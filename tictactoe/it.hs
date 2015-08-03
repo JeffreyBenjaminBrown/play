@@ -106,7 +106,10 @@ allCellGroups = flip concatMap [rows, columns, diagonals] . flip ($)
 winner :: Board -> Maybe XO
 winner = listToMaybe . mapMaybe mxo . mapMaybe allAreSame . allCellGroups
   -- mapMaybe f xs returns a list with only the non-Nothing values of f x.
-  -- If there were a row of Xs and another of Os, the first listed in allCellGroups would win (because listToMaybe takes the head), but that shouldn't happen in ordinary gameplay.
+  -- listToMaybe takes the first.
+    -- If there were a row of Xs and another of Os, 
+    -- the first listed in allCellGroups would be declared the winner.
+    -- In ordinary gameplay, though, that should not happen.
 
 countXOs :: XO -> Board -> Int
 countXOs xo = length . filter (== Just xo) . map mxo . concat . rows
@@ -117,7 +120,7 @@ checkPlayersMove xo board =
      == (countXOs (notXO xo) board - case xo of {X -> 0; O -> 1})
        -- X starts, so if equal number, is X's move
        -- whereas if |Y|=|X|-1, then is Y's move 
-        -- where |p| means number of p
+        -- where |p| means number of p-type pieces on the board
   then Right () -- Right indicates success; () b/c no other data needed.
   else Left $ "Not " ++ show xo ++ "'s turn"
 
@@ -171,7 +174,7 @@ aiMoveGetter xo board =
 consoleGame :: MoveGetter -> MoveGetter -> StateT (XO, Board) IO ()
   -- TODO: understand last arg of type sig
 consoleGame moveGetterA moveGetterB = do
-  -- All lifts are from (IO _) to MonadTrans IO BoardCoord
+  -- Lifts are, I think, from (IO _) to MonadTrans IO BoardCoord.
     -- How is MonadTrans different from StateT?
   (xo, board) <- get
   case winner board of
