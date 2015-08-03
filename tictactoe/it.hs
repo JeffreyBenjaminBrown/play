@@ -142,7 +142,10 @@ aiMove xo board = maybe
   (Left "No moves available") 
   Right
   $ find (\coord -> isJust $ eitherToMaybe $ move coord xo board)
-    -- Why is the previous line so much work?
+      -- Why is the previous line so much work? 
+      -- Doesn't the AI just take the first available position?
+      -- move (next function) checks three conditions. 
+      -- Is checkNotWon the only one of those three that aiMove needs?
     $ emptyBoardCoords board
 
 move :: BoardCoord -> XO -> Board -> Either String Board
@@ -174,8 +177,9 @@ aiMoveGetter xo board =
 consoleGame :: MoveGetter -> MoveGetter -> StateT (XO, Board) IO ()
   -- TODO: understand last arg of type sig
 consoleGame moveGetterA moveGetterB = do
-  -- Lifts are, I think, from (IO _) to MonadTrans IO BoardCoord.
-    -- How is MonadTrans different from StateT?
+  -- Lifts are, I think, from (IO _) to MonadTrans IO BoardCoord,
+    -- based on what GHCI tells me.
+    -- Is MonadTrans different from StateT?
   (xo, board) <- get
   case winner board of
     Just xo -> do
