@@ -1,0 +1,35 @@
+In ordinary GHCI I can intercalate a string into a list of strings:
+
+  Prelude> import Data.List
+  Prelude Data.List> import Data.String
+  Prelude Data.List Data.String> intercalate " " ["word", "salad"]
+  "word salad"
+  Prelude Data.List Data.String> 
+
+In Tidal I cannot:
+
+  tidal> import Data.List
+  tidal> import Data.String
+  tidal> intercalate " " ["word","salad"]
+  
+  <interactive>:516:1:
+      No instance for (IsString [a0]) arising from a use of ‘it’
+      The type variable ‘a0’ is ambiguous
+      Note: there is a potential instance available:
+        instance IsString [Char] -- Defined in ‘Data.String’
+      In the first argument of ‘print’, namely ‘it’
+      In a stmt of an interactive GHCi command: print it
+  tidal> 
+
+The reason I want to do it is to make a sequence like this more readable:
+
+  "cp sn sn cp sn sn sn cp sn sn cp sn sn sn cp sn sn sn"
+
+by building it up piecewise:
+  
+  let pa3 = "cp sn sn" -- pattern, atomic
+
+  let pa4 = "cp sn sn sn"
+  
+  let p = intercalate " " [pa3, pa4, pa3, pa4, pa4]
+

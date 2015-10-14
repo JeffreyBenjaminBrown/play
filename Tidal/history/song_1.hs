@@ -1,0 +1,7 @@
+d1 $ slow 8 $ sound "psr*8" |+| pit (13-62) "0 10 18"
+d2 $ slow 4 $ sound "psr*8" |+| (1/6) <~ pit (13) "0 10 18"
+d3 $ slow 2 $ sound "psr*8" |+| (1/2) <~ pit (-18) "18 28 41"
+d4 $ slow 1 $ sound "psr*8" |+| (2/3) <~ pit (31-18) "18 28 41"
+d5 $ sound $ "gabba sn:1 sn:2"
+d6 $ slow 2 $ sound $ "if cp cp cp"
+d7 $ slow 4 $ sound $ "gabba sn sn"

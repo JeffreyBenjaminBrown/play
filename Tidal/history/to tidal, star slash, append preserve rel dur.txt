@@ -1,0 +1,19 @@
+mixing * and /
+
+These sound identical:
+  d1 $ sound "bd*2 hh/2"
+  d1 $ slow 2 $ sound "bd*2 hh bd*2 ~"
+
+Preplace is beautiful! But what is the numeric pair argument for? To me it seems to have no effect.
+
+append, append' and cat all disregard the relative lengths of the two loops.
+
+-----
+mixing * and /
+
+This expression:
+  d1 $ sound "if*2 bd/2"
+sounds identical to this one:
+ d1 $ sound "if*2 bd/2"
+
+
