@@ -40,6 +40,22 @@ emptyBoard' = Board $ replicate boardSize
               $ Row $ replicate boardSize
               $ Cell Nothing
 
+nth :: Int -> [a] -> Maybe a -- nth 1 [1] = Nothing, nth 1 [1..3] = Just 2
+nth n = listToMaybe . drop n
+
+cell :: BoardCoord -> Board -> Either String Cell  -- pretty rad
+  -- nth returns Nothing if a lookup fails
+  -- The >>= applies nth x to inside the Maybe from the first nth call.
+  -- If either call to nth fails, 
+    -- then the >>= returns Nothing, so cell returns the Left.
+  -- Otherwise cell returns the Right, holding the result of the >>=
+cell (x, y) board = maybe -- TO EMUL
+  (Left "Invalid board coordinate") 
+  Right 
+  $ nth y (rows board) -- rows returns [[Cell]], is not accessor.
+    >>= nth x          -- nth returns Maybe.
+                       -- x horiz, y vert 
+
 emptyBoardCoords :: Board -> [BoardCoord]
 emptyBoardCoords board = filter
   (maybe False (isNothing . mxo) . eitherToMaybe . flip cell board)
@@ -50,31 +66,23 @@ emptyBoardCoords board = filter
 boardCoords :: [BoardCoord]
 boardCoords = let x = [0..boardSize - 1] in (,) <$> x <*> x
 
-nth :: Int -> [a] -> Maybe a -- nth 1 [1] = Nothing, nth 1 [1..3] = Just 2
-nth n = listToMaybe . drop n
-
 maybeRead :: Read a => String -> Maybe a
-maybeRead s = case reads s of
-    [(x, "")] -> Just x
-    _ -> Nothing -- Finding multiple parses would trigger this case.
+maybeRead s = case reads s of -- TO EMUL
+  [(x, "")] -> Just x
+  _ -> Nothing -- Finding multiple parses would trigger this case.
 
 setList :: Int -> a -> [a] -> Maybe [a]
 setList _ _ [] = Nothing
 setList 0 x (y : ys) = Just $ x : ys
 setList n x (y : ys) = (y :) <$> setList (n - 1) x ys
 
-cell :: BoardCoord -> Board -> Either String Cell  -- pretty rad
-  -- nth returns Nothing if a lookup fails
-  -- The >>= applies nth x to inside the Maybe from the first nth call.
-  -- If either call to nth fails, 
-    -- then the >>= returns Nothing, so cell returns the Left.
-  -- Otherwise cell returns the Right, holding the result of the >>=
-cell (x, y) board = maybe -- x horiz, y vert
-  (Left "Invalid board coordinate") 
-  Right 
-  $ nth y (rows board) >>= nth x
+columns :: Board -> [[Cell]]
+columns = transpose . rows
 
-setCell :: BoardCoord -> XO -> Board -> Either String Board
+rows :: Board -> [[Cell]]
+rows = map cells . rows'
+
+setCell :: BoardCoord -> XO -> Board -> Either String Board -- TO EMUL
 setCell (x, y) xo board = fromMaybe (Left "Invalid board coordinate") $ do
     -- oldRow, newRow are not type Row, rather type [Cell]
       -- because rows is not rows'
@@ -88,12 +96,6 @@ allAreSame [] = Nothing
 allAreSame [a] = Just a
 allAreSame (x : xs @(y : _)) = if x == y then allAreSame xs else Nothing
   -- The @ is an "as-pattern".
-
-rows :: Board -> [[Cell]]
-rows = map cells . rows'
-
-columns :: Board -> [[Cell]]
-columns = transpose . rows
 
 diagonals :: Board -> [[Cell]] -- TO READ
 diagonals = flip map [g, g . reverse] . flip ($) . rows where
@@ -115,7 +117,7 @@ countXOs :: XO -> Board -> Int
 countXOs xo = length . filter (== Just xo) . map mxo . concat . rows
 
 checkPlayersMove :: XO -> Board -> Either String ()
-checkPlayersMove xo board = 
+checkPlayersMove xo board = -- TO EMUL (the Right () part) 
   if countXOs xo board 
      == (countXOs (notXO xo) board - case xo of {X -> 0; O -> 1})
        -- X starts, so if equal number, is X's move
@@ -157,7 +159,7 @@ move coord xo board = do
 
 type MoveGetter = XO -> Board -> IO BoardCoord
 
-playerMoveGetter :: MoveGetter
+playerMoveGetter :: MoveGetter -- ? EMUL
 playerMoveGetter xo board = do
     putStrLn $ show xo ++ "'s move"
     print board
@@ -175,6 +177,7 @@ aiMoveGetter xo board =
   -- Magic number? Why (0,0)?
 
 consoleGame :: MoveGetter -> MoveGetter -> StateT (XO, Board) IO ()
+  -- TO EMUL
   -- TODO: understand last arg of type sig
 consoleGame moveGetterA moveGetterB = do
   -- Lifts are, I think, from (IO _) to MonadTrans IO BoardCoord,
@@ -189,17 +192,17 @@ consoleGame moveGetterA moveGetterB = do
       moveCoord <- lift $ moveGetterA xo board
         -- moveGetter returns IO BoardCoord
         -- lift returns MonadTrans IO BoardCoord
-        -- <- then unwraps the BoardCoord 
+        -- (<-) then (executes the IO and?) unwraps the BoardCoord 
       case move moveCoord xo board of
         Left s -> do
           lift $ putStrLn s
-          consoleGame moveGetterA moveGetterB
+          consoleGame moveGetterA moveGetterB -- try again
         Right newBoard -> do
           put (notXO xo, newBoard)
           lift $ putStrLn ""
-          consoleGame moveGetterB moveGetterA
+          consoleGame moveGetterB moveGetterA -- next player, swap getters
 
-main = void $ runStateT
+main = void $ runStateT -- TO EMUL
   -- void prevents the finished game from returning its state.
   (consoleGame playerMoveGetter aiMoveGetter) 
   (X, emptyBoard)
