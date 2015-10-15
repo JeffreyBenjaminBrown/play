@@ -26,10 +26,10 @@
   import Control.Concurrent.MVar
   import Control.Monad.Trans (liftIO)
 
--- functions  
-  pit transpose = -- |+| pit 13 "0 10 18 10" = major chord, up a fourth
+-- functions
+  hi transpose = -- |+| hi 13 "0 10 18 10" = major chord, up a fourth
     speed . ((step**) . (+ transpose) <$>)
-    where step = 2**(1/31)
+    where step = 2**(1/31) 
   up = speed . ((step**) <$>) where step = 2**(1/31)
 
   scal :: [Double] -> Int -> Double
@@ -54,11 +54,16 @@
     f x = x - root
     g x = if x < 0 then x + 31 else x
 
+  -- copy, fewer terms
+  md tones rotn = toFirstOctaveIfJustUnder . (relToRotatedTones n tones) <$> shift where
+    relToRotatedTones rotn tones x = x - ((rotl n tones) !! 0)
+    toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
+
 -- aliases
   fast = density                             
   cyc = slowspread -- cycle through functions
 
--- tuning to jvbass
+-- tuning(in 31et) to jvbass
   psrc = (+1.82) -- psr correction, to harmonize jvbass
     -- to prove that correction
     -- d1 $ sound "psr*4" |+| up "1.82"
@@ -67,5 +72,4 @@
     -- let fcorr = (+ 7)
     -- d1 $ sound "jvbass*3" |+| pit 0 "0"
     -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
-
 

@@ -1,0 +1,40 @@
+let rotl n xs = take (length xs) . drop n . cycle $ xs -- rotate left
+let toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
+let relToRotatedTones rotn tones x = x - ((rotl rotn tones) !! 0)
+let md tones rotn = toFirstOctaveIfJustUnder . (relToRotatedTones rotn tones) <$> (rotl rotn tones) -- mode melodicMinor 2 = ionian #4 #5
+
+-- copied from longfunc.tidal for 12et, share 
+  let s = [0,3,7]
+  let remPos num den = if x < 0 then x + den else x where x = rem num den -- test (works): fmap (flip remPos 3) [-5..5]
+  let fStep = \scale n -> (scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) -- test (works): fmap (fStep [0,3,7]) [-5..5]
+    -- adding this type sig breaks it :: [Double] -> Int  -> Double
+  let fOct scale n = (12 *) . floor . (n /) $ fromIntegral $ length scale -- test (works): fmap (fOct s) [-1..1] ++ fmap (fOct s) [-5..5]
+  scale' s n = fromIntegral $ scaleScaleSummand s n + scaleOctaveSummand s n
+
+
+let remPos num den = if x < 0 then x + den else x where x = rem num den
+let fStep scale n = (scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) -- scaleScaleSummand
+  fmap (fStep [0,4,7]) [-5..5] -- test (success)
+let fOct scale n = fromIntegral $ (31 *) . floor . (n /) $ fromIntegral $ length scale -- scaleOctaveSummand 
+let scale' s n = fStep s n + fOct s n
+
+-- this is experimental (type sigs) copy of prev parag
+let remPos num den = if x < 0 then x + den else x where x = rem num den
+let fStep = \scale n -> (scale !!) $ bfromIntegral $ remPos n (fromIntegral $ length scale) :: -> [Double] -> Int -> Double
+let fOct = \scale n -> (31 *) . floor . (n /) $ fromIntegral $ length scale :: [Double] -> Int -> Double
+let scale' s n = fStep s n + fOct s n
+
+let f = (\x y -> x + y) :: Double -> Double -> Double -- try type sigs next --RESUME HERE (is middle, relevant to both sides)
+
+--  above paragraph works, below paragraph doesn't
+let scale s = ((scale' s) <$>) -- :: ? Pattern Int -> Pattern Double
+scale [10..14] ("1 2" :: Pattern Int) -- ? :: Pattern Double
+
+
+
+let scaleIndex scale n = (scale !!) $ fromIntegral $ floor $ n / length scale
+
+floor $ x / y
+rem num den
+
+(+ 1) <$> ("1 2" :: Pattern Double)
