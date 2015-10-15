@@ -1,0 +1,15 @@
+The code
+========
+A few types that might deserve mention:
+  Time.hs:type Arc = (Time, Time) -- an interval of time
+  Time.hs:type Event a = (Arc, Arc, a) 
+    -- the second Arc is hard to explain, little used, safe to ignore
+  Pattern.hs:data Pattern a = Pattern {arc :: Arc -> [Event a]}
+    -- Patterns are functions!
+
+If you want you can find all the data types (there are only 13) by running this from an appropriate folder:
+  egrep "^\W*(type|data|newtype)" *
+
+Last (drumroll!) here's where the parsing happens!
+  https://hackage.haskell.org/package/tidal-0.5.3/docs/Sound-Tidal-Parse.html
+  https://github.com/tidalcycles/Tidal/blob/master/Sound/Tidal/Parse.hs

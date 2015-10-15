@@ -1,0 +1,25 @@
+Tidal is *easy*. No monad or music understanding needed.
+
+Source
+======
+The "stable" branch of Tidal, on Hackage:  
+  https://hackage.haskell.org/package/tidal
+The "devel" branch (I have found no problems in it): 
+  https://github.com/tidalcycles/Tidal
+
+Install
+=======
+Installation guide:
+    http://tidal.lurk.org/getting_started.html
+Linux there's an install script for Linux. I used it; piece of cake. (Jack was a bit of a struggle, but out of scope.)
+    https://raw.githubusercontent.com/tidalcycles/Tidal/master/doc/install-linux.sh
+
+Use
+===
+Intro to writing Patterns:
+  http://tidal.lurk.org/patterns.html
+Early days of this Twitter feed have a lot of working code.
+  https://twitter.com/tidalcycles
+My own work in Tidal.
+  https://github.com/JeffreyBenjaminBrown/play/blob/master/Tidal/music.tidal
+
