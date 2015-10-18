@@ -20,4 +20,6 @@ t4 = scale s 1
 t4' = fmap (scale s) [-1..1]
 -- 
 --
-
+d3 $ slow 10 $ 
+  (hi $ (scale s . ((+) (-31))) <$> run 25) 
+  |+| sound "bleep"

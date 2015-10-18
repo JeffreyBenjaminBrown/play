@@ -39,15 +39,6 @@
     | otherwise = tones !! n
     where len = length tones
 
-  sDia = [ 0, 5, 10, 13, 18, 23, 28] :: [Double]
-  sMel = [ 0, 5, 10, 15, 20, 23, 28] :: [Double]
-  sHar = [ 0, 5, 10, 13, 20, 23, 28] :: [Double]
-  sAnt = [ 0, 5, 10, 13, 18, 21, 28] :: [Double]
-  -- harmonics: 10 (5/4), 14 (11/8), 18 (3/2), 22 (13/8), 25 (7/4)
-
-  rotl :: Int -> [a] -> [a]
-  rotl n xs = take (length xs) . drop n . cycle $ xs
-
   mode tones n = g . f <$> shift where
     shift = rotl n tones
     root = shift !! 0
@@ -59,17 +50,4 @@
     relToRotatedTones rotn tones x = x - ((rotl n tones) !! 0)
     toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
 
--- aliases
-  fast = density                             
-  cyc = slowspread -- cycle through functions
-
--- tuning(in 31et) to jvbass
-  psrc = (+1.82) -- psr correction, to harmonize jvbass
-    -- to prove that correction
-    -- d1 $ sound "psr*4" |+| up "1.82"
-    -- d2 $ (1/8) <~ sound "jvbass*4"
-  fcorr = (+ 7.0)
-    -- let fcorr = (+ 7)
-    -- d1 $ sound "jvbass*3" |+| pit 0 "0"
-    -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
 

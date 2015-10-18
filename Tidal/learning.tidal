@@ -1,3 +1,5 @@
+d3 $ sound $ fmap (const "hh:4") "bd ho sn [sn hh*2]/4" -- TODO: can't?
+
 d1 $ sound "bd sn*2?" -- might have zero, one or two sn
 d1 $ sound "bd sn?!"-- zero or two sn
 d1 $ sound "bd sn!" -- always two sn, yet (!) is defined in terms of pRand; why?
