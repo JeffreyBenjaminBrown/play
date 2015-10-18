@@ -1,3 +1,9 @@
+dur 1
+d1 $ (slow 2 $ up "0 7") |+| sound "psr" -- too many parens
+d1 $ slow 2 $. up $. (* 2) <$> "0 7 4 7" |+| sound "psr" -- fewer parens!
+
+
+
 dur 6 -- arpeggios!
 let v = sound "psr*9"
 let s = [0,10,14,18,21,25]
@@ -350,7 +356,14 @@ d2 $ slow 8 $ sound "insect*2" |+| hi "0 -26"
 d1 $ sound "{bd ht ~, insect cp cp cp}"
 d2 $ slow 4 $ sound $ samples "insect*3" $ run 3
 
-hush
+dur 2
+d1 $ slow 8 $ sound "psr*8" |+| hi_ob (13-62) "0 10 18"
+d2 $ slow 4 $ sound "psr*8" |+| (1/6) <~ hi_ob (13) "0 10 18"
+d3 $ slow 2 $ sound "psr*8" |+| (1/2) <~ hi_ob (-18) "18 28 41"
+d4 $ slow 1 $ sound "psr*8" |+| (2/3) <~ hi_ob (31-18) "18 28 41"
+d5 $ sound $ "gabba sn:1 sn:2"
+d6 $ slow 2 $ sound $ "if cp cp cp"
+d7 $ slow 4 $ sound $ "gabba sn sn"
 
 -- new day
 
