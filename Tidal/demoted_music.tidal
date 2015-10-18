@@ -1,0 +1,33 @@
+-- replaced from the top of the music.tidal file, reading down
+
+hush
+d1 $ sound (samples "{casio ~ bd*3, bd*2 rm*3, numbers lt [mt sn, lt*3 voodoo] sn bass3*2}" "{7 2, 3 1 5}") |+|end rand 
+
+d1 $ (sound $ samples "gabba*8" (run 1)) |+| end rand
+
+d1 $ slow 2 $ stack [every 4 rev $ (jux ((|+| speed "0.5") . rev) $ sound "arpy ~ arpy:5 ~ arpy:3 ~") |+| end "0.6" |+| delay "0.9", jux rev $ superimpose (iter 4) $ slow 2 $ sound "[bass3 ~ bass3:3*2 ~ bass3*2 bass3:2]" |+| speed ("[4 8 6]/4") |+| shape "0.4" |+| gain "0.9" |+| delay "0.4", slowspread ($) [id, brak, id, density 2, trunc (1%4), rev] $ sound "ht lt future sn drum ~"
+
+cps 1
+d1 $ every 3 (0.5<~) $ jux (spread'(density)"[2 1 3]/4") $ sound "{drum drum odx*2,drum/2 drum/3[hit/7 ~ ~ ~]/4 drum/2 ~}"
+d1 $ sound "{drum drum odx*2,drum/2 drum/3[hit/7 ~ ~ ~]/4 drum/2 ~}"
+d1 $ slow 2 $ sound $ samples "odx*7" $ run 7
+d2 $ sound "f:4*16" |+| hi (fmap (*5) $ run 8) |+| gain "0.7"
+d2 $ silence
+
+-- replaced from the bottom of the music.tidal file, reading up
+
+let pb3 = "cp sn sn" -- pattern, basic(atomic)
+let pb4 = "cp sn sn sn"
+let p = intercalate " " [pb3, pb4, pb3, pb4, pb4]
+
+d2 $ sound "feel"
+d2 $ slow 2 $ sound "arpy arp feel*4 arpy*4"
+
+d1 $ slow 2 $ sound "{bd ht if:1, if cp }"
+
+d3 $ slow 1.5 $ sound "bd cp*2 bd cp"
+
+d1 $ slow 1 $ sound "bd cp"
+d2 $ slow 8 $ sound "if:1 haw:1"
+d3 $ slow 2 $ (<~) (0/14) $ sound $ "bd sn sn sn sn sn sn sn"
+d4 $ slow 4 $ sound $ (1/16) <~ "bd sn sn sn sn sn sn sn"

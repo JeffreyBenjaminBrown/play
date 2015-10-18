@@ -1,3 +1,9 @@
+d1 $ sound "bd sn*2?" -- might have zero, one or two sn
+d1 $ sound "bd sn?!"-- zero or two sn
+d1 $ sound "bd sn!" -- always two sn, yet (!) is defined in terms of pRand; why?
+
+-- 2015 10 15
+
 d1 $ density 4 $ sound "bd sn" |*| sound "~ hh ~ hh" -- cannot compose sound patterns?
 
 -- 2015 10 14

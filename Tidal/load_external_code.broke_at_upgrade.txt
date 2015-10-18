@@ -1,0 +1,50 @@
+Thanks, Ben! That worked for me, for a long time!
+
+But when, following Mike's advice, I upgraded from 0.5.4 to 0.6-dev [1], my TidalCustom.hs file (which is on Github [2]) broke.
+
+When it was working, I had replaced this line:
+  (tidal-send-string ":module Sound.Tidal.Context") ;; original
+with this:
+  (tidal-send-string ":load ~/git_play/Tidal/TidalCustom")
+  (tidal-send-string ":module+ Sound.Tidal.Context")
+
+If I try that now, Emcas shows this in the *tidal* buffer:
+  GHCi, version 7.8.4: http://www.haskell.org/ghc/  :? for help
+  Loading package ghc-prim ... linking ... done.
+  Loading package integer-gmp ... linking ... done.
+  Loading package base ... linking ... done.
+  Prelude> [1 of 1] Compiling Main             ( /home/jeff/git_play/Tidal/TidalCustom.hs, interpreted )
+  
+  /home/jeff/git_play/Tidal/TidalCustom.hs:31:5:
+      Not in scope: ‘speed’
+  
+  /home/jeff/git_play/Tidal/TidalCustom.hs:33:8:
+      Not in scope: ‘speed’
+  
+  /home/jeff/git_play/Tidal/TidalCustom.hs:58:65: Not in scope: ‘n’
+  
+  /home/jeff/git_play/Tidal/TidalCustom.hs:58:78:
+      Not in scope: ‘shift’
+  
+  /home/jeff/git_play/Tidal/TidalCustom.hs:59:49: Not in scope: ‘n’
+  Failed, modules loaded: none.
+  unknown command ':module+'
+  use :? for help.
+  
+  <interactive>:5:18: Not in scope: ‘bpsUtils’
+  
+  <interactive>:6:12: Not in scope: ‘dirtSetters’
+  
+  <interactive>:6:24: Not in scope: ‘getNow’
+
+  ... [many similar] ...
+  
+  <interactive>:18:17: Not in scope: ‘hush’
+  tidal> 
+
+Any ideas?
+
+
+[1] http://lurk.org/groups/tidal/messages/topic/3Br59sshyTSSKb6Lx1niGZ
+[2] https://github.com/JeffreyBenjaminBrown/play/blob/master/Tidal/TidalCustom.hs
+
