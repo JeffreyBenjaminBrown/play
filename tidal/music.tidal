@@ -1,32 +1,40 @@
-dur 6
-let v = sound "sax*8"
+dur 6 -- arpeggios!
+let v = sound "psr*9"
 let s = [0,10,14,18,21,25]
 let hump = (\x -> if x > 6 then 0 else x) <$> run 8
 let nump n = fmap (+n) hump
 let runMaker num = fmap (+ num)
 let rr = cat [nump 1, nump 2, nump 3, nump 4, rev $ nump 2] -- TODO: brevity
-d1 $ (hi $ fmap (scale s) rr) |+| v |+| cut "2"
-d3 $ slow 2 $ (hi $ (1/2) <~ fmap (scale s) rr) |+| v |*| hi "31" |+| cut "1"
+d1 $ (hi $ fmap (sc s) rr) |+| v |+| cut "2"
+d3 $ slow 2 $ (hi $ (1/2) <~ fmap (sc s) rr) |+| v |*| hi "31" |+| cut "1"
 d2 $ fast 4 $ sound "bd ho sn [sn [hh*2!! hh:4]/2]/4"
 
-d1 $ v |+| hi "[0,10] [25,35]" |*| hi "0 -6" |*| (slow 3 $ hi "0 -10 -20")
+hush
+dur 4
+let v = sound "psr*15"
+d1 $ v |+| hi "[0,10] [25,35]" |*| hi "0 -6" |*| slow 3 $. hi "0 -10 -20"
+d1 $ v |+| hi "[8,16,26] [10,14,25] [1,14,24] [0,14,25]"
+
+let v = sound "psr*4"
+d1 $ v |*| up "[0,10] [25,35]" |*| slow 2 $. up "0 -6" |*| slow 6 $. up "0 -10 -20"
 
 dur 8 -- TODO: tune the different samples -- 2015 10 17
 let s = [0,7,14,21,25] -- 0-14, 0-25, 7-25(18), and 0-7=7-14c
 let s = [    14,21,25,31,38] -- 2nd mode
 let s = [       21,25,31,38,45] -- 3rd mode
 let g = "1 0 1 0 0.7" -- gain
-let rr = hi $ (+(-31)) . scale s <$> run 25 -- run
+let rr = hi $ (+(-31)) . sc s <$> run 25 -- run
 let ovd = sound "psr" -- override
 -- let ovd = sound "sax" -- override
-d1 $ striate 5 $ sound "metal*10" |*| (hi $ (+ (-28)) . scale s <$> run 5) |+| gain (0.4 <~ g) |+| ovd
-d2 $ slow 2 $ striate 5 $ (1/2) <~ sound "psr*10" |*| (hi $ (+ (-28)) . scale s <$> run 5) |+| (pan $ (* 0.8) <$> triwave) |+| ovd
+d1 $ striate 5 $ sound "metal*10" |*| (hi $ (+ (-28)) . sc s <$> run 5) |+| gain (0.4 <~ g) |+| ovd
+d2 $ slow 2 $ striate 5 $ (1/2) <~ sound "psr*10" |*| (hi $ (+ (-28)) . sc s <$> run 5) |+| (pan $ (* 0.8) <$> triwave) |+| ovd
 d3 $ slow 10 $ rr |+| sound "bleep:1" |+| ovd
-d4 $ slow 3 $ chop 5 $ (1/2) <~ sound "jvbass*20" |*| (hi $ (+ 4) . scale s <$> run 5) |*| hi "0 18 0 31" |*| pan triwave |+| gain g |+| ovd
+d4 $ slow 3 $ chop 5 $ (1/2) <~ sound "jvbass*20" |*| (hi $ (+ 4) . sc s <$> run 5) |*| hi "0 18 0 31" |*| pan triwave |+| gain g |+| ovd
 d5 $ fast 5 $ sound "[bd bd*2]/2 [hh:3 hh:4]/4 sn [ho ~]/5 ho:1"
 d5 $ fast 5 $ slow 1 $ sound "[bd hh]/2!! ~!! [bd hh cp:1]/3!! ~"
 
-scale s <$> run 3 -- scales!
+let s = [0,3,7]
+sc s <$> run 3 -- scales!
 
 hush
 dur 4
