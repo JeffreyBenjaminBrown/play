@@ -1,3 +1,5 @@
+-- sent to Tidal\Lurk 2015 10 18
+
 An operator like $ with lower precedence, for fewer parens
 ----------------
 

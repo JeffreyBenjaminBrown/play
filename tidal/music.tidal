@@ -1,8 +1,12 @@
-dur 1
-d1 $ (slow 2 $ up "0 7") |+| sound "psr" -- too many parens
-d1 $ slow 2 $. up $. (* 2) <$> "0 7 4 7" |+| sound "psr" -- fewer parens!
+dur 5
+let dorian = [0,4,8,14,18,22,27]
+let upDown = append rr $ (+1) <$> rev rr where rr = run 7
+d1 $ hi $. sc dorian <$> upDown |+| sound "psr"
+d2 $ hi $. slow 2 $. sc dorian <$> upDown |+| sound "psr" |*| hi "-31"
+d3 $ hi $. fast 1.5 $. sc dorian . (+3) <$> upDown |+| sound "psr" |*| hi "-31"
 
-
+dur 1 -- 2015 10 18
+d1 $ slow 2 $. up $. (* 2) <$> "0 7 4 7" |+| sound "psr" -- $ > $. > <$>
 
 dur 6 -- arpeggios!
 let v = sound "psr*9"
@@ -15,7 +19,6 @@ d1 $ (hi $ fmap (sc s) rr) |+| v |+| cut "2"
 d3 $ slow 2 $ (hi $ (1/2) <~ fmap (sc s) rr) |+| v |*| hi "31" |+| cut "1"
 d2 $ fast 4 $ sound "bd ho sn [sn [hh*2!! hh:4]/2]/4"
 
-hush
 dur 4
 let v = sound "psr*15"
 d1 $ v |+| hi "[0,10] [25,35]" |*| hi "0 -6" |*| slow 3 $. hi "0 -10 -20"

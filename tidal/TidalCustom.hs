@@ -59,8 +59,8 @@
       -- fmap (scaleOctave s) [-5..5] --test
 
     sc s n = scaleOctave s n + scaleElt s n -- "scale" already = "stretch" 
-      -- scale s 1
-      -- fmap (scale s) [-1..1]
+      -- scale s 1              -- test
+      -- fmap (scale s) [-1..1] -- test
 
   -- scale data
     -- 31et harmonics: 10 (5/4), 14 (11/8), 18 (3/2), 22 (13/8), 25 (7/4)
@@ -78,5 +78,6 @@
       -- fcorr = (+ 7)
       -- d1 $ sound "jvbass*3" |+| pit 0 "0"
       -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
+
 --
 
