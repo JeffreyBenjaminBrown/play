@@ -1,9 +1,15 @@
-dur 5
+dur 15
 let dorian = [0,4,8,14,18,22,27]
-let upDown = append rr $ (+1) <$> rev rr where rr = run 7
-d1 $ hi $. sc dorian <$> upDown |+| sound "psr"
-d2 $ hi $. slow 2 $. sc dorian <$> upDown |+| sound "psr" |*| hi "-31"
-d3 $ hi $. fast 1.5 $. sc dorian . (+3) <$> upDown |+| sound "psr" |*| hi "-31"
+let upDown = append rr $ (+1) <$> rev rr where rr = run 12
+let v = sound "psr"
+d1 $ hi $. sc dorian <$> upDown |+| v
+d2 $ hi $. slow 2 $. sc dorian <$> upDown |*| hi "-31"|+| v
+d3 $ hi $. fast 1.25 $. sc dorian . (+5) <$> upDown |*| hi "-31"|+| v
+d4 $ hi "[-31,-13]*48" |+| v |+| gain "0.8"
+
+hush
+d1 $ hi $. sc dorian . (+0) <$> upDown |+| sound "psr" |*| hi "-31"
+d2 $ hi $. sc dorian . (+2) <$> upDown |+| sound "psr" |*| hi "-31"
 
 dur 1 -- 2015 10 18
 d1 $ slow 2 $. up $. (* 2) <$> "0 7 4 7" |+| sound "psr" -- $ > $. > <$>

@@ -1,4 +1,4 @@
-let dur = cps . (\x -> 1 / x) -- orig
+let dur x = cps $ 1 / x
 
 --- ========================
 -- init, OBSOLETE -- dupd to TidalCustom.hs, nicer there

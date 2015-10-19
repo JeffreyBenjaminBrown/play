@@ -23,17 +23,17 @@
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
 
--- functions, not Tidal-specific
-    rotl :: Int -> [a] -> [a] -- rotate left
-    rotl n xs = take (length xs) . drop n . cycle $ xs
-
-    infixr 3 $. -- binds before |+|, after <$> and <*>
+-- minor dollar
+    -- binds before |+|, after <$> and <*>
+    infixr 3 $.
     ($.) :: (a -> b) -> a -> b
     f $. x = f x
 
 -- synonyms and near-synonyms
-    -- dur :: Double -> IO () -- broken; define by had from init.tidal
-    -- dur = cps . (\x -> 1 / x)
+    -- dur: broken, defining by hand (from init.tidal)
+      -- Did this ever work from a .hs file?
+      -- dur :: Double -> IO ()
+      -- dur = cps . (\x -> 1 / x)
 
     fast = density
     cyc = slowspread
@@ -47,11 +47,11 @@
 
   -- scale functions
     remPos num den = if x<0 then x+den else x where x = rem num den
-      -- fmap (flip remPos 3) [-5..5] -- positive remainder (works)
+      -- fmap (flip remPos 3) [-5..5] -- positive remainder, test
 
     -- scaleElt :: [Double] -> Int -> Double
     scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) 
-    -- fmap (scaleElt [0,3,7]) [-5..5] --test
+    -- fmap (scaleElt [0,3,7]) [-5..5] -- test
     
     -- scaleOctave :: [Double] -> Int -> Double -- type sig breaks it
     scaleOctave scale n = (31 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
@@ -79,5 +79,14 @@
       -- d1 $ sound "jvbass*3" |+| pit 0 "0"
       -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
 
+  -- modes
+    rotl :: Int -> [a] -> [a] -- rotate left
+    rotl n xs = take (length xs) . drop n . cycle $ xs
+
+    md tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order 
+      . (relToRotatedTones rotn tones) <$> shift 
+      where relToRotatedTones rotn tones x = x - (shift !! 0)
+            toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
+            shift = rotl rotn tones
 --
 
