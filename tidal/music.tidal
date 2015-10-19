@@ -1,3 +1,18 @@
+dur 7
+let rp = append (run 3) $ (*2) <$> run 2 -- run pitch
+let rg = "1 0.8 1 0.8 0.8" -- run gain
+let globShift = slow 8 $ hi "0 8"
+let v = sound "psr"
+d3 $ hi rp |*| slow 2 $. hi "0 8"|+| v |+| gain rg |+| pan "0"
+d2 $ hi $. fast 2 rp |*| v |+| gain rg |+| pan "1"
+d4 $ hi "[-31,-13]*8" |+| v |+| gain "0.75" |+| pan triwave1 -- drone
+d1 $ sound $. fast 8 "bd hh*2 [sn!! sn*2]/4 hh*2"
+let p1 = "~ 4    ~     [4 3 2 1]"
+let p2 = "~ [~ 0] [1 2] [3 4]"
+let p3 = cat [p1, p2, p1, rev p2] :: Pattern Int
+d5 $ fast 1 $. hi $. sc [0,10,18] <$> p3 |+| sound "jvbass"
+
+hush
 dur 15
 let dorian = [0,4,8,14,18,22,27]
 let upDown = append rr $ (+1) <$> rev rr where rr = run 12
@@ -5,15 +20,13 @@ let v = sound "psr"
 d1 $ hi $. sc dorian <$> upDown |+| v
 d2 $ hi $. slow 2 $. sc dorian <$> upDown |*| hi "-31"|+| v
 d3 $ hi $. fast 1.25 $. sc dorian . (+5) <$> upDown |*| hi "-31"|+| v
-d4 $ hi "[-31,-13]*48" |+| v |+| gain "0.8"
 
 hush
 d1 $ hi $. sc dorian . (+0) <$> upDown |+| sound "psr" |*| hi "-31"
 d2 $ hi $. sc dorian . (+2) <$> upDown |+| sound "psr" |*| hi "-31"
+-- wish: could apply f :: Int -> (Int, Int) to upDown, use one voice
 
-dur 1 -- 2015 10 18
-d1 $ slow 2 $. up $. (* 2) <$> "0 7 4 7" |+| sound "psr" -- $ > $. > <$>
-
+hush
 dur 6 -- arpeggios!
 let v = sound "psr*9"
 let s = [0,10,14,18,21,25]
@@ -22,25 +35,28 @@ let nump n = fmap (+n) hump
 let runMaker num = fmap (+ num)
 let rr = cat [nump 1, nump 2, nump 3, nump 4, rev $ nump 2] -- TODO: brevity
 d1 $ (hi $ fmap (sc s) rr) |+| v |+| cut "2"
-d3 $ slow 2 $ (hi $ (1/2) <~ fmap (sc s) rr) |+| v |*| hi "31" |+| cut "1"
-d2 $ fast 4 $ sound "bd ho sn [sn [hh*2!! hh:4]/2]/4"
+d3 $ slow 2 $ (hi $ (1/2) <~ fmap (sc s) rr) |+| v |+| cut "1" |*| hi "-31"
+d2 $ slowspread fast [5,10] $ sound "bd ho sn [sn [hh*2!! hh:4]/2]/4"
 
+hush
 dur 4
 let v = sound "psr*15"
 d1 $ v |+| hi "[0,10] [25,35]" |*| hi "0 -6" |*| slow 3 $. hi "0 -10 -20"
-d1 $ v |+| hi "[8,16,26] [10,14,25] [1,14,24] [0,14,25]"
+d2 $ v |+| hi "[8,16,26] [10,14,25] [1,14,24] [0,14,25]"
 
-let v = sound "psr*4"
-d1 $ v |*| up "[0,10] [25,35]" |*| slow 2 $. up "0 -6" |*| slow 6 $. up "0 -10 -20"
+hush
+dur 1
+let v = sound "psr*8"
+d1 $ v |*| hi "[0,10] [25,35]" |*| slow 2 $. hi "0 -6" |*| slow 3 $. up "-20 -10 0"
 
+hush
 dur 8 -- TODO: tune the different samples -- 2015 10 17
 let s = [0,7,14,21,25] -- 0-14, 0-25, 7-25(18), and 0-7=7-14c
-let s = [    14,21,25,31,38] -- 2nd mode
-let s = [       21,25,31,38,45] -- 3rd mode
+let s' = [    14,21,25,31,38] -- 2nd mode
+let s' = [       21,25,31,38,45] -- 3rd mode
 let g = "1 0 1 0 0.7" -- gain
 let rr = hi $ (+(-31)) . sc s <$> run 25 -- run
-let ovd = sound "psr" -- override
--- let ovd = sound "sax" -- override
+let ovd = sound "psr" -- override {sax, ..}
 d1 $ striate 5 $ sound "metal*10" |*| (hi $ (+ (-28)) . sc s <$> run 5) |+| gain (0.4 <~ g) |+| ovd
 d2 $ slow 2 $ striate 5 $ (1/2) <~ sound "psr*10" |*| (hi $ (+ (-28)) . sc s <$> run 5) |+| (pan $ (* 0.8) <$> triwave) |+| ovd
 d3 $ slow 10 $ rr |+| sound "bleep:1" |+| ovd
@@ -48,41 +64,45 @@ d4 $ slow 3 $ chop 5 $ (1/2) <~ sound "jvbass*20" |*| (hi $ (+ 4) . sc s <$> run
 d5 $ fast 5 $ sound "[bd bd*2]/2 [hh:3 hh:4]/4 sn [ho ~]/5 ho:1"
 d5 $ fast 5 $ slow 1 $ sound "[bd hh]/2!! ~!! [bd hh cp:1]/3!! ~"
 
-let s = [0,3,7]
-sc s <$> run 3 -- scales!
+hush
+dur 5
+let p1 = (*4) <$> run 8 -- neutral scale, between dim and aug
+let p2 = append p1 $ rev p1
+let p3 = stack [const 0 <$> p2, (1.1/32) <~ p2] -- swing (1/32 would be straight)
+d2 $ fast 3 $ sound "[bd*2 bd*6 bd*4]/6 [sn [sn ~! sn]]/2"
+d3 $ hi p3 |+| sound "off" |*| slow 2 $. hi "0 -6" |+| cut "1" |+| gain "0.73"
 
 hush
-dur 4
-let p1 = (*5) <$> run 6
-let p2 = append p1 $ rev p1
-let p3 = stack [const 0 <$> p2, (1/3) <~ p2]
-d3 $ hi p3 |+| sound "f" |+| cut "1"
-
 dur 2
-let dl = "bd?!? sn?!"
+let dl = "bd?!? sn?!" -- random!
 solo $ d1 $ sound $ stack [dl, (1/4) <~ dl,"hh?*8"]
 
+hush
 dur 6
 d1 $ hi "[0, [8 9 10]/3]*8" |+| sound "f"
 d1 $ hi "{0, 8 9 10,25 26}*9" |+| sound "f"
-d2 $ fast 6 $ sound "bd hh"
+d2 $ sound "bd hh"
 
-dur 8
+dur 8 -- ear training
 let v p = sound "f" -- |+| cut p
 let gg = (* (-1)) <$> run 7 :: Pattern Double
 d1 $ gain "1*12" |+| (hi  $ append gg $ rev gg) |+|              v "1"
 d2 $ gain "1*12" |+| (pan $ append gg $ rev gg) |+| hi "-13" |+| v "2"
 
-dur 30 -- ear training experiment. dubious: hard to follow.
+hush
+dur 40 -- ear training experiment. tense. dubious: hard to follow.
 let stepLen = 10
 let v p = sound "f" |+| cut p
-d1 $ (fast stepLen $ hi "0*5") |*| (hi $ run stepLen) |+| v "1"
-d2 $ (fast (stepLen*4) $ up "0 -1 0 +1 0") |*| (hi $ (+ (-21)) <$> run stepLen) |*| v "2"
-d2 $ silence
-d3 $ (fast stepLen $ up "0 -1 0 +1 0") |*| (hi $ (+ (-13)) <$> run stepLen) |*| v "3"
+let rr = rev $ run stepLen
+let waver = (3*) <$> "0 -1 -3  0 1 3 0" :: Pattern Double
+d1 $ (fast stepLen $ hi "0*5") |*| (hi rr) |+| v "1"
+d2 $ (fast (stepLen*2) $ hi waver) |*| (hi $ (+ (-21)) <$> rr) |*| v "2"
+-- d2 $ silence
+d3 $ (fast stepLen $ hi waver) |*| (hi $ (+ (-13)) <$> rr) |*| v "3"
 d4 $ sound "[bd sn hh*5 sn ~]*10" |+| gain "1.3"
 
-dur 60
+hush -- after those above, tedious, similar
+dur 30
 let stepLen = 5
 let v p = sound "f" |+| cut p
 d2 $ (fast stepLen $ up $ (*2) <$> "0 -1 -2 -3 -2 -1 0 1 2 3 4 3 2 1 0") |*| (hi $ (+ (-21)) <$> run stepLen) |*| v "2"
@@ -93,19 +113,14 @@ d1 $ density 4 $ sound "bd sn" -- 2015 10 14.., worth it
 dur $ 0.8 * 4
 let worthit = "~ [[0 14]/2 -1]!! 8 0 999 ~" :: Pattern Double
 let beep = hi "-62" |+| sound "bleep:4" |*| gain "0.9" -- @ d3
-solo $ d2 $ hi worthit |+| sound "[koy, psr]" |*| hi "12"
-solo $ d3 $ striate 8 $ slow 4 $ hi "[10*2 ~!!!!!] ~ 10 [18 [25 [41]]]" |*| beep
+d2 $ hi worthit |+| sound "[koy, psr]" |*| hi "12"
+d3 $ striate 8 $ slow 4 $ hi "[10*2 ~!!!!!] ~ 10 [18 [25 [41]]]" |*| beep
 
 let p1 = "~ 0*2 4 0 2 -2 ~!!! 0*2! -2 2 0 ~" :: Pattern Double -- ghost busters
 d1 $ slow 2 $ up p1 |*| up "[7]" |*| sound "[wobble,metal]" |+| kriole "1"
 -- want: transpose metal by a different amount than 24
 
--- EDIT THIS not above copy
-let a1 = "~ 0*2 2 0 1 -1 ~!!! 0*2! -1 1 0" -- scale steps
-let p1 = "~ 0*2 4 0 2 -2 ~!!! 0*2! -2 2 0 ~" :: Pattern Double
-d1 $ slow 2 $ up p1 |*| up "[7]" |*| sound "[wobble,metal]" |+| kriole "1"
-
-d1 $ striate 24 $ sound "noise2:6*7 [noise2:6*9 noise2:6*12 noise2:7*7]/3"-- hich from noise!
+d1 $ striate 24 $ sound "noise2:6*7 [noise2:6*9 noise2:6*12 noise2:7*7]/3"-- pitch from noise! (noise2:7 is quiet)
 d2 $ sound "bd hh hh ~ sn hh hh [~ bd*2]/2"
 d3 $ slow 2 $ sound "jvbass*8" |+| up "0 [[4 -2.3]/2 5]"
 d4 $ slow 2 $ sound "psr*8" |+| up "0 4 8 8.5 7 5 4 2" |+| gain "1.1"

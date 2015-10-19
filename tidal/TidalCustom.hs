@@ -57,10 +57,12 @@
     scaleOctave scale n = (31 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
       -- fmap (scaleOctave s) [-1..1] --test
       -- fmap (scaleOctave s) [-5..5] --test
+    scaleOctave12 scale n = (12 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
 
     sc s n = scaleOctave s n + scaleElt s n -- "scale" already = "stretch" 
       -- scale s 1              -- test
       -- fmap (scale s) [-1..1] -- test
+    sc12 s n = scaleOctave12 s n + scaleElt s n
 
   -- scale data
     -- 31et harmonics: 10 (5/4), 14 (11/8), 18 (3/2), 22 (13/8), 25 (7/4)
@@ -88,5 +90,12 @@
       where relToRotatedTones rotn tones x = x - (shift !! 0)
             toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
             shift = rotl rotn tones
+
+    md12 tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order 
+      . (relToRotatedTones rotn tones) <$> shift 
+      where relToRotatedTones rotn tones x = x - (shift !! 0)
+            toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
+            shift = rotl rotn tones
+
 --
 
