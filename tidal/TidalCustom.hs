@@ -25,8 +25,6 @@
     import Sound.Tidal.Time
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
-  -- experiment
-    import MyParse as MP
 
 -- minor dollar
     -- binds before |+|, after <$> and <*>
