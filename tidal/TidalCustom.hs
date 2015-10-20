@@ -1,6 +1,9 @@
 --  Setup discussed here. Thank you Mr. Gold! http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
 
--- TODO: move tests to separate file
+-- TODO 
+  -- move tests to separate file
+  -- modes: flip argument order
+  -- tuning: extend
 
 -- imports (remember, they must come first)
   -- general
@@ -22,6 +25,8 @@
     import Sound.Tidal.Time
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
+  -- experiment
+    import MyParse as MP
 
 -- minor dollar
     -- binds before |+|, after <$> and <*>
@@ -39,7 +44,8 @@
     cyc = slowspread
 
 -- pitch
-  -- 31et version of up
+  -- hi
+    -- this is a 31et version of up
     hi = speed . ((step**) <$>) where step = 2**(1/31)
     hi_ob transp = speed . ((step**) . (+ transp) <$>) 
       where step = 2**(1/31) 

@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings, TypeSynonymInstances, OverlappingInstances, IncoherentInstances, FlexibleInstances #-}
 
--- module Sound.Tidal.Parse where -- jbb
+-- search for "is mod" to find modified lines
+
+module MyParse where -- is mod
 
 import Text.ParserCombinators.Parsec
 import qualified Text.ParserCombinators.Parsec.Token as P
