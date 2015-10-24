@@ -1,10 +1,119 @@
+d1 $ weave' 3 (sound "bd [sn drum:2*2] bd*2 [sn drum:1]") [density 2, (|+| speed "0.5"), chop 16] -- example of weave', not mine
+d1 $ weave' 3 (sound "hh*4") [density 2,(|+| speed $.. run 4)] -- no effect?
+d1 $ weave' 5 (sound "[bd*2,hh] hh") [density 4, (|+| hi "18"), chop 20, striate 4] -- what is weave's first arg? duration?
+cps 1
+
+d1 $ weave' 1 (sound "psr") [(|+| hi "31 18 8"),(|+| hi "18"),striate 8,(|+| hi "8"),chop 32]
+d1 $ weave' 1 (sound "psr") [(|+| hi "[31, 18])"
+
+dur 4 -- YES
+d1 $ hi "[31,18] [8,25 12] [8,12] [8,18]^3" |+| sound "psr"
+d1 $ slow 1 $ spread' striate $. slow 4 "1 2 1 8" $ hi "0 14 0 18*2 0 [20,30] [0 8, 18 25] ~" |+| sound $. slow 3 "[drum insect,metal]/2 metal [psr [psr psr:2] psr psr:4]/4"
+d2 $ slow 2 $ stack [sound "bd [sn!! [sn*3 sn*4 [sn ~ ~ sn] sn*2]/4]/4", spread' chop (slow 4 "1 4 1 16") $ sound $ samples "hh*4" $ slow 4 $ run 15, spread' striate (slow 4 "3 [[[8 1] 8 1] 8 1] 32 1") $ sound $ (1/8) <~ fast 16 "hh hh:2*2 hh:3 hh:6*4" |*| coarse "[0 1]*8" -- fast 2 of this also good
+
+cps 2 -- reviewing first ten "drum" samples; "if" to show 0
+d1 $ sound $ samples "~ drum" $ slow 10 $ run 10
+d2 $ sound $ slow 10 "if"
+
+cps $ 1.5 -- learning samples
+let p' = "[kurt bd*2] [mouth,insect] [can]*3 sn" -- was slow 2
+let p = cat [p','p', rev p', rev p', rev p']
+d1 $ slowspread striate [1,4,2] $ chop 3 $ sound (pick <$> slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn" <*> slow 5 "0 1 2 3")
+let p = slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
+d1 $ sound $ slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
+2
+cps 2
+d1 $ sound $ pick <$> "bd [lt ~]/2 cp [hh*2]" <*> slow 4 $.. run 5 -- after <$> can't provide variable
+
+d1 $ sound $ samples "noise*3 noise2" $ slow 8 $ run 10
+
+dur 1.8
+let p1 = "x! ~ [x! ~ x]]"
+let p2 = slow 2 $ append p1 $ rev p1
+let f = preplace (1,1)
+let v1 = "bd sn"
+let v2 = "psr metal"
+d1 $ sound $ stack [f p1 v1, (<~) (1/2) $ f p2 v2]
+let m1 = "[0 8 [18 22]] [[22 9] 27 13]" :: Pattern Double
+let m2 = cat [m1, (*2)<$> m1, (+ (-10)) <$> rev m1, append m1 $ (+ (-18)) <$> m1, "25*2"]
+d2 $ slow 5 $. hi m2 |+| sound "psr"
+
+let p = (+ (-3)) <$> "0*2 2 4 1*2 3 5 4" :: Pattern Int
+let q = slow 4 $ cat [p, rev p, append p p, (\x-> 1.5*x-5) <$> compress (2/7,4/7) p]
+let s = [0,4,14,18,21,25,28] 
+let s = [0,12,18,25,29,36] -- out of bounds scales work!
+d1 $ hi $. sc s <$> stack [q, (+) <$> q <*> "3 [13 1 -7 -11]/3 6 2"] |+| sound "psr" -- in-scale harmony!
+d2 $ sound "bd ~ sn bd ~ [sn cp ~ sn*2]/4 [~ hh:3*2]/2"
+d3 $ spread' striate $. slow 3 "1 [16 2] [4 1]" $ sound $. samples "noise*14" $. slow 4 $. run 10 |+| slow 4 $. gain "1 [2 1] 0 [2 1]*2" |*| hi $. sc s <$> q
+
+d1 $ sound $ stack [slow 2 "bd [sn*2 sn]/4 [sn lt*2]/2", slow 3 "hh cp:1", samples "hh*2"$ slow 8 $ append (run 4) (run 5)]
+
+dur 1
+d3 $ slow 2 $ sound "bd sn sn"
+d2 $ slow 3 $ sound "hh cp:1"
+d1 $ sound "hh"
+
+let p = "bd sn"
+d3 $ slow 7 $ sound $ preplace (1,1) "x ~ x x ~" p
+d2 $ slow 5 $ sound $ preplace (1,1) "x ~ x x ~ x ~" p
+d1 $ sound "hh"
+cps 3
+
+let p = "bd sn metal metal:3"
+d3 $ slow 5 $ sound $ preplace (1,1) "x ~ x x ~" p
+d2 $ slow 3 $ sound $ preplace (1,1) "x ~ x" "metal cp"
+d2 $ slow 3 $ sound $ preplace (1,1) "x ~ x" p
+d1 $ silence
+d1 $ slow 6 $ sound $. samples "insect*5 industrial*5" $. slow 4 $. (5+) <$> append (run 5) (run 3) |+| gain "0.75"
+cps 5 -- x-meters? x-(dur,meter) in phase! 
+  -- each has factors for 3/5 or 5/3 or 1/15 or 15, can't tell which
+
+  -- preplace: can make last (Pattern) arg a var, but not the one before that
+
+d2 $ slow 3 $ sound "metal cp ~"
+
+
+preplace (1,1) "[x ~ x] ~ [x x ~]/2 ~" "ho hc hc:2"
+
+-- 2015 10 23
+
+let y1 = "0 5 7 12 17 19" :: Pattern Double
+let y2 = append y1 y2
+cps (1/40)
+d1 $ up y2 |+| sound "jvbass"
+
+-- 2015 10 22
+
+dur 4 -- the 1/5 below is the weirdest
+let m1 = listToPat [0, 3, 6]
+let m2 = listToPat [0, 2, 4, 6]
+let n1 = cat [m1, rev m1, m2, rev m2]
+let n2 = cat [n1, (1/5) <~ n1] -- this evaluates even if the last n1 is n2, that is, recursively! But then it can't stop playing.
+d1 $ hi $. n1 |*| r |+| pan "0"
+d2 $ hi $. slow 2 $. n2 |*| r |+| pan "1"
+d3 $ fast 4 $. sound "bd sn"
+
+cps 11
+d3 $ fast 4 $. sound "jvbass psr" |+| pan $. slow 16 triwave |+| hi $. slow 100 "0 8 18 31 39 49"
+d3 $ fast 4 $. sound "jvbass psr" |+| pan $. slow 16 triwave |+| speed $. slow 100 "1 1.2 [1, 1.25] 1.4 [1 1.5] 1.6 1.666 [1, 1.75] 1.8"
+
+dur 2
+let m1 = listToPat [0,  3, 6, 3]
+let m2 = listToPat [12,14,16,14]
+let m3 = listToPat [12,14,16,14] -- this time by 1s
+d1 $ r |+| hi m1
+d2 $ r |+| hi m2
+
+-- 2015 10 21
+
 dur 7
 let rp = append (run 3) $ (*2) <$> run 2 -- run pitch
 let rg = "1 0.8 1 0.8 0.8" -- run gain
 let globShift = slow 8 $ hi "0 8"
 let v = sound "psr"
-d3 $ hi rp |*| slow 2 $. hi "0 8"|+| v |+| gain rg |+| pan "0"
-d2 $ hi $. fast 2 rp |*| v |+| gain rg |+| pan "1"
+hush
+d3 $ hi rp           |*| slow 2 $. hi "0 8"|+| v |+| gain rg |+| pan "0"
+d2 $ hi $. fast 2 rp |*|                       v |+| gain rg |+| pan "1"
 d4 $ hi "[-31,-13]*8" |+| v |+| gain "0.75" |+| pan triwave1 -- drone
 d1 $ sound $. fast 8 "bd hh*2 [sn!! sn*2]/4 hh*2"
 let p1 = "~ 4    ~     [4 3 2 1]"
@@ -20,6 +129,8 @@ let v = sound "psr"
 d1 $ hi $. sc dorian <$> upDown |+| v
 d2 $ hi $. slow 2 $. sc dorian <$> upDown |*| hi "-31"|+| v
 d3 $ hi $. fast 1.25 $. sc dorian . (+5) <$> upDown |*| hi "-31"|+| v
+
+d1 $ sound "bd sn"
 
 hush
 d1 $ hi $. sc dorian . (+0) <$> upDown |+| sound "psr" |*| hi "-31"
@@ -109,12 +220,24 @@ d2 $ (fast stepLen $ up $ (*2) <$> "0 -1 -2 -3 -2 -1 0 1 2 3 4 3 2 1 0") |*| (hi
 d3 $ (fast stepLen $ up "0 -1 0 +1 0") |*| (hi $ (+ (-13)) <$> run stepLen) |*| v "3"
 d4 $ sound "[bd sn hh*5 sn ~]*10" |+| gain "1.3"
 
+dur 0.5
+d1 $ up "[0,16]" |+| sound "f"
+d1 $ speed "-2" |+| sound "f"
+
+d1 $ speed "[1,1.5]" |+| sound "psr"
+d1 $ speed "[1,1.25]" |+| sound "psr"
+
+hush
 d1 $ density 4 $ sound "bd sn" -- 2015 10 14.., worth it
 dur $ 0.8 * 4
 let worthit = "~ [[0 14]/2 -1]!! 8 0 999 ~" :: Pattern Double
-let beep = hi "-62" |+| sound "bleep:4" |*| gain "0.9" -- @ d3
-d2 $ hi worthit |+| sound "[koy, psr]" |*| hi "12"
+let beep = hi "-62" |+| sound "psr:4" |*| gain "0.9" -- @ d3
+d2 $ hi worthit |+| sound "[koy,psr]" |*| hi "12" |+| cut "1"
 d3 $ striate 8 $ slow 4 $ hi "[10*2 ~!!!!!] ~ 10 [18 [25 [41]]]" |*| beep
+-- d3 $ sound "metal*32" |+| (slow 3 $ hi "[10*2 ~!!!!!] ~ 10 [18 [25 [41]]]") |*| beep
+
+d1 $ sound "bd*16" |+| gain rand4
+
 
 let p1 = "~ 0*2 4 0 2 -2 ~!!! 0*2! -2 2 0 ~" :: Pattern Double -- ghost busters
 d1 $ slow 2 $ up p1 |*| up "[7]" |*| sound "[wobble,metal]" |+| kriole "1"

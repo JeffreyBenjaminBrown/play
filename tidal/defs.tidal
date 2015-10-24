@@ -1,0 +1,11 @@
+let m1 = listToPat [0, 2, 4, 6, 8, 10]
+let m2 = listToPat [0, 3, 5, 8, 10]
+let m3 = listToPat [0, 3, 7, 10]
+let m4 = listToPat [0,5,10]
+let n1 = cat [m1, rev m1, m2, rev m2, m3, rev m3, m4, rev m4]
+let n2 = cat [n1, (1/5) <~ n1] -- this evaluates even if the last n1 
+let v = sound "metal" |+| hi "-31"
+let r = sound "bd*10" |+| v
+
+
+-- 2015 10 21
