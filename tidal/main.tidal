@@ -1,10 +1,17 @@
+-- use ### = $, ## = $., ..
+  -- is minor dup
+
+
+-- 2015 10 24
+
 d1 $ weave' 3 (sound "bd [sn drum:2*2] bd*2 [sn drum:1]") [density 2, (|+| speed "0.5"), chop 16] -- example of weave', not mine
+
 d1 $ weave' 3 (sound "hh*4") [density 2,(|+| speed $.. run 4)] -- no effect?
 d1 $ weave' 5 (sound "[bd*2,hh] hh") [density 4, (|+| hi "18"), chop 20, striate 4] -- what is weave's first arg? duration?
 cps 1
 
 d1 $ weave' 1 (sound "psr") [(|+| hi "31 18 8"),(|+| hi "18"),striate 8,(|+| hi "8"),chop 32]
-d1 $ weave' 1 (sound "psr") [(|+| hi "[31, 18])"
+d2 $ weave' 1 (sound "psr") (|+| hi "[31, 18]")
 
 dur 4 -- YES
 d1 $ hi "[31,18] [8,25 12] [8,12] [8,18]^3" |+| sound "psr"
@@ -18,12 +25,13 @@ d2 $ sound $ slow 10 "if"
 cps $ 1.5 -- learning samples
 let p' = "[kurt bd*2] [mouth,insect] [can]*3 sn" -- was slow 2
 let p = cat [p','p', rev p', rev p', rev p']
-d1 $ slowspread striate [1,4,2] $ chop 3 $ sound (pick <$> slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn" <*> slow 5 "0 1 2 3")
+solo $ d1 $ slowspread striate [1,4,2] $ chop 3 $ sound (pick <$> slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn" <*> slow 5 "0 1 2 3")
 let p = slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
-d1 $ sound $ slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
+d2 $ sound $ slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
 2
 cps 2
 d1 $ sound $ pick <$> "bd [lt ~]/2 cp [hh*2]" <*> slow 4 $.. run 5 -- after <$> can't provide variable
+d2 $ sound "bd sn"
 
 d1 $ sound $ samples "noise*3 noise2" $ slow 8 $ run 10
 
@@ -186,7 +194,7 @@ d3 $ hi p3 |+| sound "off" |*| slow 2 $. hi "0 -6" |+| cut "1" |+| gain "0.73"
 hush
 dur 2
 let dl = "bd?!? sn?!" -- random!
-solo $ d1 $ sound $ stack [dl, (1/4) <~ dl,"hh?*8"]
+d1 $ sound $ stack [dl, (1/4) <~ dl,"hh?*8"]
 
 hush
 dur 6
@@ -219,6 +227,9 @@ let v p = sound "f" |+| cut p
 d2 $ (fast stepLen $ up $ (*2) <$> "0 -1 -2 -3 -2 -1 0 1 2 3 4 3 2 1 0") |*| (hi $ (+ (-21)) <$> run stepLen) |*| v "2"
 d3 $ (fast stepLen $ up "0 -1 0 +1 0") |*| (hi $ (+ (-13)) <$> run stepLen) |*| v "3"
 d4 $ sound "[bd sn hh*5 sn ~]*10" |+| gain "1.3"
+
+
+
 
 dur 0.5
 d1 $ up "[0,16]" |+| sound "f"
