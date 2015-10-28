@@ -27,6 +27,7 @@
     import Sound.Tidal.Utils
 
 -- minor dollars
+  -- first, deprecated
     infixr 3 $. -- binds before |+|, after <$> and <*>
     ($.) :: (a -> b) -> a -> b
     f $. x = f x
@@ -34,6 +35,21 @@
     infixr 5 $.. -- binds even after <$> and <*>
     ($..) :: (a -> b) -> a -> b
     ($..) = ($)
+
+  -- it is () and , at once
+    infixr 5 #.
+    (#.) :: (a -> b) -> a -> b
+    (#.) = ($)
+
+    infixr 3 ##
+    (##) :: (a -> b) -> a -> b
+    (##) = ($)
+
+    infixr 0 ###
+    (###) :: (a -> b) -> a -> b
+    (###) = ($)
+
+    -- group more spaces between ) and (, let each be a separate grammar within
 
 -- synonyms and near-synonyms
     -- dur: broken, defining by hand (from init.tidal)
