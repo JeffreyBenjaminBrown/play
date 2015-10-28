@@ -1,3 +1,15 @@
+
+let v1 = sound "psr"
+
+let m1 = "[0,18] [0 [3,9] [7,18]]" :: Pattern Double
+let m2 = "[0 18 0] [0 3 7 0 11 14 0 18] [3,9] [7,18]*3]" :: Pattern Double
+let mLar = "0 [18 4] 0 [4 18] 13 [25 26] 25 24" :: Pattern Double
+
+let m3 = (2.5*) <$> run 5
+let p5 = (*(18/3)) 
+
+-- 2015 10 26
+
 let m1 = listToPat [0, 2, 4, 6, 8, 10]
 let m2 = listToPat [0, 3, 5, 8, 10]
 let m3 = listToPat [0, 3, 7, 10]

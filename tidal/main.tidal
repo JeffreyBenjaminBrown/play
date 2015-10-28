@@ -1,6 +1,26 @@
+cps 1
+d1 $ striate 12 $ slow 12 $ sound ## samples "[[noise2 ho*5]*3 noise:1 noise2*3]*16" ## slow 8 "0 1 2" |+| gain "0.4"
+d2 $ fast 1 $ sound "bd"
+d3 $ fast 1.5 $ sound "hh"
+d4 $ stut' 7 (1/16) ## (|*| gain "0.4") $ striate 16 $ slow 4 $ hi "-31 ~ [~ -13]" |*| gain "1 0.8" |*| sound "psr"
+d5 $ slow 4 $ hi (sc [0,7,8,14,18,28] <$> r1) |*| v1 |*| gain "0.7"
+d5 $ silence
+
 -- use ### = $, ## = $., ..
   -- is minor dup
 
+hush
+d1 $ slow 4 $ stut' 9 (3/14) (\x -> x |*| coarse "16" |*| hi "0.5" |*| gain "0.97") $ hi "{14 18, 16 18 20}%8" |*| sound "psr!! [bd hh]"
+d1 $ slow 4 $ hi "{14 18, 16 18 20}%8" |*| sound "psr!! [bd hh]"
+d2 $ slow 4 $ hi "[[0,25] 0] [18*16 [25 7]*7 ]/4 8*4 7*4" |*| sound "[jvbass,metal]" |*| slow 8 ## hi "13 [0 [0 8]]" |*| fast 8 ## hi "0 0.7"
+d3 $ slow 8 $ hi "[29 33]*5 31 18*3 ~" |*| v1
+d4 $ slow 2 $ sound ## stack ["bd*4","can(13,16)"] |+| pan ## slow 4 triwave1
+
+d1 $ slow 3 $ sound "hh(3,7) bd(3,2) jvbass(3,8)" |+| hi m1
+d2 $ slow 18 $ hi (append m2 $ rev $ (+13)<$>m2) |*| slow 4 ## hi mLar |*| hi "-62" |+| sound "psr"
+d3 $ slow 9 $ hi ## cat [m1,m2,append m3 $ rev m3] |*| slow 4 ## hi mLar |*| hi "-13" |+| sound "psr"
+
+-- 26
 
 -- 2015 10 24
 
@@ -15,7 +35,9 @@ d2 $ weave' 1 (sound "psr") (|+| hi "[31, 18]")
 
 dur 4 -- YES
 d1 $ hi "[31,18] [8,25 12] [8,12] [8,18]^3" |+| sound "psr"
-d1 $ slow 1 $ spread' striate $. slow 4 "1 2 1 8" $ hi "0 14 0 18*2 0 [20,30] [0 8, 18 25] ~" |+| sound $. slow 3 "[drum insect,metal]/2 metal [psr [psr psr:2] psr psr:4]/4"
+d1 $ slow 1 ### spread' striate ## slow 4 "1 2 1 8" ### hi "0 14 0 18*2 0 [20,30] [0 8, 18 25] ~" |+| sound ## slow 3 "[drum insect,metal]/2 metal [psr [psr psr:2] psr psr:4]/4"
+
+-- broken, not imeed obvious how to fix
 d2 $ slow 2 $ stack [sound "bd [sn!! [sn*3 sn*4 [sn ~ ~ sn] sn*2]/4]/4", spread' chop (slow 4 "1 4 1 16") $ sound $ samples "hh*4" $ slow 4 $ run 15, spread' striate (slow 4 "3 [[[8 1] 8 1] 8 1] 32 1") $ sound $ (1/8) <~ fast 16 "hh hh:2*2 hh:3 hh:6*4" |*| coarse "[0 1]*8" -- fast 2 of this also good
 
 cps 2 -- reviewing first ten "drum" samples; "if" to show 0
@@ -32,8 +54,6 @@ d2 $ sound $ slow 2 "[kurt bd*2] [mouth,insect] [can]*3 sn"
 cps 2
 d1 $ sound $ pick <$> "bd [lt ~]/2 cp [hh*2]" <*> slow 4 $.. run 5 -- after <$> can't provide variable
 d2 $ sound "bd sn"
-
-d1 $ sound $ samples "noise*3 noise2" $ slow 8 $ run 10
 
 dur 1.8
 let p1 = "x! ~ [x! ~ x]]"
