@@ -61,12 +61,15 @@
     cyc = slowspread
 
 -- pitch
-  -- hi
+  -- hi, spd (speed)
     -- this is a 31et version of up
     hi = speed . ((step**) <$>) where step = 2**(1/31)
     hi_ob transp = speed . ((step**) . (+ transp) <$>) 
       where step = 2**(1/31) 
       --obsoleted by |*|, but used in early portion of music.tidal
+
+    sp  = speed . return 
+    sps = speed . stack . fmap return
 
   -- scale functions
     remPos num den = if x<0 then x+den else x where x = rem num den
@@ -95,7 +98,7 @@
     sAnt = [ 0, 5, 10, 13, 18, 21, 28] :: [Double]
 
   -- tuning (in 31et) to jvbass
-    psrCorr = (+1.82) -- psr correction, to harmonize jvbass
+    psrCorr = (+2.5) -- psr correction, to harmonize jvbass
       -- to prove that correction
       -- d1 $ sound "psr*4" |+| up "1.82"
       -- d2 $ (1/8) <~ sound "jvbass*4"
@@ -103,6 +106,12 @@
       -- fcorr = (+ 7)
       -- d1 $ sound "jvbass*3" |+| pit 0 "0"
       -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
+    sineCorr = (+ 3.7)
+
+  -- voices
+    insF = sound "f" |*| gain "0.75" |*| cutoff "0.15" |*| resonance "0.9" |*| hi ## fCorr <$> "-31"
+    insPsr = sound "psr" |*| hi ## psrCorr <$> "0"
+    insSine = sound "sine" |*| hi ## sineCorr <$> "0" |*| gain "0.9"
 
   -- modes
     rotl :: Int -> [a] -> [a] -- rotate left
