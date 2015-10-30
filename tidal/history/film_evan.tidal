@@ -1,0 +1,114 @@
+-- should have
+  -- noted especially good coincidences, to time them to the film
+  -- buzz introduced too early, in daylight rather than hallway; early part needs deletion
+
+
+
+-- get Tidal audio before starting VLC
+let pd1 = pan "0"
+let pd2 = pan "0.2"
+let pd3 = pan "0.4"
+let pd4 = pan "0.6"
+let pd5 = pan "0.8"
+
+-- let dns p = cat [p, rev p, append p $ rev p, slow 2 $ p]
+dur 9
+let dns p = cat [p, rev p, append p $ rev p]
+let sc1 = [0,5,10,13,18,20,25]
+let sc1 = [0,2,8,13,18,20,29]
+-- let sc1 = [0,4,8,14,18,22,25]
+let p1 = "0 [1 2] 3*3 [2 1]*3" :: Pattern Int
+d4 $ fast 1 $ sound ## dns "bd sn hh*2!" |*| pd4
+d2 $ slowspread striate [1,2,4] $ slow 3 $ ((1/6) <~) ## hi ## dns ## sc sc1 . (+2) <$> p1 |*| insPsr |*| cut "2" |*| pd2
+d3 $ striate 4 $ slow 3 $ ((2/6) <~) ## hi ## dns ## sc sc1 . (+4) <$> p1 |*| insSine |*| hi "-31" |*| pd3
+d1 $ striate 2 $ slow 3 $ hi ## dns ## sc sc1 <$> p1 |*| insF |*| cut "1" |*| hi "31" |*| pd1
+let ck w = striate 7 $ stut' 3 (5/16) (|*| hi "1") w
+d5 $ fast 4 $ sound "jvbass*15" |*| pd5
+d5 $ fast 1 $ ck $ sound "jvbass*59" |*| pd5 -- striate 7, jvbass 59, dur 9 => in tune
+-- d5 $ fast 4 $ ck $ sound "[jvbass*18, jvbass*27, jvbass*21]" |*| pd5
+
+-- start
+hush
+
+-- "why they're here"
+dur 9
+d1 $ fast 4 $ slowspread striate [1,4,16] $ sound ## samples "[[noise ho*5]*3 noise:1 noise:2*3]*16" ## slow 8 ## run 16 |+| gain "0.4" |*| pd1
+
+-- after "do you understand?"
+let  sc1 = [0,3,10,18,20,24,27]
+let p1 = "0 [1 2] 3*3 [2 1]*3" :: Pattern Int
+d3 $ striate 2 $ slow 3 $ hi ## dns ## sc sc1 <$> p1 |*| insF |*| cut "1" |*| hi "31" |*| pd3
+
+-- after "can't even hear you"
+hush
+
+-- Brian
+d1 $ fast 4 $ slowspread striate [1,4,16] $ sound ## samples "[[noise ho*5]*3 noise:1 noise:2*3]*16" ## slow 8 ## run 16 |+| gain "0.4" |*| pd1
+
+-- (outside). Jen.
+d3 $ slowspread striate [1,2,4] $ slow 3 $ ((1/6) <~) ## hi ## dns ## sc sc1 . (+2) <$> p1 |*| insPsr |*| cut "2" |*| pd3
+
+-- "go away"
+d4 $ striate 2 $ slow 3 $ hi ## dns ## sc sc1 <$> p1 |*| insF |*| cut "1" |*| hi "31" |*| pd4
+
+-- between rooms, voiceover as if outside
+d3 $ silence
+d4 $ silence
+
+-- bedroom
+hush -- (stay silent through day scene). 
+
+
+-- ======== 2nd half
+-- hallway, 1:41
+d1 $ fast 4 $ slowspread striate [2,7,24] $ sound ## samples "[[noise ho*5]*3 noise:1 noise:2*3]*16" ## slow 8 ## run 16 |+| gain "0.4" |*| pd1
+
+-- more noise, 1:51 (lock turns)
+d2 $ fast 2 $ slowspread striate [4,16,20] $ sound ## samples "breath*8" ## run 8 |*| hi "-62" |*| shape ## (\x -> x/4) <$> run 4 |*| pd2
+
+-- more noise, 2:05
+d3 $ fast 3 $ slowspread striate [8,16,20] $ sound ## samples "crow*8" ## run 8 |*| hi "-62" |*| shape ## (\x -> x/4) <$> run 4 |*| gain "0.75" |*| pd3
+
+-- a melody, 2:16
+d4 $ slowspread striate [1,2,4] $ slow 3 $ ((1/6) <~) ## hi ## dns ## sc sc1 . (+2) <$> p1 |*| insPsr |*| cut "2" |*| pd4
+
+-- Brian, 2:26.5
+d5 $ fast 2 $ sound "{if [bd ho] [bd*3 bd ~!], hh?*8}%2" |*| pd5
+
+-- after "do better than that", 2:43
+hush
+d4 $ slowspread striate [1,2,4] $ slow 3 $ ((1/6) <~) ## hi ## dns ## sc sc1 . (+2) <$> p1 |*| insPsr |*| cut "2" |*| pd4
+
+hush
+dur 9 -- the fuck?
+-- Jen (d5=slow drums, d4=psr, d3=sine)
+d5 $ fast 2 $ sound "{if [bd ho] [bd*3 bd ~!], hh?*8}%2" |*| pd5
+d4 $ slowspread striate [1,2,4] $ slow 3 $ ((1/6) <~) ## hi ## dns ## sc sc1 . (+2) <$> p1 |*| insPsr |*| cut "2" |*| pd4
+d3 $ striate 2 $ slow 3 $ ((2/6) <~) ## hi ## dns ## sc sc1 . (+4) <$> p1 |*| insSine |*| hi "-31" |*| pd3
+
+-- book 2:55, or Evan 2:59. d5=drums, d4=psr.
+d3 $ silence
+
+-- after "there is a word", 3:12. d5=drums, d4=psr, d3=psr
+d3 $ striate 2 $ slow 3 $ ((2/6) <~) ## hi ## dns ## sc sc1 . (+4) <$> p1 |*| insSine |*| hi "-31" |*| pd3
+
+-- after "you answered me", 3:22. d5=drums, d4=psr, d3=psr, d2=drums
+let ck w = striate 7 $ stut' 3 (5/16) (|*| hi "1") w
+d2 $ fast 2 $ ck $ sound "jvbass*59" |*| gain "0.9" |*| pd2
+
+-- after "tell me what you want", 3:33. d5=drums, d4=psr, d3=psr, d2=drums, d1=f.
+d1 $ striate 2 $ slow 3 $ hi ## dns ## sc sc1 <$> p1 |*| insF |*| cut "1" |*| hi "31" |*| pd1
+let ck w = striate 5 $ stut' 3 (5/16) (|*| hi "1") w
+d2 $ fast 2 $ ck $ sound "jvbass*42" |*| gain "0.9" |*| pd2
+
+-- answers
+dur 11
+dur 10
+dur 9
+dur 8
+dur 7
+dur 6
+dur 5.5
+dur 5
+dur 3.8
+hush

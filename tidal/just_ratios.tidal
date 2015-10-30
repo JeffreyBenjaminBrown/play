@@ -1,0 +1,15 @@
+-- The just ratios!
+let rTo12 f = (*12) $ log (fromRational f) / log 2 
+rTo12 $ 8/7 -- wanted to def&use rnd x = round (100*x)/100; fails
+let octave1 n = if n<= 0 then n else if n<1 then octave1 (n*2) else if n>2 then octave1 (n/2) else n
+let theFirstRatios = nub $ fmap octave1 $ (%)<$>[1..16]<*>[1..16]
+fmap (\r -> (octave1 r, rTo12 $ fromRational  r)) theFirstRatios
+  -- for 16 X 16 there are only 50 ratios!
+
+-- standardize a set of ratios! almost works!
+  -- so that for instance stdz [1/3,2/3] = [3,2]
+  -- problem: stdz [13+1%3,14] = [40.0,42.0], should be [20.0,21.0]
+let lcmMany' (acc,list) = case list of [] -> acc; h:t -> lcmMany' (lcm acc h, t)
+let lcmMany integrals = lcmMany' (1,integrals)
+let stdz ratios = fromRational . (*(fromIntegral lcm)) <$> ratios       where lcm = lcmMany $ denominator <$> ratios
+

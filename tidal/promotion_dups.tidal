@@ -1,0 +1,21 @@
+hush
+dur 1
+d1 $ striate 12 $ slow 12 $ sound ## samples "[[noise ho*5]*3 noise:1 noise:2*3]*16" ## slow 8 ## run 16 |+| gain "0.4"
+d2 $ fast 1 $ sound "bd"
+d3 $ fast 1.5 $ sound "hh"
+
+let v1 = sound "psr"
+let v2 = sound "f" |*| gain "0.6" |*| cutoff "0.15" |*| resonance "0.9" |*| hi ## fCorr <$> "-31"
+let r1 = run 8 :: Pattern Int
+let rn = sound ## samples "[[noise2 ho*5]*3 noise:1 noise2*3]*16" ## slow 8 "0 1 2" -- run of noise
+let f1 seq = append seq $ rev seq
+cps 1
+d1 $ striate 12 $ slow 12 $ sound ## samples "[[noise2 ho*5]*3 noise:1 noise2*3]*16" ## slow 8 "0 1 2" |+| gain "0.4"
+d2 $ fast 1 $ sound "bd"
+d3 $ fast 1.5 $ sound "hh"
+d4 $ stut' 7 (1/16) ## (|*| gain "0.4") $ striate 16 $ slow 4 $ hi "-31 ~ [~ -13]" |*| gain "1 0.8" |*| sound "psr"
+d5 $ slow 4 $ hi (sc [0,7,8,14,18,28] <$> r1) |*| v1 |*| gain "0.7"
+
+-- getting fantasy
+d1 $ weave' 1 (sound "psr") [(|+| hi "31 18 8"),(|+| hi "18"),striate 8,(|+| hi "8"),chop 32]
+d2 $ weave' 1 (sound "psr") (|+| hi "[31, 18]")
