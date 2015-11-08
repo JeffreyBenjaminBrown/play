@@ -118,7 +118,7 @@
     rotl n xs = take (length xs) . drop n . cycle $ xs
 
     md tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order 
-      . (relToRotatedTones rotn tones) <$> shift 
+      . (relToRotatedTones rotn tones) <$> shift
       where relToRotatedTones rotn tones x = x - (shift !! 0)
             toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
             shift = rotl rotn tones
@@ -129,5 +129,16 @@
             toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
             shift = rotl rotn tones
 
+-- time
+  -- [Event] -> Pattern
+    evtListToPatt :: [Event a] -> (Arc -> [Event a])
+    evtListToPatt evts = 
+      let f (s,e) ((a,b),_,evt) = a < s && b > s ||  a < e && b > e
+      in \(s,e) -> filter (f (s,e)) evts
+      -- it works!
+        -- > let x = evtListToPatt [((0,1),(0,1),"bd")]
+        -- > (arc $ Pattern x) (0,1/2)
+        -- [((0 % 1,1 % 1),(0 % 1,1 % 1),"bd")]
+  
 --
 
