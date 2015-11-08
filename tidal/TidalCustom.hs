@@ -129,16 +129,39 @@
             toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
             shift = rotl rotn tones
 
--- time
-  -- [Event] -> Pattern
-    evtListToPatt :: [Event a] -> (Arc -> [Event a])
-    evtListToPatt evts = 
-      let f (s,e) ((a,b),_,evt) = a < s && b > s ||  a < e && b > e
-      in \(s,e) -> filter (f (s,e)) evts
+-- time (DUPLICATE; main at Tidal_7/Sound/Tidal/JBB.hs) 
+    ceiling_ish :: Arc -> Time
+      -- in a cycle-respecting Arc (a,b), b < floor a + 1
+    ceiling_ish (a,b) = fromInteger $ floor a + 1
+    
+    splitArcAtIntegers :: Arc -> [Arc]
+    splitArcAtIntegers (a,b) = let c = ceiling_ish (a,b)
+      in if      b <= a then []    
+         else if b <= c then [(a,b)]
+         else (a,c) : splitArcAtIntegers (c,b)  
+    
+    arcOverlaps :: Arc -> Event a -> Bool
+    arcOverlaps (s,e) ((a,b),_,evt) = a <= s && b > s ||  a < e && b >= e
+    
+    firstUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects
+      -- (s,e) in the unit interval
+    firstUnitIntersection evts (s,e) = filter (arcOverlaps (s,e)) evts
+    
+    anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects 
+      -- e <= floor s + 1
+    anyUnitIntersection evts (s,e) = let f = fromInteger $ floor s in
+      map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
+      $ firstUnitIntersection evts (s-f,e-f)
+    
+    evtListToPatt :: [Event a] -> Pattern a
+    evtListToPatt evts = Pattern $ \(s,e) -> concat 
+      $ map (\(s',e') -> anyUnitIntersection evts (s',e'))
+      $ splitArcAtIntegers (s,e)
       -- it works!
-        -- > let x = evtListToPatt [((0,1),(0,1),"bd")]
-        -- > (arc $ Pattern x) (0,1/2)
-        -- [((0 % 1,1 % 1),(0 % 1,1 % 1),"bd")]
+        -- > let x = [((0,1),(0,1),"bd")] :: [Event String]
+        -- > (arc $ evtListToPatt x) (1/2,3/2)
+        -- [((0 % 1,1 % 1),(0 % 1,1 % 1),"bd"),
+        --  ((1 % 1,2 % 1),(1 % 1,2 % 1),"bd")]
   
 --
 
