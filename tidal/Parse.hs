@@ -12,7 +12,7 @@
     import Data.Colour.SRGB
     import GHC.Exts( IsString(..) )
     import Data.Monoid
-    import Control.Applicative ((<$>), (<*>), (<*), (*>))
+    import Control.Applicative ((<$>), (<*>), (<*), (*>), pure)
     import Data.Functor (($>))
     import Data.Functor.Identity (Identity)
     import Data.Maybe
@@ -95,7 +95,8 @@
         -- in any kind of Pattern (Int, String ...), "~" is also valid
 
     pPolyIn :: Parser (Pattern a) -> Parser (Pattern a)
-    pPolyIn f = do ps <- P.brackets lexer $ pSequence f `sepBy` symbol ","
+    pPolyIn f = do ps <- P.brackets lexer 
+                         $ pSequence f `sepBy` symbol ","
                    spaces
                    pMult $ mconcat ps
 
@@ -109,7 +110,11 @@
                             <|> return Nothing
                     pMult $ mconcat $ scale base ps
       where scale _ [] = []
-            scale base (ps@((n,_):_)) = map (\(n',p) -> density (fromIntegral (fromMaybe n base)/ fromIntegral n') p) ps
+            scale base (ps@((n,_):_)) = map 
+              (\(n',p) -> density 
+                (fromIntegral (fromMaybe n base)/ fromIntegral n') 
+                p
+              ) ps
 
     pE :: Pattern a -> Parser (Pattern a)
     pE thing = do (n,k,s) <- P.parens lexer pair
@@ -127,7 +132,7 @@
                        return (fromIntegral <$> a, fromIntegral <$> b, fromIntegral <$> c)
              eoff n k s p = ((s%(fromIntegral k)) <~) (e n k p)
 
--- smaller scale functions
+-- smaller-scale functions
   -- we futzed with these
     pSample :: Parser String
     pSample = flatten <$> pSample' -- flatten for Dirt
@@ -152,25 +157,20 @@
       return (thing:extras)
 
     pMult :: Pattern a -> Parser (Pattern a) -- pMult ? pReplicate
-    pMult thing = do char '*'
-                     spaces
-                     r <- pRatio
-                     return $ density r thing
-                  <|> do char '/'
-                         spaces
-                         r <- pRatio
-                         return $ slow r thing -- slow in Pattern? not [0,1)?
-                  <|> return thing
+    pMult thing = subdivide <|> rotate <|> return thing
+      where
+        subdivide =  char '*' >> spaces
+          >> (\n -> density n thing) <$> pRatio
+        rotate = char '/' >> spaces
+          >> (\r -> slow r thing) <$> pRatio
 
-    pRand :: Pattern a -> Parser (Pattern a) -- new!
-    pRand thing = char '?' <* spaces $> degrade thing -- both infixl 4
-                  <|> return thing                    -- infixl 3
+    pRand :: Pattern a -> Parser (Pattern a)
+    pRand thing = pRand' $ return thing
+      -- return thing is the "parser" that, whatever it's told to parse, returns thing
 
-    pRand' :: Pattern a -> Parser (Pattern a) -- orig
-    pRand' thing = do char '?'
-                      spaces
-                      return $ degrade thing
-                   <|> return thing
+    -- want: pRand like this, using thing as parser of pattern rather than pattern
+    pRand' :: Parser (Pattern a) -> Parser (Pattern a) -- new!
+    pRand' thing = (char '?' >> spaces >> degrade <$> thing) <|> thing
 
   -- get a number (basically)
     pVocable :: Parser (Pattern String)
