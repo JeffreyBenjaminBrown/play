@@ -1,3 +1,49 @@
+let ns = [1,7/3] -- parallel bjorklunds + harmonic vector arithmetic
+let ns = (%) <$> [17..19] <*> [5..7]
+let nof = fmap fromRational
+let f = concat . (fmap $ (\n->[n^2/4,1/(n^2)]) . fromRational)
+dur 6
+d1 $ silence
+d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps $. f ns |*| sp 1.5
+d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps $. nof ns |*| sp 0.2
+d2 $ sound $. stack ["bd(3,11)","[gabba bleep:4]/2"]
+d3 $ sound $ (7/11) <~ "sn(5,11)"
+d4 $ sound $ fast 2 $ "hh(10,11)"
+
+let sp = speed . return -- really cool
+let sps = speed . stack . fmap return -- string-replace ",xx)"
+let ns = [1,7/6]
+let ns = fmap (\n -> n/2) [1,11/8,9/8]
+let f = concat . fmap (\n -> [1/n,1/(n+1)])
+dur 6
+d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps ns |*| sp 0.6
+d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps $. f ns |*| sp 0.4
+d2 $ sound $. stack ["bd(3,11)","[gabba bleep:4]/2"]
+d3 $ sound $ (7.05/11) <~ "sn(5,11)"
+d4 $ sound $ fast 2 $ "hh(10,11)"
+
+-- 2015 11 11 still
+
+dur 4 -- fun: change the denominators, keeping them equal
+let p1 = "[0,7] 4 [7,14]" :: Pattern Double
+d1 $ sound "can(10,13)"
+d2 $ sound "bd(3,13)"
+d3 $ sound $ (7/13) <~ "sn(5,13)"
+d4 $ sound $ fast 2 $ "hh(10,13)"
+d5 $ slow 2 $ sound "gabba bleep:4"
+
+d1 $ sound "can(6,10) can(3,5)"
+d2 $ sound "[bd sn]*2"
+
+d1 $ sound "can(3,4) can(3,5) can(6,10)"
+d2 $ sound "bd*3"
+d3 $ sound "psr*4 psr*5" |*| gain "0.65" |*| append p1 $. rev p1
+d4 $ sound "bass*4 bass*5 bass*2" |*| gain "0.65" |*| hi $. (3*)<$>p1 |*| gain "1.2"
+
+d4 $ silence
+
+-- 2015 11 11
+
 d1 $ sound "f*2" |*| sps [13,17,22] |*| sp ## 0.6/13
 
 d1 $ sound "f*2" |*| sps [11,14,16.5] |*| sp 0.08
