@@ -1,11 +1,31 @@
+-- striate turns trem-picked bass into insects, wind-cello
+
+d3 $ slow 4 $ slowspread striate [1,8,1,32] $ hi "0*8 [3*4 7*4] [18 17 18]*2 [7*2 [7 11]*2]/2" |*| sound "jvbass" |*| hi "-13"
+d2 $ sound $ stack ["bd sn", slowspread (<~) [1/3,1/4,1/6,1/8] "hc:1*2",slow 4 "~ ~ [bd*6 can*6]/2 ~"]
+dur 1.5
+
+d1 $ slow 4 $ sound "[f,psr](11,16)*2" |*| speed "7 [8 9]*3 [13.5,12]" |*| speed "0.1" |*| gain "0.7"
+
+d2 $ slow 3 $ sound "bd(13,16) can(11,16) [psr:4(15,24),sn*4] hh(5,8)"
+d3 $ slow 3 $ hi "[0,7,14](10,16) [1 0 -1 0 0]*4 [[0,8,13]*3 [1 0]*2 [0,10,18,20]]*2" |*| sound "metal:2" |*| pan rand |*| hi "-62"
+
+d1 $ sound "f(11,16)*2" |*| speed "7 [8,9] [13.5,12]" |*| speed "0.1"
+d2 $ slow 4 $ sound $. (1/3) <~ "[f,[bd hh]/2]*32" |*| speed "[4.5,4] 3.5 3 2.9" |*| speed "0.25"
+dur 2
+
+let fracs = nub $ (%) <$> [1..32] <*> [1..32]
+map (\a -> (fromRational a :: Double, a)) fracs -- memorize?
+
+-- 2015 11 12
+
 let ns = [1,7/3] -- parallel bjorklunds + harmonic vector arithmetic
-let ns = (%) <$> [17..19] <*> [5..7]
+let ns = (%) <$> [10,12] <*> [11,13]
 let nof = fmap fromRational
-let f = concat . (fmap $ (\n->[n^2/4,1/(n^2)]) . fromRational)
+let f = concat . (fmap $ (\n->[-n,n+1/4,n+1/2]) . fromRational)
 dur 6
 d1 $ silence
-d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps $. f ns |*| sp 1.5
-d1 $ sound "psr(9,11) bleep:4(7,11)" |*| sps $. nof ns |*| sp 0.2
+d1 $ sound "psr(7,11) bleep:4(8,11)" |*| sps $. f ns |*| sp 0.9
+d1 $ sound "psr(9,11) metal:4(6,11)" |*| sps $. nof ns |*| sp 0.6
 d2 $ sound $. stack ["bd(3,11)","[gabba bleep:4]/2"]
 d3 $ sound $ (7/11) <~ "sn(5,11)"
 d4 $ sound $ fast 2 $ "hh(10,11)"
