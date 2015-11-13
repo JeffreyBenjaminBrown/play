@@ -155,7 +155,7 @@
 	       s)))
     (tidal-send-string s*))
   (pulse-momentary-highlight-one-line (point))
-  (next-line)
+  ;;(next-line) ;; jbb edit
   )
 
 (defun tidal-run-multiple-lines ()
