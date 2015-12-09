@@ -1,11 +1,12 @@
 import Data.List
 import Data.Maybe
+import Control.Applicative
 import Control.Monad.State
 import Control.Monad.List
 import Control.Monad.Writer
 import Control.Monad.Trans.Maybe
 
-boardSize = 3
+boardSize = 2
 
 data XO = X | O deriving (Show, Eq)
 newtype Cell = Cell { mxo :: Maybe XO } deriving (Eq)
@@ -94,14 +95,22 @@ checkPlayersMove xo board = if countXOs xo board == (countXOs (notXO xo) board -
     else Left $ "Not " ++ show xo ++ "'s turn"
 
 checkNotWon :: Board -> Either String ()
-checkNotWon board = maybe (Right ()) (const $ Left "Game already won") $ winner board
+checkNotWon board = maybe (Right ()) 
+  (const $ Left "Game already won") $ winner board
 
 checkIsntOccupied :: BoardCoord -> Board -> Either String ()
 checkIsntOccupied coord board =
-    cell coord board >>= maybe (Right ()) (const $ Left "Cell already occupied") . mxo
+    cell coord board >>= maybe 
+        (Right ()) 
+        (const $ Left "Cell already occupied") 
+      . mxo
 
 aiMove :: XO -> Board -> Either String BoardCoord
-aiMove xo board = maybe (Left "No moves available") Right $ find (\coord -> isJust $ eitherToMaybe $ move coord xo board) $ emptyBoardCoords board
+aiMove xo board = maybe 
+  (Left "No moves available") 
+  Right $ find 
+    (\coord -> isJust $ eitherToMaybe $ move coord xo board) 
+    $ emptyBoardCoords board
 
 move :: BoardCoord -> XO -> Board -> Either String Board
 move coord xo board = do
@@ -131,9 +140,8 @@ consoleGame :: MoveGetter -> MoveGetter -> StateT (XO, Board) IO ()
 consoleGame moveGetterA moveGetterB = do
     (xo, board) <- get
     case winner board of
-        Just xo -> do
-            lift $ putStrLn $ show xo ++ " wins!"
-            lift $ print board
+        Just xo -> do lift $ putStrLn $ show xo ++ " wins!"
+                      lift $ print board
         Nothing -> do
             moveCoord <- lift $ moveGetterA xo board
             case move moveCoord xo board of
@@ -145,5 +153,6 @@ consoleGame moveGetterA moveGetterB = do
                     lift $ putStrLn ""
                     consoleGame moveGetterB moveGetterA
 
-main = void $ runStateT (consoleGame playerMoveGetter aiMoveGetter) (X, emptyBoard)
-
+main = void $ runStateT 
+  (consoleGame playerMoveGetter aiMoveGetter) 
+  (X, emptyBoard)

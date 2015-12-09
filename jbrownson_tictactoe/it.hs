@@ -37,8 +37,8 @@ emptyBoard = Board $ replicate boardSize emptyRow where
 
 emptyBoard' :: Board -- Equivalent to the previous.
 emptyBoard' = Board $ replicate boardSize
-              $ Row $ replicate boardSize
-              $ Cell Nothing
+            $ Row   $ replicate boardSize
+            $ Cell Nothing
 
 nth :: Int -> [a] -> Maybe a -- nth 1 [1] = Nothing, nth 1 [1..3] = Just 2
 nth n = listToMaybe . drop n
@@ -51,16 +51,17 @@ cell :: BoardCoord -> Board -> Either String Cell  -- pretty rad
   -- Otherwise cell returns the Right, holding the result of the >>=
 cell (x, y) board = maybe -- TO EMUL
   (Left "Invalid board coordinate") 
-  Right 
-  $ nth y (rows board) -- rows returns [[Cell]], is not accessor.
-    >>= nth x          -- nth returns Maybe.
-                       -- x horiz, y vert 
+  Right $ nth y (rows board) -- rows returns [[Cell]], is not accessor.
+          >>= nth x          -- nth returns Maybe.
+                             -- x horiz, y vert 
 
 emptyBoardCoords :: Board -> [BoardCoord]
 emptyBoardCoords board = filter
   (maybe False (isNothing . mxo) . eitherToMaybe . flip cell board)
     -- mxo expects a Cell, cannot be applied to a Maybe Cell 
     -- That's okay, because maybe reaches inside the Maybe.
+    -- The False in "maybe False" should never be used, because 
+      -- boardCoords produces no out-of-range coords.
   boardCoords
 
 boardCoords :: [BoardCoord]
@@ -69,7 +70,7 @@ boardCoords = let x = [0..boardSize - 1] in (,) <$> x <*> x
 maybeRead :: Read a => String -> Maybe a
 maybeRead s = case reads s of -- TO EMUL
   [(x, "")] -> Just x
-  _ -> Nothing -- Finding multiple parses would trigger this case.
+  _ -> Nothing -- Finding zero OR multiple parses would trigger this case.
 
 setList :: Int -> a -> [a] -> Maybe [a]
 setList _ _ [] = Nothing
@@ -206,4 +207,3 @@ main = void $ runStateT -- TO EMUL
   -- void prevents the finished game from returning its state.
   (consoleGame playerMoveGetter aiMoveGetter) 
   (X, emptyBoard)
-
