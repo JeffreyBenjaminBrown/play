@@ -1,14 +1,95 @@
--- striate turns trem-picked bass into insects, wind-cello
+dur 5
+Let t = "bd ~ sn*2" :: Pattern String
+let f t = append t $ append t $ rev t
+d1 $ sound $ f $ f t
+d2 $ fast 8 $ sound "hh*6"
+let p = "0 8 ~ 18 ~ 25 ~ 25" :: Pattern Double
+d3 $ slow 2 $ hi $. f $. f p |*| insPsr
+d4 $ slow 4 $ hi $. f $. f p |*| insBass
+let p2 = "0! 2 8 12 13 ~ [14 15] 18" :: Pattern Double
+d5 $ hi p2 |*| hi "[0,18]" |*| insPsr
+d6 $ hi $. f p2 |*| insF |*| hi "-44" |*| cut "1" |*| gain "1.2"
 
-d3 $ slow 4 $ slowspread striate [1,8,1,32] $ hi "0*8 [3*4 7*4] [18 17 18]*2 [7*2 [7 11]*2]/2" |*| sound "jvbass" |*| hi "-13"
+  -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
+let insBass = sound "bass" |*| hi ## bassCorr <$> "0"
+let bassCorr = (-2)
+(+1.8) -- bass correction, to harmonize jvbass
+
+-- 2015 12 08
+
+-- BROKEN on this rig; needs other libraries.
+let mel' scale runSize f cycles p = note (preplace(1,cycles) p (f $ sc scale <$> run runSize))
+k1 $ (|+| note "50") $mel' locrian 13 (foldEvery [2,3,4] (5.25 ~>)) 4 "[00*2 [~ 0] 0*2]" -- by Mike Hodnick, on Lurk/Tidal thread "Re: [tidal] Scales! Modes! Arpeggios!". Requires things (k1, note) I don't have.
+
+d1 $ hi "0 [6,25] 10 [18,24]" |*| sound "psr"
+
+-- 2015 11 26
+
+dur 1
+d1 $ stack [ speed rand4 |+| degrade (sound "hh:4"), slow 2 $ sound "[sn sn ~ bd] [cp bd ~ bd] [bd bd] [hh:2 hh:2 hh:2 hh:2]" |+| speed rand4 |+| cut "1" ] -- by Phil Freeman
+  -- but where he had "x" I have substituted "~"
+
+-- 2015 11 21
+
+let sc1 = [0,7,10,14,18,22,25]
+let sc2 = [0,4,10,13,18,23,25]
+let psrInstr = sound "psr" |*| hi $. psrCorr<$>"0"
+let fInstr = sound "f" |*| hi $. fCorr<$>"0" |*| hi "-93"
+let f x = hi $ (sc sc1)<$> x
+d1 $ f $. run 7 |*| fInstr
+d2 $ f $. (+6) <$> append (run 7) (rev $ run 7) |*| fInstr
+d3 $ sound "metal" |*| hi "[0 1 2]/3"
+
+hush -- **
+d3 $ fast 2 $ sound "{[bd ~]/2 bd*2 sn [~!! hc*2]/4}%7"
+d4 $ fast 2 $ sound "{hh*2 cp:1*2 ~}%7"
+d5 $ hi "{0 0 [7 10]/2}%7" |*| fInstr |*| cutoff "0.003" |*| resonance "0.99" |*| gain "1.5" |*| cut "1" 
+d1 $ hi "0 ~ 7 0 0 ~ 10" |*| hi "-13" |*| psrInstr
+
+dur 4
+
+-- pure bass!
+let fInstr = sound "f" |*| hi $. fCorr<$>"0" |*| hi "-93"
+d5 $ striate 8 $ fInstr |*| cutoff "0.001" |*| resonance "0.99"
+
+d3 $ fast 2 $ sound "{bd [bd bd*2]/2 sn [~!! bd*2]/4}%7"
+  --  somehow funny, stupid
+
+-- evening 2015 11 13
+
+-- **
+d2 $ slow 2 $ sound "pluck(11,14)" |*| hi "[0, [10 9 8 7]/4, 18]*4 [1,11,[26 29]/2]" |*| hi "0"
+d3 $ fast 1.5  $ sound "can(5,7) can(4,7)" |*| speed $. slow 4 $. (\a->a/3+0.6) <$> triwave1 |*| gain $. fast (4/3) $. (\a->a/2+0.6)<$>triwave1
+d4 $ fast 1 $ sound "{[[hh hh*2]/2 sn]/2 [~ [~!! sn]]/4 jvbass*2 ~ jvbass}%7" |*| gain "1.2" |*| hi "-7.3 [-1 0.7]/2 10.7"
+dur 2.5
+
+-- "holla" (seq 8 7 in just int)
+let rhy n = stack [sound "bleep:4! ~ ~" |*|  speed "0.04" |*| cut $. return n, sound "[sn*2 sn]/2 [sn*3 sn*4]/2 ~ ~" |*|  speed "0.1" |*| cut $. return $. n+100 |*| gain "0.9"]
+d1 $ (<~) (1/2) $ rhy 1 |*|           speed "8          [7  15 ]/2!!"
+d2 $    slow 3 $  rhy 2 |*| speed "[13 12]/2  [10 9.33]/2!!"
+d3 $              rhy 3 |*| slow 2 $. speed "[5 3]/2    4"
+d4 $ fast 2 $ sound "{hh hh jvbass*2 ~ jvbass}%4" |*| gain "1.3" |*| hi "-7.3"
+dur 2
+
+d1 $ sound "f f ~ ~" |*| speed " 8  7           !!" |*| speed "0.1"
+d2 $ sound "f f ~ ~" |*| speed "[12 [9.33 10]/2]!!" |*| speed "0.05"
+d3 $ sound "f f ~ ~" |*| speed "[[5 3.33]/2     2]!!" |*| speed "0.05"|*| cut "1"
+
+-- 2015 11 13
+
+-- striate turns trem-picked bass into insects, wind-cello
+hush -- **
+d3 $ slow 4 $ slowspread striate [1,111,1,7] $ hi "0*8 [3*4 7*4] [18 17 18]*2 [7*2 [7 11]*2]/2" |*| sound "jvbass" |*| hi "-13"
 d2 $ sound $ stack ["bd sn", slowspread (<~) [1/3,1/4,1/6,1/8] "hc:1*2",slow 4 "~ ~ [bd*6 can*6]/2 ~"]
 dur 1.5
 
 d1 $ slow 4 $ sound "[f,psr](11,16)*2" |*| speed "7 [8 9]*3 [13.5,12]" |*| speed "0.1" |*| gain "0.7"
 
+hush -- **
 d2 $ slow 3 $ sound "bd(13,16) can(11,16) [psr:4(15,24),sn*4] hh(5,8)"
 d3 $ slow 3 $ hi "[0,7,14](10,16) [1 0 -1 0 0]*4 [[0,8,13]*3 [1 0]*2 [0,10,18,20]]*2" |*| sound "metal:2" |*| pan rand |*| hi "-62"
 
+hush
 d1 $ sound "f(11,16)*2" |*| speed "7 [8,9] [13.5,12]" |*| speed "0.1"
 d2 $ slow 4 $ sound $. (1/3) <~ "[f,[bd hh]/2]*32" |*| speed "[4.5,4] 3.5 3 2.9" |*| speed "0.25"
 dur 2
@@ -16,8 +97,7 @@ dur 2
 let fracs = nub $ (%) <$> [1..32] <*> [1..32]
 map (\a -> (fromRational a :: Double, a)) fracs -- memorize?
 
--- 2015 11 12
-
+-- 2015 11 12 -- **
 let ns = [1,7/3] -- parallel bjorklunds + harmonic vector arithmetic
 let ns = (%) <$> [10,12] <*> [11,13]
 let nof = fmap fromRational
@@ -60,8 +140,6 @@ d2 $ sound "bd*3"
 d3 $ sound "psr*4 psr*5" |*| gain "0.65" |*| append p1 $. rev p1
 d4 $ sound "bass*4 bass*5 bass*2" |*| gain "0.65" |*| hi $. (3*)<$>p1 |*| gain "1.2"
 
-d4 $ silence
-
 -- 2015 11 11
 
 d1 $ sound "f*2" |*| sps [13,17,22] |*| sp ## 0.6/13
@@ -91,8 +169,6 @@ let c = stack $ fmap return $ fmap (*root) $ grid 3 3 11
 let d = stack $ fmap return $ fmap (*root) $ grid 5 1 10
 let e = stack $ fmap return $ fmap (*root) $ grid 3 4 9
 d1 $ slow 3 $ striate 4 $ sound "f*16" |*| speed ## cat [c,d,e] |*| speed "0.8"
-
-
 
 let grid n step least = (*n).(+least)<$>[0..n-1]
 let c = stack $ fmap return $ fmap (*(1/16)) $ grid 3 2 10
@@ -131,7 +207,6 @@ d1 $ sound dr
 d2 $ hi ## sc sc1 <$> p |*| insF |*| cut "1"
 d3 $ hi ## sc sc1 . (+2) <$> ((+) <$> p <*> rev p) |*| insF |*| cut "2"
 
-
 d1 $ sound "[can(3,7) [hh*10]/4, [bd [~ sn ~ [sn sn:2*2]/2] [sn*2 bd*2]/2]/3]" -- too tangled, single rep! plaquey!
 
 cps 1
@@ -146,7 +221,7 @@ d3 $ fast 6 $ sound "[hh, hh:1/24]" -- 24=slow4*fast6
 dur 2
 d1 $ speed "[7,6,9]*2" |*| insF |*| speed ## return (1/7)
 d2 $ fast 2 $ speed "~ [15,[10,12]]/2" |*| insF |*| speed ## return (1/7)
-
+d3 $ fast 6 $ sound "[hh, hh:1/24]" -- 24=slow4*fast6
 
 -- 2015 10 28
 

@@ -59,7 +59,7 @@
   ;; load libraries
     ;; jbb mod (BROKEN, upon upgrade to 0.6-dev, 2015 10 12)
       ;; per bgold's response to Lurk/Tidal/"Load external code?"
-      (tidal-send-string ":load ~/git_play/tidal/TidalCustom")
+      (tidal-send-string ":load ~/git_play/tidal/loadEveryTime.hs")
       (tidal-send-string ":m +Sound.Tidal.Context")
     ;; (tidal-send-string ":module Sound.Tidal.Context") ;; original
 

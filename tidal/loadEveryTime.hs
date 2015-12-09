@@ -1,9 +1,14 @@
---  Setup discussed here. Thank you Mr. Gold! http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
+-- CREDIT|SETUP discussed here. Thank you Mr. Gold! http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
 
--- TODO 
-  -- move tests to separate file
+-- TO LEARN
+  -- preplace
+
+-- TO PROG
+  -- ## infixl
   -- modes: flip argument order
-  -- tuning: extend
+  -- more instruments ? request|invite
+  -- move tests to separate file
+  -- just intonation
 
 -- imports (remember, they must come first)
   -- general
@@ -41,11 +46,11 @@
     (#.) :: (a -> b) -> a -> b
     (#.) = ($)
 
-    infixr 3 ##
+    infixl 3 ##
     (##) :: (a -> b) -> a -> b
     (##) = ($)
 
-    infixr 0 ###
+    infixr 0 ### -- = is ($) but stands out more
     (###) :: (a -> b) -> a -> b
     (###) = ($)
 
@@ -85,7 +90,7 @@
       -- fmap (scaleOctave s) [-5..5] --test
     scaleOctave12 scale n = (12 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
 
-    sc s n = scaleOctave s n + scaleElt s n -- "scale" already = "stretch" 
+    sc s n = scaleOctave s n + scaleElt s n -- Tidal."scale" already = stretch
       -- scale s 1              -- test
       -- fmap (scale s) [-1..1] -- test
     sc12 s n = scaleOctave12 s n + scaleElt s n
@@ -97,21 +102,28 @@
     sHar = [ 0, 5, 10, 13, 20, 23, 28] :: [Double]
     sAnt = [ 0, 5, 10, 13, 18, 21, 28] :: [Double]
 
-  -- tuning (in 31et) to jvbass
+  -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
+    insBass = sound "bass" |*| hi "-2"
+    -- IS NEW WAY. Other instruments are defined with more complexity.
+    -- bassCorr = (-2) -- bass correction, to harmonize jvbass
+      -- to prove that correction
+      -- d1 $ sound "bass*4" |+| up "1.82"
+      -- d2 $ (1/8) <~ sound "jvbass*4"
+
+    insPsr = sound "psr" |*| hi ## psrCorr <$> "0"
     psrCorr = (+2.5) -- psr correction, to harmonize jvbass
       -- to prove that correction
       -- d1 $ sound "psr*4" |+| up "1.82"
       -- d2 $ (1/8) <~ sound "jvbass*4"
+
+    insF = sound "f" |*| gain "0.75" |*| cutoff "0.15" |*| resonance "0.9" |*| hi ## fCorr <$> "-31"
     fCorr = (+ 7.0)
       -- fcorr = (+ 7)
       -- d1 $ sound "jvbass*3" |+| pit 0 "0"
       -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
-    sineCorr = (+ 3.7)
 
-  -- voices
-    insF = sound "f" |*| gain "0.75" |*| cutoff "0.15" |*| resonance "0.9" |*| hi ## fCorr <$> "-31"
-    insPsr = sound "psr" |*| hi ## psrCorr <$> "0"
     insSine = sound "sine" |*| hi ## sineCorr <$> "0" |*| gain "0.9"
+    sineCorr = (+ 3.7)
 
   -- modes
     rotl :: Int -> [a] -> [a] -- rotate left
