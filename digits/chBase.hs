@@ -1,13 +1,15 @@
 import Numeric (showIntAtBase)
+import Data.Char (ord,chr)
 
-showUpTo12 :: Int -> Char
-showUpTo12 i = head $ f i where
-  f d | d < 0 = err
-      | d < 10 = show d
-      | d == 10 = "a"
-      | d == 11 = "b"
-      | otherwise = err
-  err = error "showBase12 is only defined on [0,11]"
+showUpTo36 :: Int -> Char
+showUpTo36 i | i < 0 = err
+     | i < 10 = head $ show i
+     | i < 36 = chr $ ord 'a' + i - 10
+     | otherwise = err
+  where err = error "s' is only defined on [0,36] (the digits + a through z)"
 
-test = f "" where
-  f = showIntAtBase 12 showUpTo12 $ round (pi*(12^10) :: Double)
+test12 = f "" where
+  f = showIntAtBase 12 showUpTo36 $ round (pi*(12^10) :: Double)
+
+test36 = f "" where
+  f = showIntAtBase 36 showUpTo36 $ round (pi*(36^8) :: Double)
