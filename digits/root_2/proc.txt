@@ -1,0 +1,20 @@
+composition riddles
+===================
+replace ? deleted some valid additive interpretations
+add how much pitch info?
+  I prefer inferring it to inventing it.
+  example : deleted an m because no reason to decide|add
+    considering the root in 3ish-note mel context is enough  
+
+composition, methods, keeping
+=============================
+first play the melody unaccompanied, search for groups, timing
+Don't write chords here until can hear _ far beyond.
+
+copying digits from Wolfram Alpha
+=====================================
+proc
+  asked for "root 2 in base 10"
+  after copying, verified 6 digits at a time
+  these are the first four lines
+    as appear in the browser when line length is at max

@@ -1,0 +1,47 @@
+rules
+  leading s in () = lang change, serial melody in ()s
+    rather than chord word outside the ()s
+  (): so far all pitches in () are absolute, 
+    not relv to the root preceding the ()
+  ! In the chord line only
+    entirely numeric words are concurrent two-notes
+      except for _7 which is theorj ambig
+        where _ is a digit
+
+  lines (are double)
+    The first in each pair is the melody.
+    Under most melody lines is chords.
+
+  chord names
+    Each chord consists first of a tone 
+      from the twelve tone series 0123456789ab, 
+    followed by one of the symbols defined next.
+
+symbols
+  single-note operators
+    _ = postfix drop octave
+    ' = postfix raise octave
+  
+  time
+    (,) = these are to be played (faster) as one
+    dc = da coda
+      coda = the end after beginning a second time
+      da = to? "da coda" is italian, I think, for 
+        "go through the first part again"
+    . = extra time, ?siginfiying promise fulfilled
+        or the decimal point
+  
+  pitch
+    r: relative to the pitch outside this ()
+    ~ : glue, either chord applies
+      ? isolating between two chords ?should have the same effect
+
+    chord symbols
+      M=major, m=minor, d = dim, hd = half dim
+      pd = phrygian dominant = 0 1 4 5 7 8 10
+      7 = mixolydian. (Sorry; this notation predates me.)
+      x = mixolydian
+      dr = dorian
+      ly = lydian
+      au: augmented
+      fr: french chord, 0 4 6 10
