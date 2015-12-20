@@ -33,6 +33,7 @@ symbols
   
   pitch
     r: relative to the pitch outside this ()
+    t: postfix for "is tonic"
     ~ : glue, either chord applies
       ? isolating between two chords ?should have the same effect
 

@@ -1,47 +1,60 @@
-the digits, copied from Wolfram Alpha
-  asked for "root 2 in base 10"
-  after copying, verified 6 digits at a time
-  these are the first four lines
-    as appear in the browser when line length is at max
-1.4b79170a07b85737704b085486853504563650b559b8b79a401387b342380a998a173
-a951303434821b55419a068816958b64282342a358a8947369b97237b9b
-04b656a0723349328a219013a8b21ab42844a5758ba27b3a14317b17b28
-a4354b796260136269a55a79598a4619ba2352a310a3373251b059876b
-
-set to chords!
-!the first 188 digits of root 2 base 12
-=====================================================
-The order on the lines
-  The first in each pair is the melody.
-  Under each melody line is chords.
-
-M=major, m=minor, d = dim, hd = half dim
-pd = phrygian dominant = 0 1 4 5 7 8 10
-_ = postfix drop octave (operates on single melody notes)
-7 = mixolydian. (Sorry; this notation predates me.)
-dr = dorian
-ly = lydian
-(,) = these are to be played (faster) as one
-dc = da coda
-  coda = the end after beginning a second time
-  da = to? "da coda" is italian, I think, for 
-    "go through the first part again"
-
 1.4b 791 7  0a07 b85 737  7  04b 085 4*8 68
-9M   4m  0m 0M   5hd 3M   77 0M  5m7 1m7*,67
+9M   4m  0m 0M   5d  3M   7x 0M  5m7 1m7*,6x
   *coda: end on 0M, not 1m7
-535 045 636 50b 559 b8b
-5m  5M  0hd 5ly 5w  bd
-79a  401 387 b34  238 0a9 98a_1
-07   5M  8M  6m7  8M      7d
-73a9 513 03,43 48,21 b554 19 (da coda?)
-37   5pd 5m,3d 4M,4m bhd  9M
 
-a068 81 695 8b6 428,234 2a3 58a 894 736 9b97 237 
-87   1M 6d  5d  4wh     3m  5hd 6hd 9hd 7M   0m
-b9b 04b 656a 072 33 493 28a 219 
-7M  0M  6M   0M  0m 07  2hd 4dr (dc?)
-013a 8b21ab 42844a 5758ba2
-am   8m     4w 2w  37
-7  b3a 1431 7b1 7b2 8  (dc)
-7m 8m  1m   1hd 77  47
+535 045 636 50b 5'5'9 b8'b
+am  5M  0hd 5ly 5w    bd
+
+79a_ 401 387 b34  238 0a9 98a_1
+0x   5M  8M  6m7  8M      7d
+
+73a 95  13   03,43  48,21  b554 19 (da coda?)
+1M7 3M7 a(9) 5m,3d  b9,4dr bhd  9M
+
+a0 68 81 695 8* (b642 8234) 2a3 58a8 94 736 9b97 237 
+8x    1M 6d     (4sus 4x  )  3  5m   5M bau  7M   0
+  *isolated because can belong either side
+    because each should feel unit  
+
+b9b0 4b 656a.. 072    3  3*    
+7M   0M 1x 5M  5(09)  a8 3(a7)
+  *or delete this chord, subsume note into next phrase
+    is it too resolved, too soon from earlier resolve?
+
+49 328a 219..
+07 2hd  4dr (dc?)
+
+RESUME HERE
+
+013a 8b  21  ab  42 844a 5758ba2
+3m   4t2 7t5 8t6 85 2w   37
+
+7  b3a 1431* 7b1* 7b2. 8  (dc)
+7m 8m  1m    1hd  77   47
+  *1 trying to become 2
+
+a43 54b 7962 6013 
+
+6269 a55a 7959 8a4619ba
+
+2352a 310a 337325
+aM    
+
+1b05 987,6b
+5    ?   b    --next: line 4:
+
+4537  68  1.a1 91   a69 015 60
+3x?0m 8x  1M   5au ~    6ly 0fr
+
+b1336 295 3a_3   b_37
+bM    2m  3(3 9) b(3 9)
+
+054 25  159369305 
+0   b05 
+
+141 04 dc
+4x  4w
+
+256565
+
+
