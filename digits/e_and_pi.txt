@@ -1,21 +1,24 @@
-pi is first, e second in each
-third row if extant should ratlz them
-t= tonic in bass, h=tonic high
-  don't use a or b for anything else
-.=silence =?= divide
-, in series = let stand alone, then add concurt
-' = postfix raise octave
+prelude: lang
+-------------
+  pi is first, e second in each
+  third row if extant should ratlz them
+  t= tonic in bass, h=tonic high
+    don't use a or b for anything else
+  .=silence =?= divide
+  , in series = let stand alone, then add concurt
+  ' = postfix raise octave
+  
 pi|3 1 8    4.80 949  3,b 91    8 6   64
 e |2 8 752   3   6069 8   219  b a ~7  1 971
        0|b                          7~~~~~~~
 
 pi| 5 7 3a6 211bb 1 5 1 5 5 1
 e |0'0  9b  388aa~8 7 6 6 7 6
-            !
+            !mirac
 
-pi|  a05 7   292 9  0 a 7 8~~~~ 
-e |0r25  642 727 86 b  b   92 3b
-    r relj high
+pi| ar 05f7   292 9  0 a 7 8~~~~
+e |025    642 727 86 b  b   92 3b
+    f: the 5 brief (call this "swap"? "reachover"?)
 
 pi|09a 4 92742 1   40a  6l0a5    5 2 5 6t a066
 e |310 3 2r    5,6 60  5      42 573   48~
