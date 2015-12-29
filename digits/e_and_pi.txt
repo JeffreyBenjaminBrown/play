@@ -20,8 +20,9 @@ pi| ar 05f7   292 9  0 a 7 8~~~~~~~~~~
 e |025    642 727 86 b  b   (92)_ (3b)'
     f: optional: the 5 brief ("swap"? "reachover"?); else group 05 sep from 7 642
 
-pi|09a 4 92742 1   40a  6l0a5    5 2 5 6t a066
-e |310 3 2r    5,6 60  5      42 573   48~
+pi|09a 4  92742 1     40 a  6l0a5    5 2 5 6t a066
+e |310 3  2r    5,6r (6 0)_  5      42 573   48~
+        real extra space
 
 pi|1a 03  753a3  aa 
 e |7  16 *a175  9a1a*
