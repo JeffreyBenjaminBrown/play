@@ -1,0 +1,4 @@
+-- major the whole time, and briefly minor
+5 4 2~~~~~~~ 0 2 4 7~
+    0 3 7 11
+
