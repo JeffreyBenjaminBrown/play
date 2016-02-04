@@ -1,5 +1,82 @@
-dur 5
-Let t = "bd ~ sn*2" :: Pattern String
+try vocals!
+
+--
+dur 1.3
+hush
+d1 $ (<~) (3/4) $ every 4 ((1/3) <~) $ sound "bd hh!!" -- **
+d2 $ slow 16 $ up "0*2 4*2" |*| sound "bass"
+
+d1 $ every 4 ((1/3) <~) $ sound "bd hh!!" -- *
+d2 $ slow 8 $ up "12 10 [9 15] 8 4 [5 8] 11 7" |*| sound "bass"
+
+
+dur 1.5 --**
+hush
+d1 $ every 3 (slowspread (<~) [5/10,1/10]) $ sound "bd ~ sn ~ sn:2"
+d2 $ fast 5 $ sound "hc:6 hh:7/5" |*| gain "0.6 1"
+d3 $ slow 6 $ (<~) (1/3) $ (slow 2 $ up "[0*5 ~] -0.5 [3*5 ~] 6.5")    |*| sound "feelfx:2 feelfx"
+
+dur $ 1.2 * (7/5)
+d1 $ every 3 ((1/14) <~) $ sound "bd ~ sn ~ sn ~ sn"
+d2 $ fast 7 $ sound "hh ho/14" |*| gain "0.85"
+d3 $ slow 6 $ (<~) (1/3) $ (slow 2 $ up "[0*7 ~] -0.5 [3*7 ~] 6.5")    |*| sound "feelfx:2 feelfx"
+
+hush
+dur 1
+d1 $ sound "[bd:3 bd:3 hh:3]/3!! [sn!! sn*2]/4"
+d1 $ sound "~!! [sn sn:2]/2"
+d1 $ sound "[[bd bd hh]/3!! ~] [sn sn:2]/2" --stones
+
+**
+dur 0.4
+-- I hear but don't understand the difference.
+d1 $ slow 2 $ sound "bd hh/8 [bd ~]/2 hh/4"
+d1 $ slow 2 $ sound "bd ho/8 [~ bd]/2 hh/4"
+
+easy to code: > operator, effective after / or * and digit, for phase
+
+<-- to mus.mm
+  -- mood to music(v) /= mood to hackage(v)
+
+-- post ad for labor
+WANTED: append, preserving meter
+  ~ subseq start end seq = seq from s to e, preserving meter
+
+WHY: I think this will sound cool:
+
+b bass, k kick, . silence
+p1 = b . k
+p2 d = d . -- p2 a function
+p3 = b b k .
+p4 = f p3 = b . b . k . -- f a function
+
+a different decomposition of it into functions & seqs(not all metric)
+p1 = b, k -- , witout meter
+d n = dup nth -- d 1 (b . k) = b b . k
+(incomplete)
+
+b . k 
+b . b . k . 
+b b k . b b k
+b . k 
+b . b . b . k 
+b . b . 
+durs 3 6 7 3 7 4
+
+more operations:
+space d = add a space after each d
+
+-- 2016 02 03
+-- comments can nest unrelated to how code does
+
+dur 1
+d1 $ sound $ "bd sn"
+d1 $ sound $ "bd hh sn hh"
+
+-- 2015 12 08 still
+  --orig, dupd above
+dur 10
+let t = "bd ~ sn*2" :: Pattern String
 let f t = append t $ append t $ rev t
 d1 $ sound $ f $ f t
 d2 $ fast 8 $ sound "hh*6"
@@ -10,27 +87,23 @@ let p2 = "0! 2 8 12 13 ~ [14 15] 18" :: Pattern Double
 d5 $ hi p2 |*| hi "[0,18]" |*| insPsr
 d6 $ hi $. f p2 |*| insF |*| hi "-44" |*| cut "1" |*| gain "1.2"
 
-  -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
-let insBass = sound "bass" |*| hi ## bassCorr <$> "0"
-let bassCorr = (-2)
-(+1.8) -- bass correction, to harmonize jvbass
-
--- 2015 12 08
-
 -- BROKEN on this rig; needs other libraries.
 let mel' scale runSize f cycles p = note (preplace(1,cycles) p (f $ sc scale <$> run runSize))
 k1 $ (|+| note "50") $mel' locrian 13 (foldEvery [2,3,4] (5.25 ~>)) 4 "[00*2 [~ 0] 0*2]" -- by Mike Hodnick, on Lurk/Tidal thread "Re: [tidal] Scales! Modes! Arpeggios!". Requires things (k1, note) I don't have.
 
-d1 $ hi "0 [6,25] 10 [18,24]" |*| sound "psr"
+dur 2
+d1 $ hi "0 [6,25] 10 [[18 -13]/2,24]" |*| sound "psr" |*| hi "-15"
 
 -- 2015 11 26
 
-dur 1
+
+dur 1 -- **
 d1 $ stack [ speed rand4 |+| degrade (sound "hh:4"), slow 2 $ sound "[sn sn ~ bd] [cp bd ~ bd] [bd bd] [hh:2 hh:2 hh:2 hh:2]" |+| speed rand4 |+| cut "1" ] -- by Phil Freeman
   -- but where he had "x" I have substituted "~"
 
 -- 2015 11 21
 
+dur 5
 let sc1 = [0,7,10,14,18,22,25]
 let sc2 = [0,4,10,13,18,23,25]
 let psrInstr = sound "psr" |*| hi $. psrCorr<$>"0"
@@ -41,19 +114,20 @@ d2 $ f $. (+6) <$> append (run 7) (rev $ run 7) |*| fInstr
 d3 $ sound "metal" |*| hi "[0 1 2]/3"
 
 hush -- **
+let fInstr = sound "f" |*| hi $. fCorr<$>"0" |*| hi "-93"
 d3 $ fast 2 $ sound "{[bd ~]/2 bd*2 sn [~!! hc*2]/4}%7"
 d4 $ fast 2 $ sound "{hh*2 cp:1*2 ~}%7"
 d5 $ hi "{0 0 [7 10]/2}%7" |*| fInstr |*| cutoff "0.003" |*| resonance "0.99" |*| gain "1.5" |*| cut "1" 
 d1 $ hi "0 ~ 7 0 0 ~ 10" |*| hi "-13" |*| psrInstr
-
 dur 4
 
 -- pure bass!
 let fInstr = sound "f" |*| hi $. fCorr<$>"0" |*| hi "-93"
 d5 $ striate 8 $ fInstr |*| cutoff "0.001" |*| resonance "0.99"
 
+dur 3
 d3 $ fast 2 $ sound "{bd [bd bd*2]/2 sn [~!! bd*2]/4}%7"
-  --  somehow funny, stupid
+  -- dur 4: somehow funny, stupid -- yet 3 and 6 not
 
 -- evening 2015 11 13
 
@@ -63,29 +137,37 @@ d3 $ fast 1.5  $ sound "can(5,7) can(4,7)" |*| speed $. slow 4 $. (\a->a/3+0.6) 
 d4 $ fast 1 $ sound "{[[hh hh*2]/2 sn]/2 [~ [~!! sn]]/4 jvbass*2 ~ jvbass}%7" |*| gain "1.2" |*| hi "-7.3 [-1 0.7]/2 10.7"
 dur 2.5
 
--- "holla" (seq 8 7 in just int)
+-- ** -- "holla" (seq 8 7 in just int)
 let rhy n = stack [sound "bleep:4! ~ ~" |*|  speed "0.04" |*| cut $. return n, sound "[sn*2 sn]/2 [sn*3 sn*4]/2 ~ ~" |*|  speed "0.1" |*| cut $. return $. n+100 |*| gain "0.9"]
+hush
 d1 $ (<~) (1/2) $ rhy 1 |*|           speed "8          [7  15 ]/2!!"
 d2 $    slow 3 $  rhy 2 |*| speed "[13 12]/2  [10 9.33]/2!!"
 d3 $              rhy 3 |*| slow 2 $. speed "[5 3]/2    4"
 d4 $ fast 2 $ sound "{hh hh jvbass*2 ~ jvbass}%4" |*| gain "1.3" |*| hi "-7.3"
 dur 2
 
+-- Just Intonation!
+let fracs = nub $ (%) <$> [1..32] <*> [1..32]
+map (\a -> (fromRational a :: Double, a)) fracs -- memorize?
+
 d1 $ sound "f f ~ ~" |*| speed " 8  7           !!" |*| speed "0.1"
 d2 $ sound "f f ~ ~" |*| speed "[12 [9.33 10]/2]!!" |*| speed "0.05"
 d3 $ sound "f f ~ ~" |*| speed "[[5 3.33]/2     2]!!" |*| speed "0.05"|*| cut "1"
 
+hush
+d1 $ slow 4 $ sound "[f,psr](11,16)*2" |*| speed "7 [8 9]*3 [13.5,12]" |*| speed "0.1" |*| gain "0.7"
+
 -- 2015 11 13
 
 -- striate turns trem-picked bass into insects, wind-cello
-hush -- **
+hush -- ***
 d3 $ slow 4 $ slowspread striate [1,111,1,7] $ hi "0*8 [3*4 7*4] [18 17 18]*2 [7*2 [7 11]*2]/2" |*| sound "jvbass" |*| hi "-13"
 d2 $ sound $ stack ["bd sn", slowspread (<~) [1/3,1/4,1/6,1/8] "hc:1*2",slow 4 "~ ~ [bd*6 can*6]/2 ~"]
 dur 1.5
 
-d1 $ slow 4 $ sound "[f,psr](11,16)*2" |*| speed "7 [8 9]*3 [13.5,12]" |*| speed "0.1" |*| gain "0.7"
 
 hush -- **
+dur 2.5
 d2 $ slow 3 $ sound "bd(13,16) can(11,16) [psr:4(15,24),sn*4] hh(5,8)"
 d3 $ slow 3 $ hi "[0,7,14](10,16) [1 0 -1 0 0]*4 [[0,8,13]*3 [1 0]*2 [0,10,18,20]]*2" |*| sound "metal:2" |*| pan rand |*| hi "-62"
 
@@ -94,12 +176,10 @@ d1 $ sound "f(11,16)*2" |*| speed "7 [8,9] [13.5,12]" |*| speed "0.1"
 d2 $ slow 4 $ sound $. (1/3) <~ "[f,[bd hh]/2]*32" |*| speed "[4.5,4] 3.5 3 2.9" |*| speed "0.25"
 dur 2
 
-let fracs = nub $ (%) <$> [1..32] <*> [1..32]
-map (\a -> (fromRational a :: Double, a)) fracs -- memorize?
-
--- 2015 11 12 -- **
+-- 2015 11 12 -- ***
 let ns = [1,7/3] -- parallel bjorklunds + harmonic vector arithmetic
 let ns = (%) <$> [10,12] <*> [11,13]
+let ns = (%) <$> [10,14] <*> [11,13]
 let nof = fmap fromRational
 let f = concat . (fmap $ (\n->[-n,n+1/4,n+1/2]) . fromRational)
 dur 6
