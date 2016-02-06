@@ -1,10 +1,17 @@
 try vocals!
 
+hush
+dur 1.2
+d1 $ every 3 ((3/10) <~) $ sound "bd ~ sn ~ bd ~ bd sn ~ sn"
+d3 $ slow 3 $ sound "ho hc"
+
 --
 dur 1.3
 hush
 d1 $ (<~) (3/4) $ every 4 ((1/3) <~) $ sound "bd hh!!" -- **
+d2 $ slow 16 $ up "0*4 4*4" |*| sound "bass"
 d2 $ slow 16 $ up "0*2 4*2" |*| sound "bass"
+d2 $ slow 16 $ (~>) (3/32) $ up "0*4 4*4" |*| sound "bass"
 
 d1 $ every 4 ((1/3) <~) $ sound "bd hh!!" -- *
 d2 $ slow 8 $ up "12 10 [9 15] 8 4 [5 8] 11 7" |*| sound "bass"
