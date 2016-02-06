@@ -41,7 +41,15 @@
 
     data GEdge = Alt | In | At Time
     data GNode = Name String | Dur Rational | Seq | GQual Qual | GFunc Func
-      -- Dur(ation) and Seq both for lists; Seq infers duration by summing members
+      -- Dur(ation) and Seq both for lists. Seq infers dur by summing members.
+      -- In graph, Seq -> Seq = Seq, if no other edges of that kind from pdr.
+
+    -- to render a Seq:
+      -- collect sample values into (splList :: [(Time, Event Float)] )
+      -- collect pan values into (panList :: [(Time, Event Float)] )
+      -- d1 $ (sound $ evtListToPatt splList) |*|  (pan $ evtListToPatt panList)
+
+    -- enough things; now traversals!
 
 -- minor dollars
   -- first, deprecated
@@ -153,30 +161,31 @@
             toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
             shift = rotl rotn tones
 
--- time (DUPLICATE; main at Tidal_7/Sound/Tidal/JBB.hs) 
+-- time
     ceiling_ish :: Arc -> Time
-      -- in a cycle-respecting Arc (a,b), b < floor a + 1
+      -- in a cycle-respecting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
     ceiling_ish (a,b) = fromInteger $ floor a + 1
-    
+
     splitArcAtIntegers :: Arc -> [Arc]
-    splitArcAtIntegers (a,b) = let c = ceiling_ish (a,b)
-      in if      b <= a then []    
-         else if b <= c then [(a,b)]
-         else (a,c) : splitArcAtIntegers (c,b)  
-    
+    splitArcAtIntegers (a,b) = let c = ceiling_ish (a,b) in
+      if      b <= a then []    
+      else if b <= c then [(a,b)]
+      else (a,c) : splitArcAtIntegers (c,b)  
+
     arcOverlaps :: Arc -> Event a -> Bool
     arcOverlaps (s,e) ((a,b),_,evt) = a <= s && b > s ||  a < e && b >= e
-    
+      -- boundary conditions (< vs. <=) tricky
+
     firstUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects
       -- (s,e) in the unit interval
     firstUnitIntersection evts (s,e) = filter (arcOverlaps (s,e)) evts
-    
+
     anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects 
       -- e <= floor s + 1
     anyUnitIntersection evts (s,e) = let f = fromInteger $ floor s in
       map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
       $ firstUnitIntersection evts (s-f,e-f)
-    
+
     evtListToPatt :: [Event a] -> Pattern a
     evtListToPatt evts = Pattern $ \(s,e) -> concat 
       $ map (\(s',e') -> anyUnitIntersection evts (s',e'))
@@ -186,6 +195,3 @@
         -- > (arc $ evtListToPatt x) (1/2,3/2)
         -- [((0 % 1,1 % 1),(0 % 1,1 % 1),"bd"),
         --  ((1 % 1,2 % 1),(1 % 1,2 % 1),"bd")]
-  
---
-
