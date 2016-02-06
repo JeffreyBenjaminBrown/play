@@ -18,6 +18,8 @@
     import Data.String
     import Data.Ratio
 
+    import Data.Graph.Inductive
+
   -- Tidal    
     import Sound.Tidal.Params
     import Sound.Tidal.Parse
@@ -30,6 +32,16 @@
     import Sound.Tidal.Time
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
+
+-- FGL
+    type G = Gr GNode GEdge
+
+    data Qual = Sample String | Speed Float | Amp Float | Pan Float
+    data Func = Times | Plus | Lookup
+
+    data GEdge = Alt | In | At Time
+    data GNode = Name String | Dur Rational | Seq | GQual Qual | GFunc Func
+      -- Dur(ation) and Seq both for lists; Seq infers duration by summing members
 
 -- minor dollars
   -- first, deprecated
