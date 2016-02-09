@@ -27,7 +27,7 @@
     import Sound.Tidal.Parse
     import Sound.Tidal.Pattern
     import Sound.Tidal.Strategies
-    import Sound.Tidal.Stream
+    import Sound.Tidal.Stream hiding (S,F,I)
     import Sound.Tidal.Stream
     import Sound.Tidal.SuperCollider
     import Sound.Tidal.Tempo
@@ -35,22 +35,26 @@
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
 
--- FGL
+-- ================== FGL ====================
     type G = L.Gr GN GE -- Graph, Node, Edge
 
     data Qual = Sample String | Speed Float | Amp Float | Pan Float
       deriving (Read, Show, Ord, Eq)
     data Func = Times | Plus | Lookup deriving (Read, Show, Ord, Eq)
 
-    data GE = Alt | In | At Time deriving (Read, Show, Ord, Eq)
-    data GN = Name String | Dur Rational | Seq | GQual Qual | GFunc Func
+    data GE = Name | In | Alt | At Time deriving (Read, Show, Ord, Eq)
+    data GN = S String | Dur Rational | Seq | GQual Qual | GFunc Func
       deriving (Read, Show, Ord, Eq)
-      -- ? data Seq = DurSeq | Seq
 
     addNodes :: [GN] -> G -> (G,[L.Node])
     addNodes ns g = (g',is)
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
+
+    loadSeq :: L.Node -> [L.Node] -> G -> G -- connect a new Seq to its elts
+    loadSeq seq mbrs g = L.insEdges (map flatten triples) g
+      where triples = zip ((,) seq <$> mbrs) $ map At [1..]
+            flatten ((a,b),c) = (a,b,c)
 
     -- to render a Seq:
       -- collect sample values into (splList :: [(Time, Event Float)] )
@@ -62,6 +66,14 @@
     -- (how)should the graph contain copies?
       -- originality (v. copiedness) could be inferred from parents
 
+-- example data
+    g123 = loadSeq 3 [0,1]
+      $ L.insEdge (1,2,In)  -- the snare is at double speed
+      $ fst $ addNodes [ GQual $ Sample "bd"
+                       , GQual $ Sample "sn"
+                       , GQual $ Speed 2
+                       , Seq ] L.empty
+
 -- fgl test
     main = runTestTT $ TestList
       [   TestLabel "tAddNodes"   tGraph
@@ -70,6 +82,9 @@
     tGraph = TestCase $ do
       let g = addNodes [Seq,Seq] L.empty
       assertBool "2 into blank" $ g == (L.mkGraph [(0,Seq),(1,Seq)] [], [0,1])
+
+
+-- =============== old, little used ============
 
 -- minor dollars
   -- first, deprecated
