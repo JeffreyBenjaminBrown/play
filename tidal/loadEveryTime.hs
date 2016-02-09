@@ -18,7 +18,9 @@
     import Data.String
     import Data.Ratio
 
-    import Data.Graph.Inductive
+    import Test.HUnit
+
+    import qualified Data.Graph.Inductive as L -- FGL
 
   -- Tidal    
     import Sound.Tidal.Params
@@ -34,15 +36,21 @@
     import Sound.Tidal.Utils
 
 -- FGL
-    type G = Gr GNode GEdge
+    type G = L.Gr GN GE -- Graph, Node, Edge
 
     data Qual = Sample String | Speed Float | Amp Float | Pan Float
-    data Func = Times | Plus | Lookup
+      deriving (Read, Show, Ord, Eq)
+    data Func = Times | Plus | Lookup deriving (Read, Show, Ord, Eq)
 
-    data GEdge = Alt | In | At Time
-    data GNode = Name String | Dur Rational | Seq | GQual Qual | GFunc Func
-      -- Dur(ation) and Seq both for lists. Seq infers dur by summing members.
-      -- In graph, Seq -> Seq = Seq, if no other edges of that kind from pdr.
+    data GE = Alt | In | At Time deriving (Read, Show, Ord, Eq)
+    data GN = Name String | Dur Rational | Seq | GQual Qual | GFunc Func
+      deriving (Read, Show, Ord, Eq)
+      -- ? data Seq = DurSeq | Seq
+
+    addNodes :: [GN] -> G -> (G,[L.Node])
+    addNodes ns g = (g',is)
+      where g' = L.insNodes (zip is ns) g
+            is = L.newNodes (length ns) g
 
     -- to render a Seq:
       -- collect sample values into (splList :: [(Time, Event Float)] )
@@ -50,6 +58,18 @@
       -- d1 $ (sound $ evtListToPatt splList) |*|  (pan $ evtListToPatt panList)
 
     -- enough things; now traversals!
+
+    -- (how)should the graph contain copies?
+      -- originality (v. copiedness) could be inferred from parents
+
+-- fgl test
+    main = runTestTT $ TestList
+      [   TestLabel "tAddNodes"   tGraph
+      ]
+
+    tGraph = TestCase $ do
+      let g = addNodes [Seq,Seq] L.empty
+      assertBool "2 into blank" $ g == (L.mkGraph [(0,Seq),(1,Seq)] [], [0,1])
 
 -- minor dollars
   -- first, deprecated
