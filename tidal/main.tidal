@@ -1,3 +1,4 @@
+try pitches!
 try vocals!
 
 hush
@@ -10,18 +11,18 @@ dur 1.3
 hush
 d1 $ (<~) (3/4) $ every 4 ((1/3) <~) $ sound "bd hh!!" -- **
 d2 $ slow 16 $ up "0*4 4*4" |*| sound "bass"
-d2 $ slow 16 $ up "0*2 4*2" |*| sound "bass"
-d2 $ slow 16 $ (~>) (3/32) $ up "0*4 4*4" |*| sound "bass"
+d2 $ slow 16 $ (~>) (3/32) $ up "0*4 [-8,4]*4" |*| sound "[bass,bd]"
+d2 $ slow 16 $ up "0 0 4 [4*2 ~!!]" |*| sound "[bd,bass]"
 
 d1 $ every 4 ((1/3) <~) $ sound "bd hh!!" -- *
 d2 $ slow 8 $ up "12 10 [9 15] 8 4 [5 8] 11 7" |*| sound "bass"
 
-
-dur 1.5 --**
+dur 2 -- **
 hush
 d1 $ every 3 (slowspread (<~) [5/10,1/10]) $ sound "bd ~ sn ~ sn:2"
 d2 $ fast 5 $ sound "hc:6 hh:7/5" |*| gain "0.6 1"
 d3 $ slow 6 $ (<~) (1/3) $ (slow 2 $ up "[0*5 ~] -0.5 [3*5 ~] 6.5")    |*| sound "feelfx:2 feelfx"
+-- in a graph, could encode the rhythmic corresp in d1 and d3
 
 dur $ 1.2 * (7/5)
 d1 $ every 3 ((1/14) <~) $ sound "bd ~ sn ~ sn ~ sn"
@@ -34,11 +35,24 @@ d1 $ sound "[bd:3 bd:3 hh:3]/3!! [sn!! sn*2]/4"
 d1 $ sound "~!! [sn sn:2]/2"
 d1 $ sound "[[bd bd hh]/3!! ~] [sn sn:2]/2" --stones
 
-**
-dur 0.4
+dur 0.4 -- **
 -- I hear but don't understand the difference.
 d1 $ slow 2 $ sound "bd hh/8 [bd ~]/2 hh/4"
 d1 $ slow 2 $ sound "bd ho/8 [~ bd]/2 hh/4"
+
+hush
+dur 0.9 -- ** good for (replace-string "[digit],[digit]")
+d4 $ slow 16 $ up "0(5,12) 8(5,12)" |*| sound "bass"
+d1 $ slow 8 $ sound "bd(5,12)"
+d2 $ slow 4 $ (<~) (1/8) $ sound "sn(5,12)"
+d3 $ slow 2 $ (<~) (1/4) $ sound "hh(5,12)"
+
+dur 2.5 -- **
+d1 $ sound "bd"
+d2 $ (<~) (1/4) $ sound "sn*2"
+d3 $ (<~) (1/8) $ sound "hh*4"
+d4 $ (<~) (1/16) $ sound "hc*8" |*| gain "0.7"
+d5 $ (<~) (-1/64) $ slow 4 $ sound "can(5,16) ~ [[bleep bleep:4]/2 ~ ~ [print:3 print:7]/2] ~"
 
 easy to code: > operator, effective after / or * and digit, for phase
 
