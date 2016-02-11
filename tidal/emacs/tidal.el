@@ -57,11 +57,11 @@
   (tidal-send-string ":set prompt \"\"")       
 
   ;; load libraries
-    ;; jbb mod (BROKEN, upon upgrade to 0.6-dev, 2015 10 12)
-      ;; per bgold's response to Lurk/Tidal/"Load external code?"
+    ;; jbb mod
       (tidal-send-string ":load ~/git_play/tidal/loadEveryTime.hs")
       (tidal-send-string ":m +Sound.Tidal.Context")
-    ;; (tidal-send-string ":module Sound.Tidal.Context") ;; original
+    ;; original
+      ;; (tidal-send-string ":module Sound.Tidal.Context")
 
   (tidal-send-string "(cps, getNow) <- bpsUtils")
   (tidal-send-string "(d1,t1) <- dirtSetters getNow")
@@ -132,7 +132,6 @@
     (insert "main = do\n")
     (insert (if tidal-literate-p (tidal-unlit s) s))))
 
-
 (defun tidal-get-now ()
   "Store the current cycle position in a variable called 'now'."
   (interactive)
@@ -141,7 +140,6 @@
   (tidal-send-string "let retrig = (now ~>)")
   (tidal-send-string "let fadeOut n = spread' (degradeBy) (retrig $ slow n $ envL)")
   (tidal-send-string "let fadeIn n = spread' (degradeBy) (retrig $ slow n $ (1-) <$> envL)")
-
   )
 
 (defun tidal-run-line ()
@@ -246,7 +244,6 @@
   (tidal-run-multiple-lines)
   )
 
-
 (defun tidal-stop-d1 ()
   "send d1 $ silence as a single line"
   (interactive)
@@ -343,7 +340,6 @@
      )
    )
   )
-
 
 (defun tidal-load-buffer ()
   "Load the current buffer."
