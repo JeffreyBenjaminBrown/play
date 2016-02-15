@@ -1,18 +1,12 @@
--- CREDIT|SETUP discussed here. Thank you Mr. Gold! http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
+-- SETUP discussed here. Thank you Ben Gold! 
+  -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
 
--- TO LEARN
-  -- preplace
-
--- TO PROG
-  -- ## infixl
-  -- modes: flip argument order
-  -- more instruments ? request|invite
-  -- move tests to separate file
-  -- just intonation
+    module JBB where
 
 -- imports (remember, they must come first)
   -- general
-    import Data.List
+    import qualified Data.List as L
+    import qualified Data.Map as M
     import Data.Maybe
     import Control.Applicative
     import Data.String
@@ -35,6 +29,14 @@
     import Sound.Tidal.Transition
     import Sound.Tidal.Utils
 
+-- promote here the old useful
+    type PS = Pattern String
+    type PD = Pattern Double
+    type PI = Pattern Int
+
+    rl = (<~)
+    rr = (~>)
+
 -- ================== FGL ====================
     type G = L.Gr GN GE -- Graph, Node, Edge
 
@@ -43,7 +45,7 @@
     data Func = Times | Plus | Lookup deriving (Read, Show, Ord, Eq)
 
     data GE = Name | In | Alt | At Time deriving (Read, Show, Ord, Eq)
-    data GN = S String | Dur Rational | Seq | GQual Qual | GFunc Func
+    data GN = S String | Dur Rational | Seq | GQ Qual | GFunc Func
       deriving (Read, Show, Ord, Eq)
 
     addNodes :: [GN] -> G -> (G,[L.Node])
@@ -52,8 +54,8 @@
             is = L.newNodes (length ns) g
 
     loadSeq :: L.Node -> [L.Node] -> G -> G -- connect a new Seq to its elts
-    loadSeq seq mbrs g = L.insEdges (map flatten triples) g
-      where triples = zip ((,) seq <$> mbrs) $ map At [1..]
+    loadSeq seq mbrs g = L.insEdges (L.map flatten triples) g
+      where triples = zip ((,) seq <$> mbrs) $ L.map At [1..]
             flatten ((a,b),c) = (a,b,c)
 
     -- to render a Seq:
@@ -65,13 +67,14 @@
 
     -- (how)should the graph contain copies?
       -- originality (v. copiedness) could be inferred from parents
+        -- the copy would have more parents
 
 -- example data
     g123 = loadSeq 3 [0,1]
       $ L.insEdge (1,2,In)  -- the snare is at double speed
-      $ fst $ addNodes [ GQual $ Sample "bd"
-                       , GQual $ Sample "sn"
-                       , GQual $ Speed 2
+      $ fst $ addNodes [ GQ $ Sample "bd"
+                       , GQ $ Sample "sn"
+                       , GQ $ Speed 2
                        , Seq ] L.empty
 
 -- fgl test
@@ -213,20 +216,19 @@
 
     firstUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects
       -- (s,e) in the unit interval
-    firstUnitIntersection evts (s,e) = filter (arcOverlaps (s,e)) evts
+    firstUnitIntersection evts (s,e) = L.filter (arcOverlaps (s,e)) evts
 
     anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects 
       -- e <= floor s + 1
     anyUnitIntersection evts (s,e) = let f = fromInteger $ floor s in
-      map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
+      L.map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
       $ firstUnitIntersection evts (s-f,e-f)
 
     evtListToPatt :: [Event a] -> Pattern a
     evtListToPatt evts = Pattern $ \(s,e) -> concat 
-      $ map (\(s',e') -> anyUnitIntersection evts (s',e'))
+      $ L.map (\(s',e') -> anyUnitIntersection evts (s',e'))
       $ splitArcAtIntegers (s,e)
-      -- it works!
-        -- > let x = [((0,1),(0,1),"bd")] :: [Event String]
+      -- WARNING: I'm not sure it works:
+        -- > let x = [((0,1%2),(0,1%2),"bd"),((1%2,1),(1%2,1),"sn")] :: [Event String]
         -- > (arc $ evtListToPatt x) (1/2,3/2)
-        -- [((0 % 1,1 % 1),(0 % 1,1 % 1),"bd"),
-        --  ((1 % 1,2 % 1),(1 % 1,2 % 1),"bd")]
+        -- [((1 % 2,1 % 1),(1 % 2,1 % 1),"sn"),((1 % 1,3 % 2),(1 % 1,3 % 2),"bd")]
