@@ -1,30 +1,16 @@
-1.89:4b9 7bb
-968
-704a 1539  a82 b51:bb 699186 06a7030 5b 75a3
-292789 15b 6:90 5752a:
-                resolves
-48b4 
-6700622 2868
-75474* 133b0a7 74760b~7~a2 bb9b 13bb 5416: 79922    
-     *as if to 0
-a88 b06827781
-that's 2 wolfram-lines
-
+  -- wl:n = that(prev)'s n wolfram-lines
+  -- p = passing, fast, grace notes
+1.89:4b9 7bb 968 704a 1539 a82 b51:bb
+699186 06a7030 5b 75a3 292789 15b 6:90 
+5752a: (resolves) 48b4 67006:222:868
+75474* (*as if to 0) 133b0a7 74760b~7~a2
+bb9b 13bb 5416: 79922 a88 b06827781 wl:2
 21 a08a 7196: 574312a: b951 0282ba42aaa
-984723b488
-
-419: 2a:2b 11821012b8bab288 bb9
-that's the third w-line
-
-a78a3:b1a 40a49 8386880 b54824~3~105089
-b0 1a46: b3765  169433
-that's the fourth
-
-520b58  a54 246 a6811 9:45 4:8b 
-a22007260
-352a 2b894
-                          a8414a8a3154104455
-:the 5th
+984 723 b488 419: 2a:2b 11821012 
+b8bab288 bb9 wl:3 a78a3:b1a 40a49 
+8386880 b54824~3~105089 b0 1a46: b3765
+169433 wl:4 520b58  a54 246 a6811 9:45 4:8b 
+a22007260 352a 2b894 a8414a8a3154104455 wl:5
 
 lang
 : = root, postfix op
