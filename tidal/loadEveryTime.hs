@@ -39,43 +39,30 @@
     pp = preplace (1,1)
 
 -- ================== FGL ====================
+    type Address = L.Node
     type G = L.Gr GN GE -- Graph, Node, Edge
 
-    data Qual = Sample String | Speed Float | Amp Float | Pan Float
-      deriving (Read, Show, Ord, Eq)
-    data Func = Times | Plus | Lookup deriving (Read, Show, Ord, Eq)
-
-    data GE = Name | In | Alt | At Time deriving (Read, Show, Ord, Eq)
-    data GN = S String | Dur Rational | Seq | GQ Qual | GFunc Func
+    data SoundQual = Spl String | Spd Float | Amp Float | Pan Float
       deriving (Read, Show, Ord, Eq)
 
-    addNodes :: [GN] -> G -> (G,[L.Node])
+    data GE = Has deriving (Read, Show, Ord, Eq)
+    data GN = Q SoundQual
+            | Sound -- has Qualities
+            | Sounds -- has many Sound
+            | Evt -- has a Time and a Sounds
+            | Seq -- has Events
+      deriving (Read, Show, Ord, Eq)
+
+    addNodes :: [GN] -> G -> (G,[Address]) -- reports their addresses
     addNodes ns g = (g',is)
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
 
-    loadSeq :: L.Node -> [L.Node] -> G -> G -- connect a new Seq to its elts
-    loadSeq seq mbrs g = L.insEdges (L.map flatten triples) g
-      where triples = zip ((,) seq <$> mbrs) $ L.map At [1..]
-            flatten ((a,b),c) = (a,b,c)
-
-    -- to render a Seq:
-      -- collect sample values into (splList :: [(Time, Event Float)] )
-      -- collect pan values into (panList :: [(Time, Event Float)] )
-      -- d1 $ (sound $ evtListToPatt splList) |*|  (pan $ evtListToPatt panList)
-
-    -- enough things; now traversals!
-
-    -- (how)should the graph contain copies?
-      -- originality (v. copiedness) could be inferred from parents
-        -- the copy would have more parents
-
 -- example data
-    g123 = loadSeq 3 [0,1]
-      $ L.insEdge (1,2,In)  -- the snare is at double speed
-      $ fst $ addNodes [ GQ $ Sample "bd"
-                       , GQ $ Sample "sn"
-                       , GQ $ Speed 2
+    g123 = L.insEdge (1,2,Has)  -- the snare is at double speed
+      $ fst $ addNodes [ Q $ Spl "bd"
+                       , Q $ Spl "sn"
+                       , Q $ Spd 2
                        , Seq ] L.empty
 
 -- fgl test
