@@ -39,8 +39,8 @@
 
     -- transition between two patterns
       -- based on playWhen, which transitions from silence to one pattern
-    change :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
-    change test (Pattern before) (Pattern after) =  
+    changeWhen :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
+    changeWhen test (Pattern before) (Pattern after) =  
       stack [b,a] where
       b = Pattern $ (filter $ \e -> not $ test $ eventOnset e) . before
       a = Pattern $ (filter $ \e ->       test $ eventOnset e) . after
