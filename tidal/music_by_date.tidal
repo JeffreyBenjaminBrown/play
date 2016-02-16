@@ -1,4 +1,12 @@
-\-- C-x C-t lets me pull a selected altv defn into place
+dur $ 1/20 -- instrument (not song)
+d1 $ striate 12 $ slow 100 $ hi $. (flip (/) 4) <$> run 50 |*| sound "[sine]"
+
+dur $ 1/20 -- patterns can be very long (here, 10000 notes)
+d1 $ striate 7 $ slow 10000 $ hi $. (flip (/) 10) <$> run 10000 |*| sound "bass"
+
+-- template haskell, expand f g to g <- pure $ f g
+
+-- C-x C-t lets me pull a selected altv defn into place
 
 let pp = preplace (1,1) -- **
 let p1 = ("x ~ x ~ ~"::Pattern String)
@@ -9,7 +17,7 @@ d1 $ stack [sound $ pp p1 "hh cp cp", slow 3 $ sound "[bleep:4 bleep:5]/2"]
 d2 $ (fast 5 $ sound "hc" |*| gain "0.5") |*| (slow 3 $ gain sinewave)
 d3 $ f [2,3,8,10] |*| insPsr
 d5 $ rl (1/5) $ f [10,14,15] |*| insPsr |*| gain "1.2"
-d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [8,8,3,8,14,10] |*| insBass |*| gain "1.2"
+d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
 
 -- 14
 hush
