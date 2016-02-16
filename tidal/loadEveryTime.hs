@@ -37,6 +37,14 @@
     rr = (~>)
     pp = preplace (1,1)
 
+    -- transition between two patterns
+      -- based on playWhen, which transitions from silence to one pattern
+    change :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
+    change test (Pattern before) (Pattern after) =  
+      stack [b,a] where
+      b = Pattern $ (filter $ \e -> not $ test $ eventOnset e) . before
+      a = Pattern $ (filter $ \e ->       test $ eventOnset e) . after
+
 -- ================== FGL ====================
     -- less types, more rendering! (i.e. code it dfs, not bfs).
     type Addr = L.Node
