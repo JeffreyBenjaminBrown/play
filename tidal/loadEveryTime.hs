@@ -38,7 +38,7 @@
     pp = preplace (1,1)
 
 -- ================== FGL ====================
-    -- constructors need to be short; type names don't
+    -- less types, more rendering! (i.e. code it dfs, not bfs).
     type Addr = L.Node
     type G = L.Gr GN GE -- Graph, Node, Edge
 
@@ -47,28 +47,24 @@
 
     data GE = Has deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
+            | T Rational -- Time
             | S -- Sound; has Qualities
             | Ss -- Sounds; has many Sound
-            | Evt -- has a Time and a Sounds
-            | Seq -- has Events
+            | Ev -- has a Time and either a Sound or a Sounds
+            | Sq -- has Events
       deriving (Read, Show, Ord, Eq)
 
-    sameNodeConstructor :: GN -> GN -> Bool
-    sameNodeConstructor (Q _) (Q _) = True
-    sameNodeConstructor S S = True
-    sameNodeConstructor Ss Ss = True
-    sameNodeConstructor Evt Evt = True
-    sameNodeConstructor Seq Seq = True
-    sameNodeConstructor _ _ = False
-
-    hasOnly :: GN -> G -> Addr -> Bool
-    hasOnly beOnlyThisKind g a = and
-      $ map (sameNodeConstructor beOnlyThisKind)
+    hasOnly :: [GN] -> G -> Addr -> Bool
+    hasOnly allowedConstructors g a = and
+      $ map (flip elem allowedConstructors)
       $ map (fromJust . L.lab g)
-      $ [n | (n,lab) <- L.lsuc g a, lab==Has] -- what the node at a has
+      $ [n | (n,lab) <- L.lsuc g a, lab==Has] -- nodes which the node at a has
 
-    -- val :: GN -> Address -> G -> Bool
-    -- val Ss a g = and $ map (\n->case n of 
+    valid :: GN -> G -> Addr -> Bool
+    valid S = hasOnly [Q $ Spl "bd"] -- hack; the Spl is ignored
+    valid Ss = hasOnly [S]
+    valid Ev = hasOnly [T 1,S,Ss] -- todo: test that there's only 1 time
+    valid Sq = hasOnly [Ev]
 
     addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
     addNodes ns g = (g',is)
@@ -76,11 +72,18 @@
             is = L.newNodes (length ns) g
 
 -- fgl, data for tests
-    g123 = L.insEdge (1,2,Has)  -- the snare is at double speed
-      $ fst $ addNodes [ Q $ Spl "bd"
-                       , Q $ Spl "sn"
-                       , Q $ Spd 2
-                       , Seq ] L.empty
+    g123 :: G
+    g123 = L.mkGraph [ (1,S), (2,Ev), (3,Q $ Spl "bd")
+                     , (4,S), (5,Ev), (6,Q $ Spl "sn"), (7,Q $ Spd 2)
+                     , (8,Ss)
+                     , (9,Sq)
+                     ][
+                       (1,3,Has) -- the Sound at 1 is the "bd" at 3
+                     , (2,1,Has) -- the Event at 2 is the Sound at 1
+                     , (4,6,Has), (4,7,Has) -- the Sound at 4 is the "sn" at 6,
+                                            -- at double speed
+                     , (5,4,Has), (5,2,Has) -- the Event at 5 has both sounds
+                     ]
 
 -- fgl, test
     main = runTestTT $ TestList
@@ -88,8 +91,8 @@
       ]
 
     tGraph = TestCase $ do
-      let g = addNodes [Seq,Seq] L.empty
-      assertBool "2 into blank" $ g == (L.mkGraph [(0,Seq),(1,Seq)] [], [0,1])
+      let g = addNodes [Sq,Sq] L.empty
+      assertBool "2 into blank" $ g == (L.mkGraph [(0,Sq),(1,Sq)] [], [0,1])
 
 
 -- =============== old, little used ============
