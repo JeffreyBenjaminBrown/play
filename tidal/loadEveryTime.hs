@@ -5,7 +5,7 @@
 
 -- imports (remember, they must come first)
   -- general
-    import qualified Data.List as L
+    import qualified Data.List as List
     import qualified Data.Map as M
     import Data.Maybe
     import Control.Applicative
@@ -22,7 +22,6 @@
     import Sound.Tidal.Pattern
     import Sound.Tidal.Strategies
     import Sound.Tidal.Stream hiding (S,F,I)
-    import Sound.Tidal.Stream
     import Sound.Tidal.SuperCollider
     import Sound.Tidal.Tempo
     import Sound.Tidal.Time
@@ -39,7 +38,8 @@
     pp = preplace (1,1)
 
 -- ================== FGL ====================
-    type Address = L.Node
+    -- constructors need to be short; type names don't
+    type Addr = L.Node
     type G = L.Gr GN GE -- Graph, Node, Edge
 
     data SoundQual = Spl String | Spd Float | Amp Float | Pan Float
@@ -47,25 +47,42 @@
 
     data GE = Has deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
-            | Sound -- has Qualities
-            | Sounds -- has many Sound
+            | S -- Sound; has Qualities
+            | Ss -- Sounds; has many Sound
             | Evt -- has a Time and a Sounds
             | Seq -- has Events
       deriving (Read, Show, Ord, Eq)
 
-    addNodes :: [GN] -> G -> (G,[Address]) -- reports their addresses
+    sameNodeConstructor :: GN -> GN -> Bool
+    sameNodeConstructor (Q _) (Q _) = True
+    sameNodeConstructor S S = True
+    sameNodeConstructor Ss Ss = True
+    sameNodeConstructor Evt Evt = True
+    sameNodeConstructor Seq Seq = True
+    sameNodeConstructor _ _ = False
+
+    hasOnly :: GN -> G -> Addr -> Bool
+    hasOnly beOnlyThisKind g a = and
+      $ map (sameNodeConstructor beOnlyThisKind)
+      $ map (fromJust . L.lab g)
+      $ [n | (n,lab) <- L.lsuc g a, lab==Has] -- what the node at a has
+
+    -- val :: GN -> Address -> G -> Bool
+    -- val Ss a g = and $ map (\n->case n of 
+
+    addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
     addNodes ns g = (g',is)
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
 
--- example data
+-- fgl, data for tests
     g123 = L.insEdge (1,2,Has)  -- the snare is at double speed
       $ fst $ addNodes [ Q $ Spl "bd"
                        , Q $ Spl "sn"
                        , Q $ Spd 2
                        , Seq ] L.empty
 
--- fgl test
+-- fgl, test
     main = runTestTT $ TestList
       [   TestLabel "tAddNodes"   tGraph
       ]
@@ -208,17 +225,17 @@
 
     firstUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects
       -- (s,e) in the unit interval
-    firstUnitIntersection evts (s,e) = L.filter (arcOverlaps (s,e)) evts
+    firstUnitIntersection evts (s,e) = List.filter (arcOverlaps (s,e)) evts
 
     anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects 
       -- e <= floor s + 1
     anyUnitIntersection evts (s,e) = let f = fromInteger $ floor s in
-      L.map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
+      List.map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
       $ firstUnitIntersection evts (s-f,e-f)
 
     evtListToPatt :: [Event a] -> Pattern a
     evtListToPatt evts = Pattern $ \(s,e) -> concat 
-      $ L.map (\(s',e') -> anyUnitIntersection evts (s',e'))
+      $ List.map (\(s',e') -> anyUnitIntersection evts (s',e'))
       $ splitArcAtIntegers (s,e)
       -- WARNING: I'm not sure it works:
         -- > let x = [((0,1%2),(0,1%2),"bd"),((1%2,1),(1%2,1),"sn")] :: [Event String]
