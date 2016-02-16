@@ -36,6 +36,7 @@
 
     rl = (<~)
     rr = (~>)
+    pp = preplace (1,1)
 
 -- ================== FGL ====================
     type G = L.Gr GN GE -- Graph, Node, Edge
@@ -161,7 +162,11 @@
     sAnt = [ 0, 5, 10, 13, 18, 21, 28] :: [Double]
 
   -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
-    insBass = sound "bass" |*| hi "-2"
+    offCorr = 13.4
+    insOff = sound "off" |*| hi $. return offCorr  |*| gain "0.6"
+
+    bassCorr = -2
+    insBass = sound "bass" |*| hi $. return bassCorr
     -- IS NEW WAY. Other instruments are defined with more complexity.
     -- bassCorr = (-2) -- bass correction, to harmonize jvbass
       -- to prove that correction
