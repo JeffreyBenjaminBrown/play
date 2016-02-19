@@ -1,3 +1,26 @@
+dur 1 -- changewhen
+let p1 = sound "bd*4 hh*4"
+let p2 = sound "sn*4 hc*4"
+let aTest now n = (\t -> (floor t) > div (floor now) n * n + n)
+let f n = d1 $ changeWhen (aTest now n) p1 p2
+f 7
+now
+
+-- playWhen starts at mod 2 where I expect mod 0
+hush
+now
+dur 1.8
+let p1 = sound "bd*4 hh*4"
+let aTest denom = d1 $ playWhen (\t -> (floor t) > div (floor now) denom * denom + denom) p1
+aTest 5 -- how to use the test: execute "testPlayWhen n" for some n
+  -- then repeatedly evaluate "now" (in this buffer, not *tidal*)
+  -- evaluate "now" one last time when it starts playing, 
+    -- before the end of the first cycle
+  -- so far the result always seems to be equal to 2 mod n
+    -- I tested n=3,4,5,7,9, and I tried restarting Tidal and Dirt
+
+--
+
 dur $ 1/20 -- instrument (not song)
 d1 $ striate 12 $ slow 100 $ hi $. (flip (/) 4) <$> run 50 |*| sound "[sine]"
 

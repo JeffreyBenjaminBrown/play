@@ -37,7 +37,7 @@
   "Remove bird literate marks"
   (replace-regexp-in-string "^> " "" s))
 
-(defun tidal-intersperse (e l)
+(defun tidal-intersperse (e l) ;; if l=(a b) then this=(e a e b)
   (if (null l)
       '()
     (cons e (cons (car l) (tidal-intersperse e (cdr l))))))
@@ -153,7 +153,8 @@
 	       s)))
     (tidal-send-string s*))
   (pulse-momentary-highlight-one-line (point))
-  ;;(next-line) ;; jbb edit
+  ;; jbb edit 
+    ;; was: (next-line) 
   )
 
 (defun tidal-run-multiple-lines ()
