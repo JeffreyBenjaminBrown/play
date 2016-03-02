@@ -1,3 +1,23 @@
+-- 2016 03 01
+
+let ps = "[1 1*2]/2 2 1 ~ [1,2]" :: Pattern String -- ** mess with this line
+let beats = 5 -- the duration of ps
+let pn = fmap (\_ -> 0) p1 :: Pattern Double
+let pnDub = stack [pn, rr (1/beats) pn]
+let ps1 = filterValues (== "1") ps
+let ps2 = filterValues (== "2") ps
+dur 2
+d1 $ fast 2 $ sound $. pp ps "hc hc hh hh [bleep:5 ~]/2" |*| gain "0.8"
+d2 $ fast 2 $ sound $ pp ps2 "ht mt ht lt lt:2"
+d3 $ slow 4 $ sound $ pp ps1 "bd sn"
+d4 $ slow 1 $ slow 2 $. rl (2/beats) $. up $. pp pnDub "0 [3 4] 7 [9 [-2 3]/2]" |*| up pnDub |*| slow 16 $. up "0 [7 5]"|*| insBass
+
+d5 $ striate 64 $ rl (3/beats) $ slow 4 $ sound "metal*16 metal:2" |*| up $. pp pn "[0,7*2,16*2,26*4]" |*| fast 4 $. up "0 7 16"
+d3 $ striate 32 $ slow 16 $. up "0 7 3 -2" |*| slow 4 $. sound "sax" |*| up "[0,7,16*2,26*4]" |*| gain "0.75"
+
+
+-- 2016 02 26
+
 dur 1 -- changewhen
 let p1 = sound "bd*4 hh*4"
 let p2 = sound "sn*4 hc*4"
@@ -94,11 +114,14 @@ d1 $ slow 2 $ sound "bd hh/8 [~ sn]/2 hc/4"
 
 hush
 dur 0.9 -- ** jagged rhythm, good for (replace-string "[digit],[digit]")
-d4 $ slow 16 $ up "0(5,12) 9(5,12)" |*| sound "bass"
+d4 $ slow 16 $ up "[-2,17](5,12) 9(5,12)" |*| sound "bass"
 d1 $ slow 8 $ sound $. pp "x(5,12)" "bleep:7 bleep:5 bleep:4 bleep" |*| gain "0.8 0.7"
 d2 $ slow 4 $ (<~) (1/8) $ sound $ pp "x(5,12)" "bd sn"
 d3 $ slow 2 $ (<~) (1/4) $ sound "hh(5,12)"
 
+-- take special note, please note
+d5 $ hi "0" 
+d5 $ hi "0 3" |*| slow 4 $. hi $. (*(-2)) 
 hush
 dur 2.5 -- **
 d1 $ sound "bd"
@@ -106,6 +129,41 @@ d2 $ (<~) (1/4) $ sound "sn*2"
 d3 $ when (\n->mod n 4==3) (striate 64) $ (<~) (1/8) $ sound "hh*4"
 d4 $ every 4 (striate 4) $ (<~) (1/16) $ sound "hc*8" |*| gain "0.7"
 d5 $ (<~) (-1/64) $ slow 4 $ sound "can(5,16) ~ [[bleep bleep:4]/2 ~ ~ [print:3 print:7]/2] ~"
+d6 $ silence -- up "0 5 7" |*| slow 4 $ up "[0,4,7] [0,3,7]" |*| sound "psr"
+d6 $ up "0 e5 7" |*| slow 4 $ up "[0,4,7] [0,3,7]" |*| sound "psr"
+d6 $ up "[0 7](5,16)" |*| sound "psr"
+d7 $ up "[0,7](11,16)" |*| slow 4 $. hi "0 2 3 5 3"  |*| sound "psr"-- ** rad line
+d7 $ up "[0,7](11,16)" |*| slow 4 $. up "0 2 3 5 3"  |*| sound "psr"-- ** rad line
+dur 5
+d7 $ up "[9,7](11,16)" |*| slow 4 $. up "0 2 3 5 3"  |*| sound "psr"-- ** rad line
+  -- is kind of f
+d7 $ up "[3 5 7 9 11](11,16)" |*| sound "psr"
+d8 $ up "[7 9 11 1 3 [5 4]]" |*| sound "psr"
+d9 $ up ""
+
+dur 6
+
+
+
+
+
+
+
+
+
+hush
+let f p = up "-4.3" |*| p
+d1 $ up "[0 12 5 10]*8" |*| f $. insBass -- is F#, Trev wants D
+d2 $ fast 4 $ sound "bd sn"
+d3 $ slow 4 $. up "7*16 5*16 3*16" |*| up "12" |*| f $. insBass
+d4 $ slow 1 $. up "-0 " |*| sound "koy" |*| gain "1.35"
+
+d2 $ silence
+d2 $ chop 16 $ up "[0]*16" |*| f $. insBass -- is F#, Trev wants D
+
+
+d1 $ up "6" |*| f $. insBass -- is F#, Trev wants D
+d2 $ up "15*4" |*| f $. insBass -- is F#, Trev wants D
 
 todo, easy: > operator, effective after / or * and digit, for phase
 
