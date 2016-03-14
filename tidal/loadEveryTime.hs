@@ -276,5 +276,6 @@
       -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
       -- trick: make arcs miniscule, ignore all but first time coordinate
 
-  --  oscPattToOscMap :: Pattern OscMap -> OscMap
-  --  oscPattToOscMap p = arc p (0,1/2^16)
+    oscPattToOscMap :: Pattern OscMap -> [OscMap]
+    oscPattToOscMap p = map (\(_,_,oscMap) -> oscMap)
+      $ arc p (0,toRational epsilon) -- :: [Event OscMap]
