@@ -232,6 +232,9 @@
             shift = rotl rotn tones
 
 -- time
+    epsilon = 1/2^16 -- hopefully short enough to rarely cross cycles
+      -- not sure if crossing cycles could cause bad things
+
     ceiling_ish :: Arc -> Time
       -- in a cycle-respecting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
     ceiling_ish (a,b) = fromInteger $ floor a + 1
@@ -264,3 +267,14 @@
         -- > let x = [((0,1%2),(0,1%2),"bd"),((1%2,1),(1%2,1),"sn")] :: [Event String]
         -- > (arc $ evtListToPatt x) (1/2,3/2)
         -- [((1 % 2,1 % 1),(1 % 2,1 % 1),"sn"),((1 % 1,3 % 2),(1 % 1,3 % 2),"bd")]
+
+    trigListToPatt :: [(Rational, a)] -> Pattern a
+    trigListToPatt trigList = 
+      let f time = (time, time + epsilon)
+          evts = map (\(r,a) -> (f r,f r,a)) trigList
+      in evtListToPatt evts
+      -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
+      -- trick: make arcs miniscule, ignore all but first time coordinate
+
+  --  oscPattToOscMap :: Pattern OscMap -> OscMap
+  --  oscPattToOscMap p = arc p (0,1/2^16)
