@@ -1,4 +1,5 @@
-d1 $ soundToEvts g123 4
+
+d1 $ soundToEvts g123 4 -- plays the sound at 4 in the graph!
 
 cps 1
 d1 $ sound (pure "bd") |*| sound (pure "sn")

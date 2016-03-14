@@ -53,14 +53,15 @@
     data SoundQual = Spl String | Spd Float | Amp Float | Pan Float
       deriving (Read, Show, Ord, Eq)
 
-    data GE = Has deriving (Read, Show, Ord, Eq)
+    data GE = Has | HasAt Rational deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
-            | T Rational -- Time
             | S -- Sound; has Qualities
-            | Ss -- Sounds; has many Sound
-            | Ev -- Event; has a Time and either a Sound or a Sounds
-            | Sq -- has Events
+            -- | Ss -- Sounds; has many Sound
+            | Ev -- Event; HasAt times sounds and events
       deriving (Read, Show, Ord, Eq)
+
+  -- TODO : rendering strategies
+    -- e.g. swing, or take only a size-n leading subseq
 
   -- render
     soundToEvts :: G -> Addr -> OscPattern -- works! d1 $ soundToEvts g123 4
@@ -70,8 +71,11 @@
           spls = map (\(Q (Spl s)) -> s) 
                $ filter (\x -> case x of (Q (Spl s)) -> True; _ -> False) qs
       in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "bd") spls
-           -- start value must be "bd", not silence, because silence spreads
-        
+           -- start value must be something ("bd" so far) and not silence
+             -- because silence spreads
+
+
+
   -- construct
     addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
     addNodes ns g = (g',is)
@@ -95,8 +99,6 @@
     g123 :: G
     g123 = L.mkGraph [ (1,S), (2,Ev), (3,Q $ Spl "psr")
                      , (4,S), (5,Ev), (6,Q $ Spl "sn"), (7,Q $ Spd 2)
-                     , (8,Ss)
-                     , (9,Sq)
                      ][
                        (1,3,Has) -- the Sound at 1 is the "psr" at 3
                      , (2,1,Has) -- the Event at 2 is the Sound at 1
