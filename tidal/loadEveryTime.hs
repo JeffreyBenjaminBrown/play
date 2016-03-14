@@ -56,8 +56,9 @@
     data GE = Has | HasAt Rational deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
             | S -- Sound; has Qualities
-            -- | Ss -- Sounds; has many Sound
             | Ev -- Event; HasAt times sounds and events
+      -- DEPRECATED. T=Time. S=Sounds, has many Sound. Sq=Seq.
+        | T Rational | Ss | Sq
       deriving (Read, Show, Ord, Eq)
 
   -- TODO : rendering strategies
@@ -73,8 +74,6 @@
       in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "bd") spls
            -- start value must be something ("bd" so far) and not silence
              -- because silence spreads
-
-
 
   -- construct
     addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
