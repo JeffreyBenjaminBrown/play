@@ -1,58 +1,60 @@
+hush
 dur 4 -- **
 let sil = silence
-let f p = cat [p,sil,p,p,sil]
-let g p = cat [sil,p,sil,p]
-let s = sound "bass metal*2 ~ psr ~ cp" |*| pan rand |*| up $. (* 12) <$> rand
+let f p = cat [p,sil,p,sil,p]
+let g p = cat [p,p,sil,p]
 d1 $ sound $ stack [f $ g "hc hc:1", f "bd sn"]
 d1 $ sound $ stack [slow 2 $ g $ f "hc hc:1", f "bd sn"]
-d2 $ slow 2 $ cat [s,s,s,s,s]
+
+let s = sound "bass metal*2 ~ psr ~ cp" |*| pan rand |*| up $. (* 12) <$> rand
+d2 $ slow 16 $ g $ f $ g s
 
 -- below are copies
-dur 2 -- **
+dur (3/2) -- ** dur tuned to the next parag
 let f p = cat [p,silence,p]
 let g p = cat [rev p,silence,rev p]
 d1 $ slow 2 $ rl (1/2) $. sound $. f "bd sn"
 d2 $ slow 1 $ sound $. f $. f "hh" |*| gain "0.8"
 d3 $ slow 6 $ f $ rl (0/128) $ sound $. g $. g "hc" |*| gain "0.8"
 
+hush
 dur 2 -- ** pure perc
 let f p = cat [p,p,silence,p]
 let g p = cat [rev p,p,rev p,silence]
 d1 $ slow 2 $ rl (1/2) $. sound $. f "sn"
 d2 $ slow 2 $ sound $. f $. f "hh" |*| gain "0.8"
-d3 $ slow 8 $ f $ rl (1/32) $ sound $. g $. g "hc" |*| gain "0.8"
+d3 $ slow 8 $ f $ rl (1/32) $ sound $. g $. g "lt" |*| gain "0.8"
 
 -- 2016 03 14
 
 d1 $ soundToEvts g123 4 -- plays the sound at 4 in the graph!
-
-cps 1
-d1 $ sound (pure "bd") |*| sound (pure "sn")
-let x = foldl (\oscp str -> sound $. pure str |*| oscp) (sound "bd") ["bd","sn"]
-let x = foldl (\_ str -> sound $. pure str) silence ["bd","sn"]
-d1 $ foldl (\oscp str -> oscp |*| sound $. pure str) silence ["bd","sn"]
 
 -- 2016 03 13
 
 dur 2 -- works : different cut groups on the same sample in the same voice
 d1 $ overlay (sound "f*4"|*|cut"1") (rr (1/8) $ sound "f*4" |*| up "3"|*|cut"2")
 
-dur 2 --**
+dur 2 -- ** dark, dancy
 let p1 = "x [x x/2] x*2 ~"
+hush
 d1 $ slow 4 $ every 4 (rl (1/2)) $ sound $ pp p1 "bd bd sn"
 d2 $ every 4 (striate 16) $ sound $. pp p1 "~ hh hc" |*| gain "0.9"
+d3 $ slow 2 $ up $. (\x -> stack [x, rr (1/32) x]) $. pp "0!! ~ 0! ~ 0" "0 3 7 9 3 7 6" |*| (insBass |*| cut "1")
+d4 $ up $. pp "0! ~ [0 0 0*4]/3!! ~ 0" "7 9 3 7 6 0 3" |*| insPsr |*| gain "0.8"
+d5 $ slow 8 $ rr (1/64) $ up $. pp "0! ~ 0 0*2 0 ~ 0*4" "7 9 3 7 6 0 3" |*| insPsr |*| up "-12"
 
-dur 0.45
+dur 0.45 -- ** funny
 let f23 p = cat [silence,p,p]
 let f24 p = cat [silence,p,p,silence]
 let f34 p = cat [p,p,p,silence]
 d1 $ slow 3 $ sound $ f23 "bd/2 sn"
+d2 $ silence |*| sound $. slow 4 $. f24 "hh*2"
 d2 $ sound $ slow 4 $ f24 "hh*2"
 d3 $ sound $ slow 16 $ "bleep:5"
-
+d4 $ slow 4 $ sound "lt*16" |*| gain $. (* 0.6) <$> rev saw1
 
 -- 03 12
-
+dur 4 -- *
 d1 $ sound "hh*16" |*| slow 2 $. gain $. lin 0.9 0.7 <$> square1
 d2 $ fast 2 $ stack [sound "bd sn", sound $. slow 2 $. rr (1/8) "bleep:5/4" |*| gain "0.7"]
 d3 $ hi "31 29 20 18 ~ 10 8 -2" |*| insF |*| cut "1"
@@ -60,12 +62,9 @@ d4 $ hi "[0(11,16), [20, 25 41](5,8)]" |*| up "-12" |*| insPsr |*| gain $. slow 
 d5 $ slow 8 $ hi "0*8 [[12*2 11*2] [~ [10*2 8*2]]]" |*| up "-24" |*| insF |*| cut "2" |*| gain "1.3" |*| gain "1 0 1 [0 1]"
 
 -- 2016 03 10
-
--- 2016 03 01
-
--- broken, circa 2016 03 01 (the commit on that day)
-let ps = "[1 1*2]/2 2 1 ~ [1,2]" :: Pattern String -- ** mess with this line
-let beats = 5 -- the duration of ps
+hush
+let ps = "[1 1*2]/2 ~ 2*2 ~ 2 1 ~ [1,2]" :: Pattern String -- * mess with this line (and the next to match)
+let beats = 8 -- the duration of ps
 let pn = fmap (\_ -> 0) ps :: Pattern Double
 let pnDub = stack [pn, rr (1/beats) pn]
 let ps1 = filterValues (== "1") ps
@@ -79,34 +78,7 @@ d4 $ fast 2 $ slow 2 $. rl (2/beats) $. up $. pp pnDub "0 [3 4] 7 [9 [-2 3]/2]" 
 d5 $ striate 64 $ rl (3/beats) $ slow 4 $ sound "metal*16 metal:2" |*| up $. pp pn "[0,7*2,16*2,26*4]" |*| fast 4 $. up "0 7 16"
 d3 $ striate 32 $ slow 16 $. up "0 7 3 -2" |*| slow 4 $. sound "sax" |*| up "[0,7,16*2,26*4]" |*| gain "0.75"
 
-
 -- 2016 02 26
-hush
-dur 1 -- changewhen
-let p1 = sound "bd*4 hh*4"
-let p2 = sound "sn*4 hc*4"
-let aTest now n = (\t -> (floor t) > div (floor now) n * n + n)
-let f n = d1 $ changeWhen (aTest now n) p1 p2
-f 7
-now
-
--- playWhen starts at mod 2 where I expect mod 0
-hush
-now
-dur 1.8
-let p1 = sound "bd*4 hh*4"
-let aTest denom = d1 $ playWhen (\t -> (floor t) > div (floor now) denom * denom + denom) p1
-aTest 5 -- how to use the test: execute "testPlayWhen n" for some n
-  -- then repeatedly evaluate "now" (in this buffer, not *tidal*)
-  -- evaluate "now" one last time when it starts playing, 
-    -- before the end of the first cycle
-  -- so far the result always seems to be equal to 2 mod n
-    -- I tested n=3,4,5,7,9, and I tried restarting Tidal and Dirt
-
---
-
-dur $ 1/3 -- instrument (not song)
-d1 $ striate 12 $ slow 100 $ hi $. (flip (/) 4) <$> run 50 |*| sound "[sine]"
 
 dur $ 35/200 -- patterns can be very long (here, 10000 notes)
 d1 $ striate 7 $ slow 10000 $ hi $. (flip (/) 10) <$> run 10000 |*| sound "bass"
@@ -114,17 +86,18 @@ d1 $ striate 7 $ slow 10000 $ hi $. (flip (/) 10) <$> run 10000 |*| sound "bass"
 -- template haskell, expand f g to g <- pure $ f g
 
 -- C-x C-t lets me pull a selected altv defn into place
-
-let pp = preplace (1,1) -- **
+let pp = preplace (1,1) -- ****
 let p1 = ("x ~ x ~ ~"::Pattern String)
 let f pitches = up (preplace (1,1) ("1 1 ~ ~ ~" :: Pattern Double) $ cat $ map return pitches)
 let dbl p = stack [p, rl (2/5) p]
 dur 1.1
 d1 $ stack [sound $ pp p1 "hh cp cp", slow 3 $ sound "[bleep:4 bleep:5]/2"]
-d2 $ (fast 5 $ sound "hc" |*| gain "0.5") |*| (slow 3 $ gain sinewave)
+d2 $ (fast 5 $ sound "hc" |*| gain $. lin 0.3 0.6 <$> tri1) |*| (slow 3 $ gain sinewave)
 d3 $ f [2,3,8,10] |*| insPsr
 d5 $ rl (1/5) $ f [10,14,15] |*| insPsr |*| gain "1.2"
 d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
+d3 $ silence
+d5 $ silence
 
 -- 14
 hush
