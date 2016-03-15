@@ -55,9 +55,9 @@
 
     data GE = Has | HasAt Rational deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
-            | S -- Sound; has Qualities
+            | Sd -- Sound; has Qualities
             | Ev -- Event; HasAt times sounds and events
-      -- DEPRECATED. T=Time. S=Sounds, has many Sound. Sq=Seq.
+      -- DEPRECATED. T=Time. Ss=Sounds, has many Sound. Sq=Seq.
         | T Rational | Ss | Sq
       deriving (Read, Show, Ord, Eq)
 
@@ -65,15 +65,28 @@
     -- e.g. swing, or take only a size-n leading subseq
 
   -- render
-    soundToEvts :: G -> Addr -> OscPattern -- works! d1 $ soundToEvts g123 4
-    soundToEvts g a =
-      let qns = [a | (a,lab) <- L.lsuc g a, lab == Has]
+    gSound :: G -> Addr -> OscPattern -- works! d1 $ gSound g123 4
+      -- TODO: test: addr should be a Sd
+      -- resulting pattern has no rhythm, and sound only at the very beginning
+    gSound g a =
+      let qns = [a | (a,lab) <- L.lsuc g a, lab == Has] -- q?
           qs = map (fromJust . L.lab g) qns
           spls = map (\(Q (Spl s)) -> s) 
                $ filter (\x -> case x of (Q (Spl s)) -> True; _ -> False) qs
       in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "bd") spls
            -- start value must be something ("bd" so far) and not silence
-             -- because silence spreads
+             -- because a silent OscPattern dominates across |*|
+
+    gPatt :: G -> Addr -> OscPattern
+      -- TODO: BUGGY: only the first epsilon of the cycle is rendering
+      -- TODO: test: each Addr should be an Ev
+    gPatt g evAddr = 
+      let soundAdjs = L.lsuc g evAddr :: [(Addr,GE)] 
+            -- these Adjs are backwards; ordinarily the edge label is first
+          mkSound (addr,elab) = (oscPattToOscMaps $ gSound g addr, elab)
+            :: ( [OscMap] , GE)
+          mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
+      in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
 
   -- construct
     addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
@@ -89,21 +102,21 @@
       $ [n | (n,lab) <- L.lsuc g a, lab==Has] -- nodes which the node at a has
 
     valid :: GN -> G -> Addr -> Bool
-    valid S = hasOnly [Q $ Spl "bd"] -- hack; the Spl is ignored
-    valid Ss = hasOnly [S]
-    valid Ev = hasOnly [T 1,S,Ss] -- todo: test that there's only 1 time
+    valid Sd = hasOnly [Q $ Spl "bd"] -- hack; the Spl is ignored
+    valid Ss = hasOnly [Sd]
+    valid Ev = hasOnly [T 1,Sd,Ss] -- todo: test that there's only 1 time
     valid Sq = hasOnly [Ev]
 
 -- fgl, data for tests
     g123 :: G
-    g123 = L.mkGraph [ (1,S), (2,Ev), (3,Q $ Spl "psr")
-                     , (4,S), (5,Ev), (6,Q $ Spl "sn"), (7,Q $ Spd 2)
+    g123 = L.mkGraph [ (1,Sd), (2,Ev), (3,Q $ Spl "psr")
+                     , (4,Sd), (5,Ev), (6,Q $ Spl "sn"), (7,Q $ Spd 2)
                      ][
                        (1,3,Has) -- the Sound at 1 is the "psr" at 3
-                     , (2,1,Has) -- the Event at 2 is the Sound at 1
+                     , (2,1,HasAt $ 1%2) -- the Event at 2 is the Sound at 1
                      , (4,6,Has), (4,7,Has) -- the Sound at 4 is the "sn" at 6,
                                             -- at double speed
-                     , (5,4,Has), (5,2,Has) -- the Event at 5 has both sounds
+                     , (5,4,HasAt 0), (5,2,HasAt $ 1%2) -- Event 5 has 2 sounds
                      ]
 
 -- fgl, test
@@ -232,8 +245,9 @@
             shift = rotl rotn tones
 
 -- time
-    epsilon = 1/2^16 -- hopefully short enough to rarely cross cycles
-      -- not sure if crossing cycles could cause bad things
+    epsilon = 1/2^16 -- surely short enough to rarely cross cycles
+      -- I have little reason to believe crossing cycles could cause bad things,
+      -- but of even a 60-second cycle this would be only one thousandth.
 
     ceiling_ish :: Arc -> Time
       -- in a cycle-respecting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
@@ -276,6 +290,6 @@
       -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
       -- trick: make arcs miniscule, ignore all but first time coordinate
 
-    oscPattToOscMap :: Pattern OscMap -> [OscMap]
-    oscPattToOscMap p = map (\(_,_,oscMap) -> oscMap)
+    oscPattToOscMaps :: Pattern OscMap -> [OscMap] -- takes 1st instant, ala head
+    oscPattToOscMaps p = map (\(_,_,oscMap) -> oscMap)
       $ arc p (0,toRational epsilon) -- :: [Event OscMap]
