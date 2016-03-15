@@ -74,13 +74,12 @@
       -- TODO: test: addr should be a Sd
       -- resulting pattern has no rhythm, and sound only at the very beginning
     gSound g a =
-      let qns = [a | (a,lab) <- L.lsuc g a, lab == Has] -- Q is a GN constructor
-          qs = map (fromJust . L.lab g) qns
-          spls = map (\(Q (Spl s)) -> s) 
-               $ filter (\x -> case x of (Q (Spl s)) -> True; _ -> False) qs
+      let gqas = [a | (a,lab) <- L.lsuc g a, lab == Has] -- graph quality addrs
+          gqs = map ( (\(Q x) -> x) . fromJust . L.lab g) gqas
+          spls = map (\(Spl s) -> s) $ filter isSplQual gqs
       in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "gabba") spls
-           -- start value must be something ("bd" so far) and not silence
-             -- because a silent OscPattern dominates across |*|
+        -- start value must be something ("bd" so far) and not silence
+          -- because a silent OscPattern dominates across |*|
 
     gPatt :: G -> Addr -> OscPattern
       -- TODO: BUGGY: only the first epsilon of the cycle is rendering
