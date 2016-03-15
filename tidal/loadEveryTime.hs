@@ -48,17 +48,16 @@
 -- ================== FGL ====================
   -- types
     type Addr = L.Node
+    type Rat = Rational
     type G = L.Gr GN GE -- Graph, Node, Edge
 
     data SoundQual = Spl String | Spd Float | Amp Float
       deriving (Read, Show, Ord, Eq)
 
-    data GE = Has | HasAt Rational deriving (Read, Show, Ord, Eq)
+    data GE = Has | HasAt Rat | HasAtFor Rat Rat deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
             | Sd -- Sound; has Qualities
             | Ev -- Event; HasAt times sounds and events
-      -- DEPRECATED. T=Time. Ss=Sounds, has many Sound. Sq=Seq.
-        | T Rational | Ss | Sq
       deriving (Read, Show, Ord, Eq)
 
   -- TODO : rendering strategies
@@ -111,19 +110,6 @@
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
 
-  -- tests (on pause)
-    hasOnly :: [GN] -> G -> Addr -> Bool
-    hasOnly allowedConstructors g a = and
-      $ map (flip elem allowedConstructors)
-      $ map (fromJust . L.lab g)
-      $ [n | (n,lab) <- L.lsuc g a, lab==Has] -- nodes which the node at a has
-
-    valid :: GN -> G -> Addr -> Bool
-    valid Sd = hasOnly [Q $ Spl "bd"] -- hack; the Spl is ignored
-    valid Ss = hasOnly [Sd]
-    valid Ev = hasOnly [T 1,Sd,Ss] -- todo: test that there's only 1 time
-    valid Sq = hasOnly [Ev]
-
 -- fgl, data for tests
     g123 :: G
     g123 = L.mkGraph [ (1,Sd), (2,Ev), (3,Q $ Spl "psr")
@@ -135,15 +121,6 @@
                                             -- at double speed
                      , (5,4,HasAt 0), (5,1,HasAt $ 1%2) -- Event 5 has 2 sounds
                      ]
-
--- fgl, test
-    main = runTestTT $ TestList
-      [   TestLabel "tAddNodes"   tGraph
-      ]
-
-    tGraph = TestCase $ do
-      let g = addNodes [Sq,Sq] L.empty
-      assertBool "2 into blank" $ g == (L.mkGraph [(0,Sq),(1,Sq)] [], [0,1])
 
 -- =============== old, little used ============
 

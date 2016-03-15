@@ -1,3 +1,28 @@
+dur 4 -- **
+let sil = silence
+let f p = cat [p,sil,p,p,sil]
+let g p = cat [sil,p,sil,p]
+let s = sound "bass metal*2 ~ psr ~ cp" |*| pan rand |*| up $. (* 12) <$> rand
+d1 $ sound $ stack [f $ g "hc hc:1", f "bd sn"]
+d1 $ sound $ stack [slow 2 $ g $ f "hc hc:1", f "bd sn"]
+d2 $ slow 2 $ cat [s,s,s,s,s]
+
+-- below are copies
+dur 2 -- **
+let f p = cat [p,silence,p]
+let g p = cat [rev p,silence,rev p]
+d1 $ slow 2 $ rl (1/2) $. sound $. f "bd sn"
+d2 $ slow 1 $ sound $. f $. f "hh" |*| gain "0.8"
+d3 $ slow 6 $ f $ rl (0/128) $ sound $. g $. g "hc" |*| gain "0.8"
+
+dur 2 -- ** pure perc
+let f p = cat [p,p,silence,p]
+let g p = cat [rev p,p,rev p,silence]
+d1 $ slow 2 $ rl (1/2) $. sound $. f "sn"
+d2 $ slow 2 $ sound $. f $. f "hh" |*| gain "0.8"
+d3 $ slow 8 $ f $ rl (1/32) $ sound $. g $. g "hc" |*| gain "0.8"
+
+-- 2016 03 14
 
 d1 $ soundToEvts g123 4 -- plays the sound at 4 in the graph!
 
