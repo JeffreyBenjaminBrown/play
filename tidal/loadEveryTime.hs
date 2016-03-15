@@ -79,7 +79,7 @@
           spls = map (\(Spl s) -> s) $ filter isSplQual gqs
       in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "gabba") spls
         -- start value must be something ("bd" so far) and not silence
-          -- because a silent OscPattern dominates across |*|
+          -- because silence (the OscPattern) infects|conquers across |*|
 
     gPatt :: G -> Addr -> OscPattern
       -- TODO: BUGGY: only the first epsilon of the cycle is rendering
@@ -91,12 +91,12 @@
             :: ( [OscMap] , GE)
           mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
       in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
-      -- test: gPatt g123 5 (should make a sound at phase 0, another at 1/2)
+      -- test: gPatt g123 5 -- should make a sound at phase 0, another at 1/2
 
   -- -- Investigating gPatt -- --
     -- BUG: the one on the 0 works, the other defaults to gabba
     -- let adjs = L.lsuc g123 5
-    -- map (mkSound g123) adjs
+    -- map (_mkSound g123) adjs
     -- _mkSound :: G -> (Addr,GE) -> ([OscMap], GE)
     _mkSound g (a,e) = (gSound g a, e)
       -- (oscPattToOscMaps $ gSound g a, e)
@@ -133,7 +133,7 @@
                      , (2,1,HasAt $ 1%2) -- the Event at 2 is the Sound at 1
                      , (4,6,Has), (4,7,Has) -- the Sound at 4 is the "sn" at 6,
                                             -- at double speed
-                     , (5,4,HasAt 0), (5,2,HasAt $ 0%2) -- Event 5 has 2 sounds
+                     , (5,4,HasAt 0), (5,1,HasAt $ 1%2) -- Event 5 has 2 sounds
                      ]
 
 -- fgl, test
