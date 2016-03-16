@@ -1,3 +1,7 @@
+-- 2016 03 16
+d4 $ sound "{psr psr}%3"
+d3 $ sound "cp"
+
 -- 2016 02 26-ish
 
 hush

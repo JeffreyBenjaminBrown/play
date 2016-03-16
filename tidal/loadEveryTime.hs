@@ -32,6 +32,7 @@
     type PD = Pattern Double
     type PI = Pattern Int
 
+    si = silence
     rl = (<~)
     rr = (~>)
     pp = preplace (1,1)

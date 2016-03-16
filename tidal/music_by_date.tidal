@@ -1,4 +1,43 @@
 hush
+dur 1
+let pd ps = (\_ -> 0) <$> ps :: PD
+let ps pd = (\_ -> "x") <$> pd :: PS
+let f p = cat [p,si,p]
+let g p = cat [p,si,p,si]
+d1 $ stack [slow 8 $ sound "feelfx:0",slow 4 $ sound $ rev $ g $ f "psr"]
+
+dur 1.5
+let ps1 = "{x ~ ~}%4" :: Pattern String
+let pd1 = (\_ -> 0) <$> ps1 :: Pattern Double
+d1 $ slow 4 $. sound $. pp ps1 "bleep:4 not" |*| gain "0.7"
+d2 $ sound $. pp ps1 "metal metal"
+d3 $ fast 2 $ sound $. pp ps1 "psr not not" |*| gain "0.8"
+d4 $ slow 2 $ sound "bd sn"-- |*|si
+
+hush -- **
+dur 1.5 -- nice fractal balance
+let f p = cat [si,p,si,p]
+d1 $ slow 2 $ sound $. stack ["bd", f "sn"]
+d2 $ slow 8 $ sound $. stack [rl (1/4) "[cr:5 cr]/2", f "bd*2", f $ f "metal*3", fast 2 $ f $ f $ rev $ f "lt"]
+
+let chord ps = stack $ map pure ps
+d3 $ fast 4 $ up "-19" |*| speed $. chord [1/2,5/4,7/4,13/4] |*| sound "bleep:4" |*| gain "0.5"
+
+-- 2016 03 16
+
+dur 1.5 -- ** with stick, fun
+let sil = silence
+let f p = cat [p,sil,p,sil]
+let g p = cat [p,p,sil,sil]
+let h p = cat [p,p,p,p,sil,sil,sil,sil]
+d1 $ slow 16 $ h $. stack [f $. f $. sound "hh", g $. f $. sound "hc"]
+d2 $ slow 4 $      stack [f $. f $. sound "bd", fast 2 $. g $. f $. sound "sn"]
+d3 $ slow 2 $. up $. pp "0 ~ 0 0*2" "0 0 7" |*| slow 8 $. up "5 -3" |*| sound "bass"
+
+
+-- 2016 03 15
+
+hush
 dur 4 -- **
 let sil = silence
 let f p = cat [p,sil,p,sil,p]
@@ -46,7 +85,7 @@ d5 $ slow 8 $ rr (1/64) $ up $. pp "0! ~ 0 0*2 0 ~ 0*4" "7 9 3 7 6 0 3" |*| insP
 dur 0.45 -- ** funny
 let f23 p = cat [silence,p,p]
 let f24 p = cat [silence,p,p,silence]
-let f34 p = cat [p,p,p,silence]
+--let f34 p = cat [p,p,p,silence]
 d1 $ slow 3 $ sound $ f23 "bd/2 sn"
 d2 $ silence |*| sound $. slow 4 $. f24 "hh*2"
 d2 $ sound $ slow 4 $ f24 "hh*2"
@@ -63,8 +102,8 @@ d5 $ slow 8 $ hi "0*8 [[12*2 11*2] [~ [10*2 8*2]]]" |*| up "-24" |*| insF |*| cu
 
 -- 2016 03 10
 hush
-let ps = "[1 1*2]/2 ~ 2*2 ~ 2 1 ~ [1,2]" :: Pattern String -- * mess with this line (and the next to match)
-let beats = 8 -- the duration of ps
+let ps = "[1 1*2]/2 ~ 2*2 ~ 1 ~ [1,2]" :: Pattern String -- * mess with this line (and the next to match)
+let beats = 7 -- the duration of ps
 let pn = fmap (\_ -> 0) ps :: Pattern Double
 let pnDub = stack [pn, rr (1/beats) pn]
 let ps1 = filterValues (== "1") ps
@@ -86,6 +125,7 @@ d1 $ striate 7 $ slow 10000 $ hi $. (flip (/) 10) <$> run 10000 |*| sound "bass"
 -- template haskell, expand f g to g <- pure $ f g
 
 -- C-x C-t lets me pull a selected altv defn into place
+hush
 let pp = preplace (1,1) -- ****
 let p1 = ("x ~ x ~ ~"::Pattern String)
 let f pitches = up (preplace (1,1) ("1 1 ~ ~ ~" :: Pattern Double) $ cat $ map return pitches)
@@ -93,14 +133,17 @@ let dbl p = stack [p, rl (2/5) p]
 dur 1.1
 d1 $ stack [sound $ pp p1 "hh cp cp", slow 3 $ sound "[bleep:4 bleep:5]/2"]
 d2 $ (fast 5 $ sound "hc" |*| gain $. lin 0.3 0.6 <$> tri1) |*| (slow 3 $ gain sinewave)
+
+d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
+
 d3 $ f [2,3,8,10] |*| insPsr
 d5 $ rl (1/5) $ f [10,14,15] |*| insPsr |*| gain "1.2"
-d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
+
 d3 $ silence
 d5 $ silence
 
 -- 14
-hush
+hush -- **** variables rock!
 let p4 = "x [~ x] x x" :: Pattern String
 let p3 = "x [~ x] x" :: Pattern String
 let ds2 = "bd sn" :: Pattern String
@@ -109,10 +152,10 @@ let hh = "hh" :: Pattern String
 let h2 = "hh hc" :: Pattern String
 let h3 = "hh hc hc" :: Pattern String
 let f = preplace (1,1)
-dur 2
+dur 2.5
 d1 $ every 4 (silence |*|) $ (sound $ f p4 ds3)
-d2 $ when (\n -> mod n 16 < 8) (slow 2) $ rr (1/2) $ every 4 (silence |*|) $ rl (1/16) $ sound $ f (fast 2 p4) h3
 d3 $ fast 2 $ when (\n -> mod n 16 > 1) (silence |*|) $ sound "insect:9*8"
+d2 $ when (\n -> mod n 16 < 8) (slow 2) $. rr (1/2) $. every 4 (silence |*|) $. rl (1/16) $. sound $. f (fast 2 p4) h3
 
 -- 2016 02 12
 hush
