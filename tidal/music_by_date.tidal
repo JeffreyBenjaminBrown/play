@@ -1,3 +1,26 @@
+dur 1 -- perform-compose-improvised 2016 03 16
+hush -- study for problems
+let f p = cat [p,si,si,p]
+let g p = cat [si,si,p,si]
+d1 $ slow 2 $ f $ f $ sound "hc"
+d2 $ slow 4 $ sound $ f $ "sn bd"
+d3 $ g $ f $ sound "ht"
+
+--
+
+hush -- **
+dur 8 -- nice fractal balance
+let f p = cat [si,p,si,p]
+let f2 p = cat [p, f p]
+d1 $ sound "psr" |*| up "12"
+d2 $ fast 4 $ f $ sound "psr" |*| up "24"
+d3 $ rr (1/4) $ sound "[cr:5 [cr,feelfx]]/2" -- offset
+d4 $ sound $ f "sn*2"
+d5 $ (sound $ f $ f $ "insect*3")
+d6 $ fast 1 (sound $ f2 $ rev $ f "metal") |*| gain "0.8"
+-- d7 $ fast 4 $ sound "{mt! ~ mt ~}%3" -- could not perfect
+d7 $ fast 4 $ rl (1/8) $ f2 $ sound "bd sn" -- offset (at new scale)
+
 hush
 dur 1
 let pd ps = (\_ -> 0) <$> ps :: PD
