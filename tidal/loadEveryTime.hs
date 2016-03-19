@@ -171,10 +171,24 @@
     sps = speed . stack . fmap return
 
   -- scale functions
+    remPos :: Integral a => a -> a -> a
     remPos num den = -- positive remainder
       if x<0 then x+den else x where x = rem num den
       -- fmap (flip remPos 3) [-5..5] -- test
       -- ifdo speed: could use one divide instead of many adds
+
+    lk :: [Double] -> Int -> Double
+    lk sc idx = -- lookup, no octaves
+      let len = fromIntegral $ length sc
+          idx' = floor $ fromIntegral $ remPos idx $ len
+      in sc !! idx'
+
+--    lk :: [Double] -> Int -> Double
+--    lk sc idx = -- lookup (assumes 12 tone)
+--      let len = fromIntegral $ length sc
+--          octaves = floor $ (fromIntegral idx) / len
+--          idx' = floor $ remPos idx $ len
+--      in (12 * octaves) + (sc !! idx')
 
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
     scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) 
