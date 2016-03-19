@@ -181,19 +181,12 @@
     quotUnif num den = if num < 0 then q - 1 else q
       where q = quot num den
 
-    lk :: [Double] -> Int -> Double
-    lk sc idx = -- lookup, no octaves
-      let len = fromIntegral $ length sc
+    lk :: [Double] -> Int -> Double -- 12 tone scale lookup
+    lk sc idx =
+      let len = length sc
           idx' = floor $ fromIntegral $ remPos idx $ len
-          -- octaves = floor $ (fromIntegral idx) / len
-      in sc !! idx' -- (12 * octaves) + (sc !! idx')
-
---    lk :: [Double] -> Int -> Double
---    lk sc idx = -- lookup (assumes 12 tone)
---      let len = fromIntegral $ length sc
---          octaves = floor $ (fromIntegral idx) / len
---          idx' = floor $ remPos idx $ len
---      in (12 * octaves) + (sc !! idx')
+          octaves = quotUnif idx len
+      in (12 * fromIntegral octaves) + (sc !! idx')
 
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
     scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) 
