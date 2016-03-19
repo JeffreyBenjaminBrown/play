@@ -38,6 +38,24 @@
     pp = preplace (1,1)
     lin min max x = x*(max - min) + min
 
+  -- scales
+    remUnif :: Integral a => a -> a -> a
+    remUnif num den = -- positive remainder
+      if x<0 then x+den else x where x = rem num den
+      -- fmap (flip remUnif 3) [-5..5] -- test
+      -- ifdo speed: could use one divide instead of many adds
+
+    quotUnif :: Integral a => a -> a -> a
+    quotUnif num den = if num < 0 then q - 1 else q
+      where q = quot num den
+
+    lk :: [Double] -> Int -> Double -- 12 tone scale lookup
+    lk sc idx =
+      let len = length sc
+          idx' = floor $ fromIntegral $ remUnif idx $ len
+          octaves = quotUnif idx len
+      in (12 * fromIntegral octaves) + (sc !! idx')
+
     -- transition between two patterns
       -- based on playWhen, which transitions from silence to one pattern
     changeWhen :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
@@ -171,25 +189,8 @@
     sps = speed . stack . fmap return
 
   -- scale functions
-    remPos :: Integral a => a -> a -> a -- TODO: promote
-    remPos num den = -- positive remainder
-      if x<0 then x+den else x where x = rem num den
-      -- fmap (flip remPos 3) [-5..5] -- test
-      -- ifdo speed: could use one divide instead of many adds
-
-    quotUnif :: Integral a => a -> a -> a -- TODO: promote
-    quotUnif num den = if num < 0 then q - 1 else q
-      where q = quot num den
-
-    lk :: [Double] -> Int -> Double -- 12 tone scale lookup
-    lk sc idx =
-      let len = length sc
-          idx' = floor $ fromIntegral $ remPos idx $ len
-          octaves = quotUnif idx len
-      in (12 * fromIntegral octaves) + (sc !! idx')
-
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
-    scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) 
+    scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remUnif n (fromIntegral $ length scale) 
     -- fmap (scaleElt [0,3,7]) [-5..5] -- test
     
     -- scaleOctave :: [Double] -> Int -> Double -- type sig breaks it
