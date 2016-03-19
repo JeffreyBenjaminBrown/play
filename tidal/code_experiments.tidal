@@ -1,3 +1,17 @@
+-- 2016 03 18
+hush
+dur 2
+let ps1 = "{x ~ x}%8" :: Pattern String -- (%) restarts each measure!
+d1 $ sound "bd"
+d2 $ sound $. pp ps1 "psr"
+
+hush
+dur 2
+let ps1 = "{x ~ x}%4 {x ~ x}%4" :: Pattern String -- (%) restarts each mention!
+d1 $ sound "bd"
+d2 $ sound $. pp ps1 "psr"
+
+
 -- 2016 03 16
 d4 $ sound "{psr psr}%3"
 d3 $ sound "cp"
