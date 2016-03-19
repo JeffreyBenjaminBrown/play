@@ -171,10 +171,12 @@
     sps = speed . stack . fmap return
 
   -- scale functions
-    remPos num den = if x<0 then x+den else x where x = rem num den
-      -- fmap (flip remPos 3) [-5..5] -- positive remainder, test
+    remPos num den = -- positive remainder
+      if x<0 then x+den else x where x = rem num den
+      -- fmap (flip remPos 3) [-5..5] -- test
+      -- ifdo speed: could use one divide instead of many adds
 
-    -- scaleElt :: [Double] -> Int -> Double
+    scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
     scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remPos n (fromIntegral $ length scale) 
     -- fmap (scaleElt [0,3,7]) [-5..5] -- test
     
