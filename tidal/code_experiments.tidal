@@ -104,3 +104,29 @@ aTest 5 -- how to use the test: execute "testPlayWhen n" for some n
 dur $ 35/200 -- patterns can be very long (here, 10000 notes)
 d1 $ striate 7 $ slow 10000 $ hi $. (flip (/) 10) <$> run 10000 |*| sound "bass"
 
+-- 2015 12 08
+dur 0.4 -- * multi-wavelength
+-- I hear but don't understand the difference.
+hush1
+d1 $ slow 2 $ sound "bd hh/8 sn/2     hc/4"
+d1 $ slow 2 $ sound "bd hh/8 [~ sn]/2 hc/4"
+
+-- 2015 11 12 -- industrial
+hush -- * 2 good code ideas, but not the greatest music yet
+  -- rand pan, & seq of bjorklund (n,m) rhythms
+dur 2.5
+d2 $ slow 3 $ sound "bd(13,16) can(11,16) [psr:4(15,24),sn*4] hh(5,8)"
+d3 $ slow 3 $ hi "[0,7,14](10,16) [1 0 -1 0 0]*4 [[0,8,13]*3 [1 0]*2 [0,10,18,20]]*2" |*| sound "metal:2" |*| pan rand |*| hi "-62"
+
+hush
+d1 $ sound "f(11,16)*2" |*| speed "7 [8,9] [13.5,12]" |*| speed "0.1"
+d2 $ slow 4 $ sound $. (1/3) <~ "[f,[bd hh]/2]*32" |*| speed "[4.5,4] 3.5 3 2.9" |*| speed "0.25"
+dur 2
+
+-- 2015 10 14
+d1 $ sound $ samples "future*9" $ run 10 -- * samples, howto
+
+hush
+dur 2
+let dl = "bd?!? sn?!" -- random!
+d1 $ sound $ stack [dl, (1/4) <~ dl,"hh?*8"]
