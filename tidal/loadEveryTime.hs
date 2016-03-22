@@ -32,6 +32,8 @@
     type PD = Pattern Double
     type PI = Pattern Int
 
+    duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
+
     si = silence
     rl = (<~)
     rr = (~>)
