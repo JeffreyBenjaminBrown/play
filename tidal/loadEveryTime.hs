@@ -215,7 +215,7 @@
 
   -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
     pluckCorr = 7.87
-    insPluck = sound "pluck" |*| hi $. return pluckCorr  |*| gain "0.6"
+    insPluck = sound "pluck" |*| hi $. return pluckCorr
 
     offCorr = 13.4
     insOff = sound "off" |*| hi $. return offCorr  |*| gain "0.6"

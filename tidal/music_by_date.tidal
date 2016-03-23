@@ -8,21 +8,21 @@ d3 $ slow 2 $ (sound $ f $ rev $ f $ "hh") |*| coarse "6"
 d2 $ stack $ [sound "bd", rr (1/2) $ less $ sound $ "sn"]
 d4 $ slow 2 $ (sound $ g $ rev $ g $ "psr") |*| coarse "128"
 
-hush -- ** 
-dur 2
-let duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
-let df phase = duty phase 2 8 (silence |*|)
-d1 $ df 0 $ slowspread striate [3,6,4,8,5,10] $ fast 2 $ sound "hc" -- |*| gain "0.33"
-d2 $ sound "bd ~ ~ [[~ ht] ~]/2"
-let f p = cat [si,p::PS,p,si,p,p,si,si] -- is rotated once right
-let g p = cat [p,p::PS,p,si] -- sim
-d3 $ df 4 $ slow 2 $ (sound $ f $ rev $ f $ "hh") |*| up "7" |*| coarse "6"
-d4 $ df 4 $ slow 2 $ (sound $ g $ rev $ g $ "psr") |*| up "4" |*| coarse "128"
+ hush -- ***
+ dur 2
+ let duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
+ let df phase = duty phase 2 8 (silence |*|)
+ d1 $ df 0 $ slowspread striate [3,6,4,8,5,10] $ fast 2 $ sound "hc" -- |*| gain "0.33"
+ d2 $ sound "bd ~ ~ [[~ ht] ~]/2"
+ let f p = cat [si,p::PS,p,si,p,p,si,si] -- is rotated once right
+ let g p = cat [p,p::PS,p,si] -- sim
+ d3 $ df 4 $ slow 2 $ (sound $ f $ rev $ f $ "hh") |*| up "7" |*| coarse "6"
+ d4 $ df 4 $ slow 2 $ (sound $ g $ rev $ g $ "psr") |*| up "4" |*| coarse "128"
 
--- 2016 03 21
+ -- 2016 03 21
 
-hush -- ** would be good next: pitch gets wherever it's going, rhythm slows
-dur 2
+hush -- *** would be good next: pitch gets wherever it's going, rhythm slows
+cps $ 1/2
 let p1 = run 7
 let insPsr' = insPsr |*| gain "0.9"
 let mains =  [0,2,4,7]
@@ -36,7 +36,7 @@ d5 $ slow (32/7) $ up $. lk mains <$> "{0 3 ~ 0}%16 ~ {1 ~ 2 3}%16 ~" |*| insBas
 
 -- 2016 03 18
 
-hush -- **
+hush -- ** stick
 dur 8 -- nice fractal balance
 let f p = cat [si,p,si,p]
 let f2 p = cat [p, f p]
@@ -72,11 +72,11 @@ d3 $ fast 4 $ up "-19" |*| speed $. chord [5/5,8/5,10/8,12/10] |*| sound "bleep:
 -- 2016 03 15
 
 hush
-dur 4 -- **
+dur 4 -- ** stick
 let sil = silence
 let f p = cat [p,sil,p,sil,p]
 let g p = cat [p,p,sil,p]
--- let less p = cat [si,p]
+-- altvs
 d1 $ sound $ stack [f $ g "hc hc:1", f "bd sn"]
 d1 $ sound $ stack [slow 2 $ g $ f "hc hc:1", f "bd sn"]
 
@@ -114,7 +114,7 @@ d4 $ up $. pp "0! ~ [0 0 0*4]/3!! ~ 0" "7 9 3 7 6 0 3" |*| insPsr |*| gain "0.8"
 d5 $ slow 8 $ rr (1/64) $ up $. pp "0! ~ 0 0*2 0 ~ 0*4" "7 9 3 7 6 0 3" |*| insPsr |*| up "-12"
 
 hush
-dur 0.45 -- ** funny
+dur 0.45 -- ** funny, no pitch
 let f23 p = cat [silence,p,p]
 let f24 p = cat [silence,p,p,silence]
 --let f34 p = cat [p,p,p,silence]
@@ -149,21 +149,23 @@ d4 $ fast 2 $ slow 2 $. rl (2/beats) $. up $. pp pnDub "0 [3 4] 7 [9 [-2 3]/2]" 
 d5 $ striate 64 $ rl (3/beats) $ slow 4 $ sound "metal*16 metal:2" |*| up $. pp pn "[0,7*2,16*2,26*4]" |*| fast 4 $. up "0 7 16"
 d3 $ striate 32 $ slow 16 $. up "0 7 3 -2" |*| slow 4 $. sound "sax" |*| up "[0,7,16*2,26*4]" |*| gain "0.75"
 
--- C-x C-t lets me pull a selected altv defn into place
 hush
-let pp = preplace (1,1) -- **** happy
 let p1 = ("x ~ x ~ ~"::Pattern String)
+let pp = preplace (1,1) -- **** happy
 let f pitches = up (preplace (1,1) ("1 1 ~ ~ ~" :: Pattern Double) $ cat $ map return pitches)
 let dbl p = stack [p, rl (2/5) p]
-dur 1.1
-d1 $ stack [sound $ pp p1 "hh cp cp", slow 3 $ sound "[bleep:4 bleep:5]/2"]
-d2 $ (fast 5 $ sound "hc" |*| gain $. lin 0.3 0.6 <$> tri1) |*| (slow 3 $ gain sinewave)
-d4 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
-d3 $ f [2,3,8,10] |*| insPsr
+cps $ 1 / 1.1
+d1 $ (fast 5 $ sound "hc" |*| gain $. lin 0.3 0.6 <$> tri1) |*| (slow  3 $ gain sinewave)
+d2 $ stack [sound $ pp p1 "hh cp cp", slow 3 $ sound "[bleep:4 bleep:5]/2"]
+d3 $ every 3 dbl $ rl (2/5) $ f $. concatMap (\x->replicate 4 x) [3,8,3,8,14,10] |*| insBass |*| gain "1.2"
+d4 $ f [2,3,8,10] |*| insPsr
 d5 $ rl (1/5) $ f [10,14,15] |*| insPsr |*| gain "1.2"
 
-d3 $ silence
 d5 $ silence
+d4 $ silence
+d2 $ silence
+d1 $ silence
+d3 $ silence
 
 -- 14
 hush -- **** variables rock! (long cycle)
