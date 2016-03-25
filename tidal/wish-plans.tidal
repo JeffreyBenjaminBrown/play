@@ -1,0 +1,36 @@
+
+todo, easy: > operator, effective after / or * and digit, for phase
+
+<-- to mus.mm
+  -- mood to music(v) /= mood to hackage(v)
+
+-- ? post ad for labor
+WANTED: append, preserving meter
+  ~ subseq start end seq = seq from s to e, preserving meter
+
+WHY: I think this will sound cool:
+
+b bass, k kick, . silence
+p1 = b . k
+p2 d = d . -- p2 a function
+p3 = b b k .
+p4 = f p3 = b . b . k . -- f a function
+
+a different decomposition of it into functions & seqs(not all metric)
+p1 = b, k -- , witout meter
+d n = dup nth -- d 1 (b . k) = b b . k
+(incomplete)
+
+b . k 
+b . b . k . 
+b b k . b b k
+b . k 
+b . b . b . k 
+b . b . 
+durs 3 6 7 3 7 4
+
+more operations:
+space d = add a space after each d
+
+-- comments can nest unrelated to how code does
+-- C-x C-t lets me pull a selected altv defn into place
