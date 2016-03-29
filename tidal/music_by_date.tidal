@@ -1,10 +1,10 @@
 -- rhythm training!
-let speedup = 2
-let f = do { n <- runRVar (uniform 2 4) DevRandom :: IO Integer; m <- (*1) <$> runRVar (uniform 2 4) DevRandom :: IO Integer; putStrLn $ show $ (speedup*) $ m%n; cp
-s $ fromRational $ (speedup*) $ m%n }
+let fracs = sort $ nub $ concatMap (\x -> [x,x*2,x*4]) [1%2,5%8,3%4,7%8,1] --ambit
+let fracs = sort $ nub $ concatMap (\x -> [x,x*2,x*4]) [1%2,3%4,1] -- less ambit
+let g = do { n <- runRVar (uniform 0 $ fromIntegral $ length fracs - 1) DevRandom :: IO Integer; let r = fracs !! fromIntegral n in do {putStrLn $ show r; cps $ fromRational $ r}}
 
 d1 $ sound "bd"
-f
+g
 cps $ 2/3
 cps $ 3/4
 cps $ 1
@@ -14,18 +14,12 @@ cps $ 2
 cps $ 3
 cps $ 4
 
--- try a more even and less ambitious distribution:
-1/2 3/4 1 3/2 2 3 4
-
--- here is as even and more ambitious:
+-- would be more ambitious:
 1/2 5/8 3/4 7/8
 1 5/4 3/2 7/4
 2 5/2 3 7/2
 4
 
--- this would be better but it doesn't work (yet?)
-let fracs = filter (> 1) $ nub $ (%) <$> [1..4] <*> [1..4]
-let g = do { n <- (fracs !!) <$> runRVar (uniform 0 $ fromIntegral $ length fracs - 1) DevRandom :: IO Integer; putStrLn $ show n; cps $ fromRational n }
 
 --2016 03 28
 
