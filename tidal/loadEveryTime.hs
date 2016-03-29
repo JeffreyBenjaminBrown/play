@@ -15,6 +15,9 @@
     import Test.HUnit
     import qualified Data.Graph.Inductive as L
 
+    import Data.Random
+    import Data.Random.Source.DevRandom
+
   -- Tidal    
     import Sound.Tidal.Params
     import Sound.Tidal.Parse
@@ -65,6 +68,19 @@
       stack [b,a] where
       b = Pattern $ (filter $ \e -> not $ test $ eventOnset e) . before
       a = Pattern $ (filter $ \e ->       test $ eventOnset e) . after
+
+-- ==================
+-- == Experimental ==
+-- ==================
+  -- Randomness
+    x :: IO Float
+    x = runRVar (uniform 1 5) DevRandom
+
+    z :: IO ()
+    z = do
+      f <- (*10) <$> runRVar (uniform 1 2) DevRandom :: IO Double
+      putStrLn $ show f
+      return ()
 
 -- ================== FGL ====================
   -- types
@@ -171,11 +187,6 @@
     -- group more spaces between ) and (, let each be a separate grammar within
 
 -- synonyms and near-synonyms
-    -- dur: broken, defining by hand (from init.tidal)
-      -- Did this ever work from a .hs file?
-      -- dur :: Double -> IO ()
-      -- dur = cps . (\x -> 1 / x)
-
     fast = density
     cyc = slowspread
 

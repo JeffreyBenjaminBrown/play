@@ -58,8 +58,8 @@
 
   ;; load libraries
     ;; jbb mod
-      (tidal-send-string ":load ~/git_play/tidal/loadEveryTime.hs")
       (tidal-send-string ":m +Sound.Tidal.Context")
+      (tidal-send-string ":load ~/git_play/tidal/loadEveryTime.hs")
     ;; original
       ;; (tidal-send-string ":module Sound.Tidal.Context")
 
