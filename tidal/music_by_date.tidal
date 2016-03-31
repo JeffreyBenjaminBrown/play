@@ -1,3 +1,33 @@
+dur 0.5
+d1 $ duty 0 3 8 (|*| coarse "128") $ sound "hh*4" -- duty: testing
+d2 $ duty 2 3 8 (|*| coarse "128") $ sound "sn" -- duty: testing
+
+dur 2 -- meter is 3, is tempting to hear as 4
+let c p q = cat [p, q, si]
+let sh = 1/3
+d1 $ sound                                  $ c "bd" si
+d2 $ duty 4 4 8 (|*| si) $ rl $. sh^2 $ sound $ c "sn" "sn"
+let c1 = c "hh" "hc"
+d3 $ duty 2 2 4 (|*| si) $ rl $. sh^2 $ sound $ c c1 c1
+d4 $ duty 0 7 8 (|*| si) $ sound "short:1*9"|*| gain "0.54"
+
+-- prev attempts to generalize next
+
+dur 1
+let sf = (|*| si)
+d1 $ sound "bd" -- **** meditate
+d2 $ duty 3 3 8 sf $ rl $. 1/2 $ sound "sn" 
+d3 $ duty 1 2 4 sf $ rl $. 1/4 $ sound "hc*2"
+d4 $ duty 0 1 2 sf $ rl $. 1/8 $ sound "hh*4" -- can add $ duty 8 8 16 sf
+
+-- 31
+
+dur 2
+d1 $ sound "psr:2*4 metal*4" |*| slow 4 $. up "0 3 7 12"
+d2 $ rl (1/4) $ fast 2 $ sound "bd sn"
+
+-- perform-edited; showing four young people at pwl, 2016 03 30
+
 -- rhythm training!
 let fracs = sort $ nub $ concatMap (\x -> [x,x*2,x*4]) [1%2,5%8,3%4,7%8,1] --ambit
 let fracs = sort $ nub $ concatMap (\x -> [x,x*2,x*4]) [1%2,3%4,1] -- less ambit
@@ -14,7 +44,7 @@ cps $ 2
 cps $ 3
 cps $ 4
 
--- would be more ambitious:
+-- a more ambitious grid
 1/2 5/8 3/4 7/8
 1 5/4 3/2 7/4
 2 5/2 3 7/2
@@ -39,6 +69,7 @@ d2 $ duty 0 4 8 ((rl $ 1/3).(|*| coarse "11")) $ rl (1/4) $ sound "hh hc"
 d3 $ rl (1/4) $ duty 0 4 8 ((striate 77).(|*| coarse "5")) $ striate 8 $ sound "bass"
 
 hush
+dur 1
 let str n li = slow (fromIntegral n) $ sound $ cat $ take n $ (li :: [PS])
 d1 $ fast 2 $ str 13 $ "[bleep insect]/2" : cycle ["[ht lt]/2" :: PS, "[mt ~!!]/4",si]
 d1 $ when (\n -> mod n 13 > 7) ( (rl $ 1/2).( |*| coarse "4")) $ sound "hc"
@@ -62,6 +93,8 @@ d2 $ slow (6/5) $ sound $ cat $ take 3 $ "sn" : cycle ["hc" :: PS, si,si] -- slo
 d2 $ slow (4/5) $ hi "[0,10,[18 20 21]/3]" |*| sound "psr" |*| gain "0.7"
 d1 $ every 2 (fast 2) $ slow (6/5) $ sound "jvbass sn ~" |*| up $. ((flip (-) 6).(*12)) <$> rand |*| slow 2 $. up "0 [0,19]"
 
+solo $ d1 $ sound $ cat ["bd","sn"]
+
 -- 24
 
 hush -- **
@@ -73,6 +106,11 @@ let g p = cat [p::PS,p,si,p]
 d3 $ slow 2 $ (sound $ f $ rev $ f $ "hh") |*| coarse "6"
 d2 $ stack $ [sound "bd", rr (1/2) $ less $ sound $ "sn"]
 d4 $ slow 2 $ (sound $ g $ rev $ g $ "psr") |*| coarse "128"
+
+
+dur 1
+d1 $ when (\n -> mod n 3 > 1) (|*| coarse "22") $ sound "hc*16"  |*| gain "0.7"
+d2 $ sound "bd sn"
 
  hush -- ***
  dur 2
