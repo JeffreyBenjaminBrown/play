@@ -1,12 +1,23 @@
-dur 1
 hush
+let randPitch = fromIntegral . floor . (*12) <$> rand
+d1 $ every 4 (|*| up randPitch) $ sound "bass"
+dur 2
+d2 $ fast 2 $ sd "bd sn"
+d1 $ sound "bass*16" |*| fast 2 $. up "0 [0,19]" |*| up (discretise 3 $ fromIntegral . floor . (*12) <$> rand)
+
+d1 $ sound "arpy*16" # speed (struct "x x*2 [x ~ x]" $ scale 1 2 rand)
+
+dur 1.2
+hush
+d5 $ slow 2 $ rr (1/20) $ up $. pp "0*2 0*2 ~ 0*2 0" "7 13 10 12 8" |*| sound "bass" |*| up "12" -- |*| coarse "29"
 d1 $ sound $. pp "x! ~ x ~" "bd sn"
-d2 $ duty 8 8 16 (|*| si) $ fast 2 $ sound $. pp "x! ~ x ~" "hc" |*| gain "0.7"
-d3 $ $ slow 4 $ sound $. pp "0*2 0*2 ~ 0*2 ~" "bass"
-d4 $ duty 4 4 8 (rr $ 1/5) $ rl (1/2) $ slow 8 $ sound "cp*4"
+d2 $ duty 1 8 16 (|*| si) $ fast 2 $ sound $. pp "x! ~ x ~" "hc" |*| gain "0.7"
+d3 $ slow 2 $ up $. pp "0*2 0*2 ~ 0*2 0" "3 1 7 5 8" |*| sound "bass"
+d4 $ duty 4 3 8 (\p -> stack [p, coarse "12" |*| rr (1/5) p]) $ rl (1/2) $ slow 8 $ sound "cp*4"
 
 --
 
+hush
 dur 4
 d1 $ chop 2 $ chop 2 $ chop 8 $ insF |*| up $. fromIntegral . floor . (*12) <$> rand |*| coarse "4" |*| gain "0.7"
 d3 $ chop 2 $ chop 2 $ chop 8 $ insF |*| rl (1/8) $. up $. fromIntegral . floor . (*12) <$> rand |*| coarse "4" |*| gain "0.7"
@@ -34,9 +45,14 @@ d1 $ sound "psr*4" |*| (up "[0,4,7] [[0,4,7] [-2,2,[5 9]/2]]/2" |*| slow 12 $. u
 d1 $ si
 d2 $ duty 0 1 4 (fast 4) $ drum1
 
-cps 5
-d1 $ sd "psr" |*| slow 4 $. up $. fromIntegral . floor . (*12) <$> rand
-d1 $ sd "psr" |*| (slow 4 $ up $ fromIntegral . floor . (*12) <$> rand)
+hush
+cps 2
+d1 $ chop 4 $ insBass |*| slow 4 $. up $. fromIntegral . floor . (*12) <$> rand
+d2 $ duty 0 1 2 (|*| si) $ insF |*| rl (1/2) $. slow 4 $. up $. fromIntegral . floor . (*12) <$> rand
+d3 $ duty 0 3 4 (|*| si) $ insF |*| rl (1/4) $. slow 4 $. up $. fromIntegral . floor . (*12) <$> rand
+d4 $ duty (-1) 1 8 (rl (1/4) . rev . fast 2) $ slow 2 $ sd "bd sn"
+d4 $ slow 2 $ duty (-1) 2 8 (\p -> stack [p, rl (1/4) $ fast 2 $ rev p]) $ slow 2 $ sd "bd sn"
+d5 $ duty 4 12 16 (|*| si) $ rl (1/4) $ sd "hc*2"
 
 -- jam training! random bass, perc
   -- extension: cycle the bass trigger freq: 1 2 1 0=silence
