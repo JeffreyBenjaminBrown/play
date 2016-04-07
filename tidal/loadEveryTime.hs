@@ -18,6 +18,8 @@
     import Data.Random
     import Data.Random.Source.DevRandom
 
+    import Data.Fixed (mod')
+
   -- Tidal    
     import Sound.Tidal.Params
     import Sound.Tidal.Parse
@@ -37,6 +39,7 @@
 
     duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
 
+    sd = sound
     si = silence
     rl = (<~)
     rr = (~>)

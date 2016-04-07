@@ -1,3 +1,55 @@
+dur 1
+hush
+d1 $ sound $. pp "x! ~ x ~" "bd sn"
+d2 $ duty 8 8 16 (|*| si) $ fast 2 $ sound $. pp "x! ~ x ~" "hc" |*| gain "0.7"
+d3 $ $ slow 4 $ sound $. pp "0*2 0*2 ~ 0*2 ~" "bass"
+d4 $ duty 4 4 8 (rr $ 1/5) $ rl (1/2) $ slow 8 $ sound "cp*4"
+
+--
+
+dur 4
+d1 $ chop 2 $ chop 2 $ chop 8 $ insF |*| up $. fromIntegral . floor . (*12) <$> rand |*| coarse "4" |*| gain "0.7"
+d3 $ chop 2 $ chop 2 $ chop 8 $ insF |*| rl (1/8) $. up $. fromIntegral . floor . (*12) <$> rand |*| coarse "4" |*| gain "0.7"
+d4 $ chop 2 $ chop 2 $ chop 8 $ insF |*| rl (1/2) $. up $. fromIntegral . floor . (*12) <$> rand |*| coarse "4" |*| gain "0.7"
+
+d2 $ sound "bd [sn sn*2 sn sn*3]/4"
+
+
+dur 5 -- **
+hush
+let fp pa pb = cat  [pa,si,pb,si]
+let fp4 pa pb = cat [pa,si,pa,pb]
+let fp2 pa pb = cat [pa,rev pb]
+let p1 = fp (sound "bd") (sound "sn")
+let p2 = fp (sound "hc") (sound "ht")
+d2 $ duty 1 1 4 (fast 2 . rl (1/8)) $ rl (1/8) $ sd "hh*4"
+d2 $ every 8 (slow 2) $ every 2 (|*| up "-3") $ every 4 (|*| coarse "22") $ every 2 (fp2 $ append p1 p2) $ rev $ fp4 p1 p2
+
+dur 4
+let drum1 = sound "bd sn!"
+let swing p = cat [p, rr (2/9) p]
+let fifths shf n = mod' (n*shf) 12
+let squash n = mod' n 12
+d1 $ sound "psr*4" |*| (up "[0,4,7] [[0,4,7] [-2,2,[5 9]/2]]/2" |*| slow 12 $. up $. fifths 5 <$>run 12) |*| up "-12"
+d1 $ si
+d2 $ duty 0 1 4 (fast 4) $ drum1
+
+cps 5
+d1 $ sd "psr" |*| slow 4 $. up $. fromIntegral . floor . (*12) <$> rand
+d1 $ sd "psr" |*| (slow 4 $ up $ fromIntegral . floor . (*12) <$> rand)
+
+-- jam training! random bass, perc
+  -- extension: cycle the bass trigger freq: 1 2 1 0=silence
+  -- extension: cycle the digital voice count: 1 2 1 0=silence
+dur 4
+let db = degradeBy
+hush
+d2 $ fast 1 $ chop 4 $ striate 16 $ insF |*| up "-17" |*| slow 8 $. up $. (fromIntegral . floor . (*12)) <$> rand |*| cut "1"
+d1 $ fast 4 $ stack [db 0.25 $ sound "bd cp", rl (1/8) $ db 0.5 $ sound "sn*4"]
+d1 $ fast 8 $ sound "[hc*4]?" |*| coarse "132"
+
+-- April 6
+
 hush
 dur 1.5
 d1 $ rl (1/4) $ sound "bd"
@@ -20,11 +72,13 @@ d4 $ duty 0 7 8 sf $ sound "short:1*9"|*| gain "0.54"
 
 -- prev attempts to generalize next
 
+hush
 dur 1
 let sf = (|*| si)
 d1 $ slow 4 $ sound "cp bd!!" -- **** meditate
-d2 $ duty 3 3 8 sf $ rl $. 1/2 $ sound "sn" 
+d2 $ duty 3 4 8 sf $ rl $. 1/2 $ sound "sn" 
 d3 $ duty 1 2 4 sf $ rl $. 1/4 $ sound "hc*2"
+d4 $ silence
 d4 $ duty 0 1 2 sf $ rl $. 1/8 $ sound "hh*4" -- can add $ duty 8 8 16 sf
 
 dur 2.3 -- ****
