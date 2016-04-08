@@ -1,3 +1,19 @@
+let len = 17 -- todo: use startWhen to fix glitch at transition time
+dur $ 0.15 * len
+let g = f len
+d1 $ sound $ g ("hh" :: PS) 5 0 "ht" 3 2
+ take 20 $  _f ("hh" :: PS) 1 1 "ht" 2 1
+d2 $ fast len $ sound "hc" |*| coarse "55" |*| gain "0.5"
+
+d1 $ sound $ _f ("hh" :: PS) 2 3   ("ht"::PS) 1 2
+take 15 $ 
+_f ("hh" :: PS) 2 3   ("ht"::PS) 1 2
+_f ("hh") 2 3   ("ht") 1 2
+d2 $ fast 11 $ sound "hc" |*| coarse "55" |*| gain "0.7"
+
+
+-- 2015 04 07
+
 hush
 let randPitch = fromIntegral . floor . (*12) <$> rand
 d1 $ every 4 (|*| up randPitch) $ sound "bass"

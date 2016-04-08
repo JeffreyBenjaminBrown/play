@@ -75,7 +75,19 @@
 -- ==================
 -- == Experimental ==
 -- ==================
-  -- Randomness
+  -- rhythm factory
+    f              len      p1 n1 seps1   p2 n2 seps2
+      = cat $ take len $ _f p1 n1 seps1   p2 n2 seps2
+
+    _f p1 n1 seps1   p2 n2 seps2 = 
+       let sep = flip replicate si;
+           g seps = concatMap (\e -> e:sep seps);
+           s1 = g seps1 $ replicate n1 p1; 
+           s2 = g seps2 $ replicate n2 p2;
+       in concat $ repeat $ s1 ++ s2
+       --  repeat $ concat $ s1 ++ s2
+
+  -- Randomness (not \Tidal)
     x :: IO Float
     x = runRVar (uniform 1 5) DevRandom
 
