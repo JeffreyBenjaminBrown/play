@@ -1,16 +1,11 @@
-let len = 17 -- todo: use startWhen to fix glitch at transition time
-dur $ 0.15 * len
+-- **** rhythm factory!
+let len = 11 -- todo: use startWhen to fix glitch at transition time
+dur $ 0.375 * len
 let g = f len
-d1 $ sound $ g ("hh" :: PS) 5 0 "ht" 3 2
- take 20 $  _f ("hh" :: PS) 1 1 "ht" 2 1
-d2 $ fast len $ sound "hc" |*| coarse "55" |*| gain "0.5"
-
-d1 $ sound $ _f ("hh" :: PS) 2 3   ("ht"::PS) 1 2
-take 15 $ 
-_f ("hh" :: PS) 2 3   ("ht"::PS) 1 2
-_f ("hh") 2 3   ("ht") 1 2
-d2 $ fast 11 $ sound "hc" |*| coarse "55" |*| gain "0.7"
-
+d1 $ every 4 (fast 2) $ rl (5/len) $ sound $ g ("gabba" :: PS) 2 0 "hc" 3 2
+d2 $ fast 2 $ sound $ g ("bd" :: PS) 4 0 "ht" 3 2
+d3 $ duty 2 3 4 (|*|si) $ fast len $ sound "hc" |*| coarse "55" |*| gain "0.8"
+d4 $ sound "psr" |*| slow 2 $. up "[0,4,7] [3,7,11]"
 
 -- 2015 04 07
 
@@ -185,7 +180,7 @@ d1 $ fast 2 $ (str 13 $ "[bleep insect]/2" : cycle ["[ht lt]/2" :: PS, "[bleep:5
 d2 $ rl (1/2) $ (str 11 $ "[hh hc]/2" : cycle ["[metal psr]/2" :: PS,si,si]) |*| coarse "11" |*| sound "bd"
 d3 $ slow 4 $ stack [sound "bd cp", rr (1/4) $ fast 2 $ sound "hh*2 ~"|*| gain "0.8"] -- 4s, 50 50
 
--- **** Polyrhythms: Can't lose!
+-- **** Polyrhythms!
 dur 0.75
 d1 $ slow (11/5) $ sound $ cat $ take 11 $ "[bleep insect]/2" : cycle ["[ht lt]/2" :: PS, si]
 d2 $ sound $ cat $ take 5 $ "[bd sn]/2" : cycle [si,"hh" :: PS]
