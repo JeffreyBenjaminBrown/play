@@ -1,10 +1,3 @@
--- DurationPatterns!
-data DurPatt a = DP {dur :: Rational, dpPatt :: Pattern a}
-
-let (-+) p q = DP (dur p + dur q) $ splitQueries $ Pattern $ (\a@(s,e)-> if s<0 then [] else if s < (dur p) then arc (dpPatt p) $ a else if s < (dur p + dur q) then arc (dpPatt q) $ a else [])
-
-(arc $ dpPatt $ (DP 2 $ sound "bd*2") -+ (DP 3 $ sound "cp*2")) (0,6)
-:t ((DP 2 $ sound "bd*2") -+ (DP 3 $ sound "cp*2"))
 
 --
 data DutyCyc a = DC {dur :: Rational, phase :: Rational, wavelen :: Rational}

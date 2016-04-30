@@ -1,6 +1,6 @@
 -- SETUP discussed here. Thank you Ben Gold! 
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
-
+    {-# LANGUAGE FlexibleContexts #-}
     module JBB where
 
 -- imports (remember, they must come first)
@@ -109,12 +109,16 @@
       -- c.f. Tidal.Pattern.splitQueries
     splitFracQueries r p = Pattern $ \a -> concatMap (arc p) $ arcFracCycles' r a
 
-    arcFracCycles' :: Rational -> Arc -> [Arc] -- c.f. Tidal.Time.arcCycles
-    arcFracCycles' r (s,e) | s >= e = []
-      | sam s == sam e = [(s,e)]
-      | otherwise = (s, nextSam s) : (arcFracCycles' r ((nextSam s) - 1, e - 1))
-      where sam t = (fromIntegral $ div' t r) * r
-            nextSam = (+1) . sam
+    arcFracCycles' :: Rational -> Arc -> [Arc] -- c.f. Tidal.Time.arcCycles'
+    arcFracCycles' r (s,e) -- e.g. arcFracCycles' (2%3) (0,1)
+      | r <= 0 = []
+      | s >= e = []
+      | sam' r s == sam' r e = [(s,e)]
+      | otherwise = (s, nextSam' r s)
+        : arcFracCycles' r (nextSam' r s - r, e-r)
+
+    sam' r t = (fromIntegral $ div' t r) * r -- like floor
+    nextSam' r = (+r) . sam' r -- like ceiling
 
   -- rhythm factory
     f              len      p1 n1 seps1   p2 n2 seps2
