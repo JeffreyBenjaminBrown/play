@@ -1,5 +1,4 @@
 -- DurationPatterns!
-
 data DurPatt a = DP {dur :: Rational, dpPatt :: Pattern a}
 
 let (-+) p q = DP (dur p + dur q) $ splitQueries $ Pattern $ (\a@(s,e)-> if s<0 then [] else if s < (dur p) then arc (dpPatt p) $ a else if s < (dur p + dur q) then arc (dpPatt q) $ a else [])

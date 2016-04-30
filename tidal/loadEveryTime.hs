@@ -18,7 +18,7 @@
     import Data.Random
     import Data.Random.Source.DevRandom
 
-    import Data.Fixed (mod')
+    import Data.Fixed (mod',div')
 
   -- Tidal    
     import Sound.Tidal.Params
@@ -83,6 +83,39 @@
 -- ==================
 -- == Experimental ==
 -- ==================
+  -- duration-aware patterns
+    data DurPatt a = DP {dpDur :: Rational, dpPatt :: Pattern a}
+
+    instance Monoid (DurPatt a) where
+      mappend = (-+)
+      mempty = DP 1 si
+
+    (-+) :: DurPatt a -> DurPatt a -> DurPatt a
+    (-+) p q = DP (dpDur p + dpDur q) $ splitQueries $ Pattern
+      $ (\a@(s,e) -> if s<0 then []
+                     else if s < (dpDur p)         then arc (dpPatt p) $ a
+                     else if s < (dpDur p + dpDur q) then arc (dpPatt q)
+                      $ mapArc ((-) $ dpDur p) a
+                     else [])
+      -- (arc $ dpPatt $ (DP 2 $ sound "bd*2") -+ (DP 3 $ sound "cp*2")) (0,6)
+
+--    (-*) :: Rational -> DurPatt -> DurPatt
+--    (-*) mult p = DP (mult * dpDur p) $ splitQueries $ Pattern
+--      $ (\a@(s,e) -> let (s',e') = (mod' s $ dpDur p, mod' e $ dpDur p) in
+--        in if s<0 then []
+--        else if
+
+    splitFracQueries :: Rational -> Pattern a -> Pattern a
+      -- c.f. Tidal.Pattern.splitQueries
+    splitFracQueries r p = Pattern $ \a -> concatMap (arc p) $ arcFracCycles' r a
+
+    arcFracCycles' :: Rational -> Arc -> [Arc] -- c.f. Tidal.Time.arcCycles
+    arcFracCycles' r (s,e) | s >= e = []
+      | sam s == sam e = [(s,e)]
+      | otherwise = (s, nextSam s) : (arcFracCycles' r ((nextSam s) - 1, e - 1))
+      where sam t = (fromIntegral $ div' t r) * r
+            nextSam = (+1) . sam
+
   -- rhythm factory
     f              len      p1 n1 seps1   p2 n2 seps2
       = cat $ take len $ _f p1 n1 seps1   p2 n2 seps2
