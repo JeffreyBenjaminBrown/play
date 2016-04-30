@@ -1,0 +1,44 @@
+-- I now think the problem is just that something was renamed ParamPattern.
+
+-- This is from loadEveryTime.hs.
+-- It worked in Tidal 6, which had the OscPattern and OscMap types.
+
+    gSound :: G -> Addr -> OscPattern -- works! d1 $ gSound g123 4
+      -- TODO : to get spls from qs: filter (isQual Spl) $ map (\(Q x) -> x)
+      -- TODO: test: addr should be a Sd
+      -- resulting pattern has no rhythm, and sound only at the very beginning
+    gSound g a =
+      let gqas = [a | (a,lab) <- L.lsuc g a, lab == Has] -- graph quality addrs
+          gqs = map ( (\(Q x) -> x) . fromJust . L.lab g) gqas
+          spls = map (\(Spl s) -> s) $ filter isSplQual gqs
+      in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "gabba") spls
+        -- start value must be something ("bd" so far) and not silence
+          -- because silence (the OscPattern) infects|conquers across |*|
+
+    gPatt :: G -> Addr -> OscPattern
+      -- TODO: BUGGY: only the first epsilon of the cycle is rendering
+      -- TODO: test: each Addr should be an Ev
+    gPatt g evAddr = 
+      let soundAdjs = L.lsuc g evAddr :: [(Addr,GE)] 
+            -- these Adjs are backwards; ordinarily the edge label is first
+          mkSound (addr,elab) = (oscPattToOscMaps $ gSound g addr, elab)
+            :: ( [OscMap] , GE)
+          mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
+      in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
+      -- test: gPatt g123 5 -- should make a sound at phase 0, another at 1/2
+
+  -- -- Investigating gPatt -- --
+    -- BUG: the one on the 0 works, the other defaults to gabba
+    -- let adjs = L.lsuc g123 5
+    -- map (_mkSound g123) adjs
+    -- _mkSound :: G -> (Addr,GE) -> ([OscMap], GE)
+    _mkSound g (a,e) = (gSound g a, e)
+      -- (oscPattToOscMaps $ gSound g a, e)
+
+    _mkTiming :: ([OscMap], GE) -> [(Rational,OscMap)]
+    _mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
+    -- in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
+
+    oscPattToOscMaps :: Pattern OscMap -> [OscMap] -- takes 1st instant, ala head
+    oscPattToOscMaps p = map (\(_,_,oscMap) -> oscMap)
+      $ arc p (0,toRational epsilon) -- :: [Event OscMap]

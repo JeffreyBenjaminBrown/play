@@ -39,11 +39,19 @@
 
     duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
 
-    sd = sound
+    -- abbrevs
+    -- @init.hs: h hush, sr striate
+    fl = floor
+    (fi,fr) = (fromIntegral,fromRational)
     si = silence
     rl = (<~)
     rr = (~>)
     pp = preplace (1,1)
+    (fa,sl) = (fast,slow)
+    (sp,sd,ga,co,ch)=(speed,sound,gain,coarse,chop)
+    rd = rand
+    (st,ap,sr,ssr) = (stack,append,spread,slowspread)
+    (ev,du) = (every,duty)
     lin min max x = x*(max - min) + min
 
   -- scales
@@ -120,42 +128,6 @@
     isSpdQual x = case x of Spd _ -> True; _ -> False
     isAmpQual x = case x of Amp _ -> True; _ -> False
 
-    gSound :: G -> Addr -> OscPattern -- works! d1 $ gSound g123 4
-      -- TODO : to get spls from qs: filter (isQual Spl) $ map (\(Q x) -> x)
-      -- TODO: test: addr should be a Sd
-      -- resulting pattern has no rhythm, and sound only at the very beginning
-    gSound g a =
-      let gqas = [a | (a,lab) <- L.lsuc g a, lab == Has] -- graph quality addrs
-          gqs = map ( (\(Q x) -> x) . fromJust . L.lab g) gqas
-          spls = map (\(Spl s) -> s) $ filter isSplQual gqs
-      in foldl (\oscp str -> oscp |*| sound $. pure str) (sound "gabba") spls
-        -- start value must be something ("bd" so far) and not silence
-          -- because silence (the OscPattern) infects|conquers across |*|
-
-    gPatt :: G -> Addr -> OscPattern
-      -- TODO: BUGGY: only the first epsilon of the cycle is rendering
-      -- TODO: test: each Addr should be an Ev
-    gPatt g evAddr = 
-      let soundAdjs = L.lsuc g evAddr :: [(Addr,GE)] 
-            -- these Adjs are backwards; ordinarily the edge label is first
-          mkSound (addr,elab) = (oscPattToOscMaps $ gSound g addr, elab)
-            :: ( [OscMap] , GE)
-          mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
-      in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
-      -- test: gPatt g123 5 -- should make a sound at phase 0, another at 1/2
-
-  -- -- Investigating gPatt -- --
-    -- BUG: the one on the 0 works, the other defaults to gabba
-    -- let adjs = L.lsuc g123 5
-    -- map (_mkSound g123) adjs
-    -- _mkSound :: G -> (Addr,GE) -> ([OscMap], GE)
-    _mkSound g (a,e) = (gSound g a, e)
-      -- (oscPattToOscMaps $ gSound g a, e)
-
-    _mkTiming :: ([OscMap], GE) -> [(Rational,OscMap)]
-    _mkTiming (oms, HasAt t) = map (\om -> (t,om)) oms
-    -- in trigListToPatt $ concatMap mkTiming $ map mkSound soundAdjs
-
   -- construct
     addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
     addNodes ns g = (g',is)
@@ -164,15 +136,16 @@
 
 -- fgl, data for tests
     g123 :: G
-    g123 = L.mkGraph [ (1,Sd), (2,Ev), (3,Q $ Spl "psr")
+    g123 = L.mkGraph [ (1,Sd), (2,Ev), (3,Q $ Spl "ps")
                      , (4,Sd), (5,Ev), (6,Q $ Spl "cp"), (7,Q $ Spd 2)
                      ][
-                       (1,3,Has) -- the Sound at 1 is the "psr" at 3
+                       (1,3,Has) -- the Sound at 1 is the "ps" at 3
                      , (2,1,HasAt $ 1%2) -- the Event at 2 is the Sound at 1
                      , (4,6,Has), (4,7,Has) -- the Sound at 4 is the "sn" at 6,
                                             -- at double speed
                      , (5,4,HasAt 0), (5,1,HasAt $ 1%2) -- Event 5 has 2 sounds
                      ]
+
 
 -- =============== old, little used ============
 
@@ -182,7 +155,7 @@
     ($.) :: (a -> b) -> a -> b
     f $. x = f x
 
-    infixr 5 $.. -- binds even after <$> and <*>
+    infixr 5 $.. -- binds even before <$> and <*>
     ($..) :: (a -> b) -> a -> b
     ($..) = ($)
 
@@ -213,8 +186,8 @@
       where step = 2**(1/31) 
       --obsoleted by |*|, but used in early portion of music.tidal
 
-    sp  = speed . return 
-    sps = speed . stack . fmap return
+    -- sp  = speed . return 
+    -- sps = speed . stack . fmap return
 
   -- scale functions
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
@@ -239,31 +212,31 @@
     sHar = [ 0, 5, 10, 13, 20, 23, 28] :: [Double]
     sAnt = [ 0, 5, 10, 13, 18, 21, 28] :: [Double]
 
-  -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jvbass
+  -- voices, inc. pitch corrections ("Corr") tuning (units of octave/31) to jv
     pluckCorr = 7.87
     insPluck = sound "pluck" |*| hi $. return pluckCorr
 
     offCorr = 13.4
     insOff = sound "off" |*| hi $. return offCorr  |*| gain "0.6"
 
-    bassCorr = -2
-    insBass = sound "bass" |*| hi $. return bassCorr
+    baCorr = -2
+    insBa = sound "ba" |*| hi $. return baCorr
     -- IS NEW WAY. Other instruments are defined with more complexity.
-    -- bassCorr = (-2) -- bass correction, to harmonize jvbass
+    -- baCorr = (-2) -- ba correction, to harmonize jv
       -- to prove that correction
-      -- d1 $ sound "bass*4" |+| up "1.82"
-      -- d2 $ (1/8) <~ sound "jvbass*4"
+      -- d1 $ sound "ba*4" |+| up "1.82"
+      -- d2 $ (1/8) <~ sound "jv*4"
 
-    insPsr = sound "psr" |*| hi ## psrCorr <$> "0"
-    psrCorr = (+2.5) -- psr correction, to harmonize jvbass
+    insPs = sound "ps" |*| hi ## psCorr <$> "0"
+    psCorr = (+2.5) -- ps correction, to harmonize jv
       -- to prove that correction
-      -- d1 $ sound "psr*4" |+| up "1.82"
-      -- d2 $ (1/8) <~ sound "jvbass*4"
+      -- d1 $ sound "ps*4" |+| up "1.82"
+      -- d2 $ (1/8) <~ sound "jv*4"
 
     insF = sound "f" |*| gain "0.75" |*| cutoff "0.15" |*| resonance "0.9" |*| hi ## fCorr <$> "-31"
     fCorr = (+ 7.0)
       -- fcorr = (+ 7)
-      -- d1 $ sound "jvbass*3" |+| pit 0 "0"
+      -- d1 $ sound "jv*3" |+| pit 0 "0"
       -- d2 $ sound "f" |+| gain "0.7" |+| pit (fcorr 0) "0"
 
     insSine = sound "sine" |*| hi ## sineCorr <$> "0" |*| gain "0.9"
@@ -291,7 +264,7 @@
       -- but of even a 60-second cycle this would be only one thousandth.
 
     ceiling_ish :: Arc -> Time
-      -- in a cycle-respecting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
+      -- in a cycle-respesp cting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
     ceiling_ish (a,b) = fromInteger $ floor a + 1
 
     splitArcAtIntegers :: Arc -> [Arc]
@@ -330,7 +303,3 @@
       in evtListToPatt evts
       -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
       -- trick: make arcs miniscule, ignore all but first time coordinate
-
-    oscPattToOscMaps :: Pattern OscMap -> [OscMap] -- takes 1st instant, ala head
-    oscPattToOscMaps p = map (\(_,_,oscMap) -> oscMap)
-      $ arc p (0,toRational epsilon) -- :: [Event OscMap]
