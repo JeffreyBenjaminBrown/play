@@ -100,10 +100,16 @@
       -- (arc $ dpPatt $ (DP 2 $ sound "bd*2") -+ (DP 3 $ sound "cp*2")) (0,6)
 
 --    (-*) :: Rational -> DurPatt -> DurPatt
---    (-*) mult p = DP (mult * dpDur p) $ splitQueries $ Pattern
---      $ (\a@(s,e) -> let (s',e') = (mod' s $ dpDur p, mod' e $ dpDur p) in
---        in if s<0 then []
---        else if
+--    (-*) mult p = let oldDur = dpDur p
+--                      newDur = mult * oldDur
+--      DP newDur $ splitFracQueries oldDur $ Pattern
+--        $ (\a@(s,e) -> let e' = min e newDur in
+--          if s<0 then []
+--          else if
+
+    capQueries :: Rational -> Pattern a -> Pattern a -- p before, silence after
+    capQueries maxQuery p = Pattern $ \(s,e) -> arc p $ (s, min e maxQuery)
+      -- arc (capQueries 2 $ sound "bd") (0,3) -- gives 2, not 3, bd samples
 
     splitFracQueries :: Rational -> Pattern a -> Pattern a
       -- c.f. Tidal.Pattern.splitQueries
