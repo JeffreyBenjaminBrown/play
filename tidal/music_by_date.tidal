@@ -1,3 +1,17 @@
+-- (+-) broke!
+let t = DP 2 $ sound "bd"
+let t' = DP 1 $ sound "~ cp"
+let tSum = t +- t'
+(arc $ dpPatt tSum) (0,4)
+
+(arc $ dpPatt $ (DP 2 $ sound "bd*2") +- (DP 3 $ sound "cp*2")) (0,6)
+
+-- shift
+let p = Pattern $ \(s,e) -> if s <= 1 && e > 1 then [((1,2),(1,2),"bd")] else []
+
+--
+let t = DP 1 $ sound "bd"
+(arc $ dpPatt $ 3 *- t) (0,4)
 
 --
 data DutyCyc a = DC {dur :: Rational, phase :: Rational, wavelen :: Rational}

@@ -1,0 +1,39 @@
+  -- duration-aware patterns
+    data DurPatt a = DP {dpDur :: Rational, dpPatt :: Pattern a}
+
+    instance Monoid (DurPatt a) where
+      mappend = (+-)
+      mempty = DP 1 si
+
+    (+-) :: DurPatt a -> DurPatt a -> DurPatt a
+    (+-) p q = DP (dpDur p + dpDur q) $ splitQueries $ Pattern
+      $ (\a@(s,e) -> if s<0 then []
+                     else if s < (dpDur p)         then arc (dpPatt p) $ a
+                     else if s < (dpDur p + dpDur q) then arc (dpPatt q)
+                      $ mapArc ((-) $ dpDur p) a
+                     arc [])
+      -- a test: (else $ dpPatt $ (DP 2 $ sound "bd*2") +- (DP 3 $ sound "cp*2")) (0,6)
+
+    (*-) :: Rational -> DurPatt a -> DurPatt a
+    (*-) mult p = let oldDur = dpDur p
+                      newDur = mult * oldDur
+      in DP newDur $ capQueries newDur $ splitFracQueries oldDur $ dpPatt p
+
+    capQueries :: Rational -> Pattern a -> Pattern a -- p before, silence after
+    capQueries maxQuery p = Pattern $ \(s,e) -> arc p $ (s, min e maxQuery)
+      --arc (capQueries 2 $ sound "bd") (0,3) --a test, gives 2, not 3, bd samples
+
+    splitFracQueries :: Rational -> Pattern a -> Pattern a
+      -- c.f. Tidal.Pattern.splitQueries
+    splitFracQueries r p = Pattern $ \a -> concatMap (arc p) $ arcFracCycles' r a
+
+    arcFracCycles' :: Rational -> Arc -> [Arc] -- c.f. Tidal.Time.arcCycles'
+    arcFracCycles' r (s,e) -- e.g. arcFracCycles' (2%3) (0,1)
+      | r <= 0 = []
+      | s >= e = []
+      | sam' r s == sam' r e = [(s,e)]
+      | otherwise = (s, nextSam' r s)
+        : arcFracCycles' r (nextSam' r s - r, e-r)
+
+    sam' r t = (fromIntegral $ div' t r) * r -- like floor
+    nextSam' r = (+r) . sam' r -- like ceiling
