@@ -5,23 +5,24 @@
       mappend = (+-)
       mempty = DP 1 si
 
-    (+-) :: DurPatt a -> DurPatt a -> DurPatt a
+    (+-) :: DurPatt a -> DurPatt a -> DurPatt a -- sequence two patterns
     (+-) p q = DP (dpDur p + dpDur q) $ splitQueries $ Pattern
       $ (\a@(s,e) -> if s<0 then []
                      else if s < (dpDur p)         then arc (dpPatt p) $ a
                      else if s < (dpDur p + dpDur q) then arc (dpPatt q)
                       $ mapArc ((-) $ dpDur p) a
                      arc [])
-      -- a test: (else $ dpPatt $ (DP 2 $ sound "bd*2") +- (DP 3 $ sound "cp*2")) (0,6)
+      --eg. (else $ dpPatt $ (DP 2 $ sound "bd*2") +- (DP 3 $ sound "cp*2")) (0,6)
 
-    (*-) :: Rational -> DurPatt a -> DurPatt a
+    -- ?better not as infix operator
+    (*-) :: Rational -> DurPatt a -> DurPatt a -- repeat a sequence
     (*-) mult p = let oldDur = dpDur p
                       newDur = mult * oldDur
       in DP newDur $ capQueries newDur $ splitFracQueries oldDur $ dpPatt p
 
-    capQueries :: Rational -> Pattern a -> Pattern a -- p before, silence after
-    capQueries maxQuery p = Pattern $ \(s,e) -> arc p $ (s, min e maxQuery)
-      --arc (capQueries 2 $ sound "bd") (0,3) --a test, gives 2, not 3, bd samples
+    capQueries :: Rational -> Pattern a -> Pattern a --p before maxq, silence after
+    capQueries maxq p = Pattern $ \(s,e) -> arc p $ (s, min e maxq)
+      --arc (capQueries 2 $ sound "bd") (0,3) --gives 2, not 3, bd samples
 
     splitFracQueries :: Rational -> Pattern a -> Pattern a
       -- c.f. Tidal.Pattern.splitQueries

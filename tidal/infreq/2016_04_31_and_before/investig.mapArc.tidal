@@ -1,0 +1,17 @@
+-- from Sound.Tidal.Pattern
+
+-- | @densityGap@ is similar to @density@ but maintains its cyclic
+-- alignment. For example, @densityGap 2 p@ would squash the events in
+-- pattern @p@ into the first half of each cycle (and the second
+-- halves would be empty).
+densityGap :: Time -> Pattern a -> Pattern a
+densityGap 0 p = silence
+densityGap r p = splitQueries $ withResultArc (\(s,e) -> (sam s + ((s - sam s)/r), (sam s + ((e - sam s)/r)))) $ Pattern (\a -> arc p $ mapArc (\t -> sam t + (min 1 (r * cyclePos t))) a)
+
+-- | @slow@ does the opposite of @density@, i.e. @slow 2 p@ will
+-- return a pattern that is half the speed.
+slow :: Time -> Pattern a -> Pattern a
+slow 0 = id
+slow t = density (1/t)
+
+-- | The @<~@ operator shifts (or rotates) a pattern to the left (or

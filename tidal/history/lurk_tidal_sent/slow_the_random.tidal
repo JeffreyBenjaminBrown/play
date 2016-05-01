@@ -1,0 +1,12 @@
+The following produces a bassline with a random pitch:
+
+  let randPitch = fromIntegral . floor . (*12) <$> rand
+  d1 $ sd "bass" |*| up randPitch
+
+Suppose you want the pitch to change only every 4 notes. It might seem reasonable to slow down the pitch instruction:
+
+  d1 $ sd "bass" |*| (slow 4 $ up randPitch)
+
+but the resulting sound is indistinguishable from the previous.
+
+Is there a way?

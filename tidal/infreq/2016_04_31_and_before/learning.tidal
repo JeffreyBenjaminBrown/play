@@ -1,0 +1,37 @@
+d3 $ sound $ fmap (const "hh:4") "bd ho sn [sn hh*2]/4" -- TODO: can't?
+
+d1 $ sound "bd sn*2?" -- might have zero, one or two sn
+d1 $ sound "bd sn?!"-- zero or two sn
+d1 $ sound "bd sn!" -- always two sn, yet (!) is defined in terms of pRand; why?
+
+-- 2015 10 15
+
+d1 $ density 4 $ sound "bd sn" |*| sound "~ hh ~ hh" -- cannot compose sound patterns?
+
+-- 2015 10 14
+
+d1 $ sound "bd!! [sn cp]/2" -- rotate fill!
+
+d1 $ sound "psr*8" |+| (hi $ fmap (scal sDia) $ run 5) -- scales!
+  -- broken until TidalCustom.hs works again
+
+let pat = "1.2 0.75 1" -- ? why can I treat wave like longWave, when are different types?
+let wave =               gain pat
+let longWave =  slow 4 $ speed pat
+let shortWave = fast 2 $ bandq pat |+| bandf pat |+| coarse pat
+d1 $ sound "psr*6" |+| cut "1" |+| wave |+| shortWave |+| longWave
+cps 1
+
+d1 $ sound "jvbass*8" |+| (hi "0 10 [18,25] 29" |*| hi "10") -- ? glitch? always mult voices
+dur 3
+
+d3 $ sound "f"  |+| (hi_ob 0 $ preplace (1,1) "x [~ x] x x" "0 10 18") -- divide by zero?
+d3 $ sound "f"  |+| (up $ preplace (1,1) "x [~ x] x x" "0 10 18") -- divide by zero?
+
+let p = slow 2 $ "x x x" -- psr? prr?
+d1 $ sound $ preplace (1,1) "x [~ x] x x" "bd cp! bd cp ho"
+d2 $ cyc (<~) [1/6,0] $ sound "~ jvbass*3" |+| (slow 2 $ cyc hi_ob [0,18] "0 10 25")
+d4 $ sound $ prr 0 (2,1) p "hh"
+d3 $ slow 2 $ sound "koy*6" |+| gain "0.7" |+| hi "[0, 14] [14, 18][18,25] [10,25] [8,26] [2,16]" |*| hi "62"
+
+

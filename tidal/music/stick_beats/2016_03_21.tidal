@@ -1,0 +1,12 @@
+hush
+dur 2 -- **** perc
+let f p = cat [p,p,silence,p]
+let g p = cat [rev p,p,rev p,silence]
+d5 $ slow 8 $ f $ rl (3/4) $. sound $. g $. f "bd" |*| cut "1"
+d1 $ slow 2 $ rl (1/16) $. sound $. f "sn"
+d2 $ slow 2 $ sound $. f $. f "hh" |*| gain "0.8"
+d3 $ slow 8 $ f $ rl (1/32) $ sound $. pp (g $. g "mt") "lt! mt! ht" |*| gain "0.8"
+d4 $ slow 8 $ rl (11/32) $ sound "[feelfx cr:5]/2"
+
+d5 $ sound "[bd! ~ bd]" |*| cut "1" --discofy
+d5 $ silence
