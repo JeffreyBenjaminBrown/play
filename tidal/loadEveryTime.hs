@@ -42,13 +42,14 @@
     -- abbrevs
     -- @init.hs: h hush, sr striate
     fl = floor
-    (fi,fr) = (fromIntegral,fromRational)
+    (fi,fr,tr) = (fromIntegral,fromRational,toRational)
     si = silence
     rl = (<~)
     rr = (~>)
     pp = preplace (1,1)
     (fa,sl) = (fast,slow)
-    (sp,sd,ga,co,ch)=(speed,sound,gain,coarse,chop)
+    (sp,sd,ga,co,ch,cr)=(speed,sound,gain,coarse,chop,crush)
+    (d,dt,df) = (delay,delaytime,delayfeedback)
     rd = rand
     (st,ap,sr,ssr) = (stack,append,spread,slowspread)
     (ev,du) = (every,duty)
@@ -83,6 +84,9 @@
 -- ==================
 -- == Experimental ==
 -- ==================
+    reps n fracs = concat $ map (\a -> take n $ repeat a) fracs
+      -- reps  3 [1,2] = [1,1,1,2,2,2]
+
   -- rhythm factory
     f              len      p1 n1 seps1   p2 n2 seps2
       = cat $ take len $ _f p1 n1 seps1   p2 n2 seps2

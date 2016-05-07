@@ -1,3 +1,4 @@
 let dur x = cps $ 1 / x
 let h = hush
-let sa = striate
+let sr = striate
+let p = pure
