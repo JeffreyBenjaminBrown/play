@@ -54,6 +54,8 @@
     (st,ap,sr,ssr) = (stack,append,spread,slowspread)
     (ev,du) = (every,duty)
     lin min max x = x*(max - min) + min
+    st' fracs = stack $ map pure fracs
+    ca' fracs = cat $ map pure fracs
 
   -- scales
     remUnif :: Integral a => a -> a -> a
