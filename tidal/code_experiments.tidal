@@ -1,9 +1,11 @@
 -- 2016 04 27, the first fractions
+import Data.List (sort)
+import Data.Ratio --just for (%), but I can't (?) qualify to that
 let fracs max = (%) <$> [1..max] <*> [1..max]
-let normz r = if r < 1 then normz $ 2*r else if r > 2 then normz $ r/2 else r
+let firstOctave r = if r < 1 then firstOctave $ 2*r else if r > 2 then firstOctave $ r/2 else r
 let h f = 12 * log f / log 2 -- hzTo12et
-let rs = map (\f -> (f, h $ fromRational f)) $ sort <$> nub $ normz <$> fracs
-mapM_ putStrLn $ map show rs
+let rs max = map (\f -> (f, h $ fromRational f)) $ sort <$> nub $ firstOctave <$> fracs max
+mapM_ putStrLn $ map show $ rs 10
 
 -- 2016 03 20
 d1 $ fast 2 $. sound "pluck" |*| pan "0 1" -- pan: [0,1]
