@@ -1,3 +1,123 @@
+-- one line mutating
+d1 $ i |*| sp $. st' [13/10,13/7]
+d1 $ i |*| sp $. p 13 |*| sp $. st' [1/10,1/7]
+d1 $ i |*| sp $. p 13 |*| sp $. st' [3/14,1/7,1/6]
+d1 $ i |*| sp $. p 11 |*| sp $. st' [3/14,1/7,1/6]
+d1 $ i |*| sl 4 $. sp $. slowcat[p 10,p 13,p 12] |*| sp $. st' [1/8,1/6,1/7] -- **
+
+d1 $ i |*| sp $. st' [1,10/7,13/7]
+d1 $ i |*| sp $. st' [13/10,13/7]
+d1 $ i |*| sp $. st' [1,3/2,15/8]
+d1 $ i |*| sp $. st' [4/7,12/7]
+
+-- comparing JI, 31et and (if it can reach) 12et
+dur 0.3
+let i = sd "mute:10" |*| up "-24"
+d1 $ i
+d1 $ i |*| sp $. st' [1,3/2] -- 3/2 ratio = 7.02 in 12et
+d1 $ i |*| up "[0,7]"
+d1 $ i |*| hi "[0,18]" -- 18 in 31et = 6.97 in 12et
+
+d1 $ i |*| sp $. st' [1,3/2,21/16] --21/16=4.71
+d1 $ i |*| hi "[0,12,18]" -- 12/31=4.65
+
+d1 $ i |*| sp $. st' [1,11/8]
+d1 $ i |*| hi "[0,14]"
+
+d1 $ i |*| sp $. st' [1,6/5,3/2]
+d1 $ i |*| hi "[0,8,18]"
+d1 $ i |*| up "[0,3,7]"
+
+d1 $ i |*| sp $. st' [1,5/4,7/4,7/3] -- dom #9
+d1 $ i |*| hi "[0,10,25,38]"
+d1 $ i |*| up "[0,4,10,15]"
+
+d1 $ i |*| sp $. st' [1,13/8]
+d1 $ i |*| hi "[0,22]"
+d1 $ i |*| up "[0,3,7]"
+
+
+-- just variations on $ 12et [0,3,7] [0,2,6]
+let i = sd "bl:4" |*| up "-12"
+let i2 = sd "si"
+dur 0.35
+d1 $ i |*| sp $. st' [8/7,10/7,1]
+
+d1 $ i |*| sp $. st' [1,9/8,45/32]
+d1 $ i |*| sp $. st' [1,6/5,3/2]
+d1 $ i |*| sp $. st' [1,7/6,35/24]
+
+d1 $ fa 2 i2 |*| sp $. st' [1,4/3,5/3]
+d1 $ i |*| sp $. st' [9/8,3/2,15/8]
+d1 $ i |*| sp $. st' [1,5/4,3/2]
+d1 $ i |*| sp $. st' [11/8,11/7,55/32]
+d1 $ i |*| sp $. st' [11/7,55/28,11/8]
+
+d1 $ i |*| sp $. st' [9/7,12/7,15/13] -- beautiful sus, irreducible
+d1 $ i |*| sp $. p $. 6/7 |*| sp $. st' [1,3/2,35/26] -- same chord
+d1 $ i |*| sp $. st' [9/7,12/7,8/7]
+d1 $ i |*| sp $. st' $. (flip (/) 7) <$> [9,12,15]
+
+d1 $ i |*| up "-0" |*| sp $. st' [4/5,9/10,1]
+
+d1 $ i |*| sp $. p (1) |*| sp $. st' $. [21/20,7/5,7/4]
+
+
+
+-- approximating harmonics -- div semitones by 6 > by 7
+  -- by 6, 13/8 is the first big miss; by 7 (below), 11/4 is
+let f freq = 12 * log freq / log 2
+mapM_ putStrLn $ map (show.f) [3/2,5/4,7/4,11/8,13/8]
+7.019550008653875
+3.863137138648349
+9.688259064691248
+5.513179423647567
+8.405276617693106
+mapM_ putStrLn $ map (show . flip (/) 7) [1..7]
+0.14285714285714285
+0.2857142857142857
+0.42857142857142855
+0.5714285714285714
+0.7142857142857143
+0.8571428571428571
+1.0
+
+-- just parallel figures! but awkward.
+dur 1.2
+let subset sc indices = map (\i -> sc !! i) indices
+let harmony sc iListList  = cat $ map (st' . subset sc) iListList
+  -- harmony sc1 [[0],[2,4]]
+let n_ad n gap = (*gap) <$> [0..n-1]  -- as in triad. n = nVox
+let n_ads maxRoot nVox gap = map (\shift -> (+shift) <$> n_ad nVox gap) [0..maxRoot-1] -- -> [[scale index]]
+let sc1 = take 100 $ concat $ repeat [2,9/8,5/4,4/3,3/2,5/3,15/8]
+let sc2 = take 100 $ concat $ repeat [1,35/32,5/4,21/16,3/2,25/16,7/4]
+let sc2 = take 100 $ concat $ repeat [1,21/16,3/2,7/4]
+let sc2 = take 100 $ concat $ repeat [1,35/32,5/4,21/16,3/2,49/32,7/4]
+d1 $ up "-5*8" |*| sl 7 $. sp $. harmony sc2 $. n_ads 7 3 2  |*| sd "si" |*| sp "[1]"
+
+let c1 = st'[1,3/2,7/4,5/2,11/4,25/16]
+let c2 = st'[1,3/2,7/4,5/2,11/4,3]
+let c3 = st'[1,3/2,7/4,5/2,11/4,3]
+
+d1 $ up "0*8" |*| sp $. cat [c1,c2] |*| sd "si"
+
+-- st
+
+d1 $ sd "si*8" |*| sp "[[1 0.875 0.85]/3, [[1.333,1.666] [1.375, 1.625] [1.2 1.4,1.6]]/3]" |*| sd "si"
+
+dur 1
+let st' fracs = stack $ map pure fracs
+let ca' fracs = cat $ map pure fracs
+let ibl = sd "bl:4" |*| up "-36"
+let isi = sd "si" |*| up "-7" |*| ga "0.77"
+let c1 = sp # st' [1,3/2,5/2,13/4]
+let c2 = sp # st' [3/2,7/2,13/5]
+let c3 = sp # st' [3/2,11/3,11/5]
+d1 $ sp "1*8" |*| sl 2 $. cat [c1,c2,c1,c3] |*| slow 20 $. sp # ca' [1,8/7,7/6,6/5] |*| isi
+d2 $ sd "bd [hh sn/5 ~ bd/3]"
+
+-- 2016 05 09
+
 do h; dur 3
 let n = 12
 solo $ d1 $ sd "ade:3"
