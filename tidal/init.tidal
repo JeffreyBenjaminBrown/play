@@ -1,4 +1,7 @@
+:set -XFlexibleContexts
 let dur x = cps $ 1 / x
 let h = hush
 let sr = striate
 let p = pure
+-- let (#) = ($.) -- somehow broken: the $. below cannot be a #
+  -- d1 $ sp "1*8" |*| c1 |*| slow 3 $. sp # cat' [1,7/6,6/5] |*| isi 
