@@ -1,3 +1,62 @@
+let sl' xs = concat $ map (\(a,b) -> [a,b]) $ zip xs xs
+dur 2
+let i = sd "pl" |*| up "12"
+d1 $ sl 3 $ (fa 2 $ sp "2") |*| sp $. ((/) 1) <$> "7 6 5" |*| i
+d2 $ sl 3 $ sp $. ((/) 1) <$> "13 12 11 10 9 8 7 6 5 4 3" |*| i |*| fa 3 $. sp "2 2" -- *** inverse harmonics: 3 (, 6, 12, ...), not 2, sounds fundamental
+
+d2 $ sl 2 $ fa 3 $. sp "[0.6666, 5 3 1]" |*| sp $. ((/) 1) <$> "16 15 14 13 12 [8*2 6*2]/4" |*| i |*| sp "4"
+
+-- ** numerator and denom seqd different, concurrent
+  -- it's such weird ear-training math!! e.g:
+  -- [18 15 12]^(-1) = 12et 0 3 7 (in order)
+d2 $ sl 2 $ fa 5 $. sp $. ((/) 1) <$> "12 9 8 7" |*| sp "8 12 13 7.5" |*| i |*| sp $. p (1/2)
+d2 $ fa 5 $ sl 2 $ sp $. ((/) 1) <$> "[12,20] 12" |*| i |*| sp "6 [5 4 3]/3"
+
+dur 1
+d2 $ sp $. ((/) 1) <$> "[12,[20 19 18 19]/4] 15" |*| i |*| sp "8"
+d2 $ sp $. ((/) 1) <$> "[10,[17 16 15 16]/4] 12" |*| i |*| sp "6"
+d2 $ sp $. ((/) 1) <$> "[9,[17 16 15 16]/4] 13" |*| i |*| sp "6"
+d1 $ sl 2 $ ssr fa [1,4/3,2,3] $ sd "[bd ~ bd] hc*3" |*| ga "0.7"
+
+
+d1 $ sp $. (/) 1 <$> "[3,2]" |*| i |*| sl 16 $. sp "2 1.6 1.2" -- perfect fifth
+  -- strangely, the low pitch is the high number
+d1 $ sp $. (/) 1 <$> "[6,5,4]" |*| i |*| sp "3" -- minor triad
+d1 $ sp $. (/) 1 <$> "[15,12,10]" |*| i |*| sp "6" -- major triad
+
+d1 $ sp $. (/) 1 <$> "[28,24,20]" |*| i |*| sp "8"
+d1 $ sp $. (/) 1 <$> "[28,21,20,16,14]" |*| i |*| sp "8"
+d1 $ sp $. (/) 1 <$> st' [x*2+3|x<-[0..3]] |*| i |*| sp "8"
+let uc start gap count = sp $. (/) 1 <$> st' [x*gap+start|x<-[1..count]] |*| sp $. p $. start + count*gap -- ** under-chord
+let uc' start gap count = sp $. (/) 1 <$> st' [x*gap+start|x<-[1..count]]
+
+d1 $ uc' 4 2 2 |*| i |*| sp "4"
+d1 $ sl 2 $ cat [uc 6 2 4, uc 6 3 3, uc 7 4 4, uc 7 5 5] |*| i |*| sp "0.5"
+
+d1 $ sp $. (/) 1 <$> "[28,21,20]" |*| i |*| sp "16"
+d1 $ sp $. (/) 1 <$> "[24,18,17]" |*| i |*| sp "16"
+d1 $ sp $. (/) 1 <$> "[20,15,11]" |*| i |*| sp "8" -- =
+d1 $ sp $. st' [0.75,1,15/11]  |*| i |*| sp "0.53" -- =
+
+d1 $ sl 3 $ sp $. (/) 1 <$> "[24 21]*3 18*3 14.4*3" |*| i |*| sp "6"
+d2 $ sp $. (/) 1 <$> "[9 10]/2 [13 12] [14.4 15]/2" |*| i |*| sp "6"
+
+d1 $ sl 3 $ sp $. (/) 1 <$> "24*6" |*| i |*| sp "6"
+d2 $ sl 2 $ sp $. (/) 1 <$> "10 15 16.666 16 13" |*| i |*| sp "6"
+
+d1 $ sp $. (/) 1<$>"[18,15,9,6]" |*| i |*| sl 4 $. sp "4 3.5"
+
+d1 $ i |*| sp "[24,[18 15]/2,12]" |*| sp "0.025"
+
+d2 $ (ssr rl (sl' [1/3,2/3,1]) $ fa 2 $ sp "1! 2 3") |*| sp $. ((/) 1) <$> "9 7 6" |*| i |*| sp "3"
+
+-- training heartbeat (chose average dur, listening to phase)
+dur $ 15.75/17
+d1 $ sd "hc!! [sn:1 ht]/2"
+
+dur 2.5 -- with stick
+d1 $ st [sd "bd sn/2", rl (1/3) $ sd "hh/3", du 4 5 8 (|*|si) $ sd "hc*3"]
+
 -- one line mutating
 d1 $ i |*| sp $. st' [13/10,13/7]
 d1 $ i |*| sp $. p 13 |*| sp $. st' [1/10,1/7]
@@ -11,12 +70,22 @@ d1 $ i |*| sp $. st' [1,3/2,15/8]
 d1 $ i |*| sp $. st' [4/7,12/7]
 
 -- comparing JI, 31et and (if it can reach) 12et
-dur 0.3
-let i = sd "mute:10" |*| up "-24"
+dur 2
+let i = sd "bl:4" |*| up "-30"
+let i = sd "f" |*| up "-30"
 d1 $ i
+
 d1 $ i |*| sp $. st' [1,3/2] -- 3/2 ratio = 7.02 in 12et
-d1 $ i |*| up "[0,7]"
+d1 $ i |*| up "[0,7]" -- the only harmonic where 12et > 31et
 d1 $ i |*| hi "[0,18]" -- 18 in 31et = 6.97 in 12et
+
+d1 $ i |*| sp $. st' [1,5/4] -- 3.86
+d1 $ i |*| hi "[0,10]" -- 3.87 !
+d1 $ i |*| up "[0,4]" -- 4
+
+d1 $ i |*| sp $. st' [1,7/4] -- 9.69
+d1 $ i |*| hi "[0,25]" -- 9.68 !
+d1 $ i |*| up "[0,10]" -- 10
 
 d1 $ i |*| sp $. st' [1,3/2,21/16] --21/16=4.71
 d1 $ i |*| hi "[0,12,18]" -- 12/31=4.65

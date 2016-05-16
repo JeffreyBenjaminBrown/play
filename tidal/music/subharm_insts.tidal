@@ -1,0 +1,19 @@
+let sl' xs = concat $ map (\(a,b) -> [a,b]) $ zip xs xs
+let i = sd "pl" |*| up "12"
+let uc start gap count = sp $. (/) 1 <$> st' [x*gap+start|x<-[1..count]] |*| sp $. p $. start + count*gap -- ** under-chord
+let uc' start gap count = sp $. (/) 1 <$> st' [x*gap+start|x<-[1..count]]
+
+dur 2
+d2 $ sp $. ((/) 1) <$> "[12,[20 19 18 19]/4] 15" |*| i |*| sp "8"
+
+dur 1.5
+d2 $ sp $. ((/) 1) <$> "[10,[17 16 15 16]/4] 12" |*| i |*| sp "6"
+d2 $ sp $. ((/) 1) <$> "[9,[17 16 15 16]/4] 13" |*| i |*| sp "6"
+
+d1 $ sl 2 $ ssr fa [1,4/3,2,3] $ sd "[bd ~ bd] hc*3" |*| ga "0.7"
+d3 $ sl 1.5 $ ssr fa [1,4/3,2,3] $ sd "[bd ~ bd] hc*3" |*| ga "0.74"
+
+d1 $ sl 2 $ cat [uc 6 2 4, uc 6 3 3, uc 7 4 4, uc 7 5 5, sp "[1, [1 1.5]/2]"] |*| i |*| sp "0.52"
+d1 $ sl 2 $ cat [uc' 3 2 2, uc' 3 2 3, uc 3 2 5] |*| i |*| sp "5"
+d2 $ sl 2 $ fa 5 $. sp $. ((/) 1) <$> "12 9 8 7" |*| sp "8 12 13 7.5" |*| i |*| sp $. p (1/2)
+d2 $ fa 5 $ sl 2 $ sp $. ((/) 1) <$> "[12,20] 12" |*| i |*| sp "6 [5 4 3]/3" |*| sp "1.5"
