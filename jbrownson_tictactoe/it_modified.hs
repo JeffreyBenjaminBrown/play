@@ -47,7 +47,7 @@ nth n = listToMaybe . drop n
 maybeRead :: Read a => String -> Maybe a
 maybeRead s = case reads s of
     [(x, "")] -> Just x
-    _ -> Nothing
+   _ -> Nothing
 
 setList :: Int -> a -> [a] -> Maybe [a]
 setList _ _ [] = Nothing
@@ -153,6 +153,6 @@ consoleGame moveGetterA moveGetterB = do
                     lift $ putStrLn ""
                     consoleGame moveGetterB moveGetterA
 
-main = void $ runStateT 
+main = void $ runStateT
   (consoleGame playerMoveGetter aiMoveGetter) 
   (X, emptyBoard)
