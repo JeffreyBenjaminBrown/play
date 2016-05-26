@@ -1,3 +1,110 @@
+-- **** CHORD PROGRESSIONS (unfinished)
+let s1 = [0,2,3,5,7,9,10]
+d1 $ up $. fmap (sc s1) $. run 7 |*| sd "ps"
+d3 $ unwrap $ (slowcat $ map pure [fa 1, fa 2, fa 3]) <*> (pure $ sound "bd sn")
+
+dur 1
+-- if you put the rev between the density 2 and density 3, so that over the four of them you get a density wave with a wavelength of 2 cycles, it's even better:
+d1 $ do {f <- slowcat $ pure<$>[density 1, density 2, density 3, rev]; f $ sound "bd sn:2"} -- alex's original
+d1 $ do {f <- slowcat $ p<$>[density 1, density 3, rl $ 1/4, density 2]; f $ sound "bd sn:2"} -- with (a shorter) meta-wave
+dur 2
+
+-- SuperDirt!
+d1 $ sd "[bd:3 [lt ~]/2] [sn:1 [ht ht*2]/2]"
+d2 $ n "1 1.2 [1.3333 [5 7]/2]" |*| n "11 22" |*| n "[16,15]" |*| sd "si" |*| sp "0.5" -- works!
+
+d1 $ sd "imp:20"
+d1 $ sd "gabor:20"
+
+d1 $ n "0 3 7.5" |+| sd "o_si:60" -- 7.5 becomes 7, because n :: Pattern Int -> _
+d1 $ sp "4" |*| sd "o_si:60" -- speed is ignored
+d1 $ sp "800" |*| sd "si" -- any freq lower than 5513 is inaudible
+d1 $ sp "1 1.2 1.5" |*| sp "5513" |*| sd "si" -- any freq lower than 5513 is inaudible
+
+--
+let cc = [0,4,7,10]
+let cf = (+5) <$> cc
+let cg = (+7) <$> cc
+d1 $ up $. cat $. fmap stack [cc, cf] |*| sd "ps"
+
+
+dur 0.3
+d1 $ up "[0,4,7,10]" |*| sd "pl" |*| up "12"
+d1 $ up $. (+5)<$> "[0,4,7,11]" |*| sd "pl" |*| up "0"
+
+-- 
+-- uniform-stacked just chords
+dur 2
+let chord num den reps = st' [(num/den)^i|i <- [0..reps]]
+d1 $ fa 2 $ sp $. cat [chord 5 3 4,chord 12 11 4,chord 9 7 3] |*| up "-12" |*| sd "pl" |*| sp "1 2 1.5" |*| sl 3 $. sp "1 2 1.333"
+d1 $ fa 4 $ up "-12" |*| sp $. st' [(13/11)^i|i <- [1..8]] |*| sl 8 $. sp "1 1.5 1.2 [1.1111 1.333] 1.0825" |*| sd "pl"
+d2 $ sd $ st ["bd sn", du 0 4 8 (rl (1/8)) $rl (1/4) $ fa 2 $ "hh"]
+
+-- ** just box quartads: ?avoid near-octaves, near-tritones
+dur 4 -- orig: 2
+dur 2
+let et12 ratio = 12 * log ratio / log 2 -- to 12et-read just fractions
+let box frac1 frac2 = (*) <$> [1,frac1] <*> [1,frac2]
+d2 $ sd $ st ["bd sn", du 0 4 12 (rl (1/8)) $rl (1/4) $ fa 2 $ "hh"]
+d1 $ sl 2 $. up "0*5 [3*4 [-2.04 4.98]*3]" |*| sp $. slowcat $. map (fa 4 . st') [box (5/4) (4/3), box (6/5) (2/3), box (8/7) (3/2), box (9/7) (11/8), box (7/8) (13/8), box (5/8) (3/2)] |*| sd "ps" |*| up "-12" |*| ga "0.9"
+
+d1 $ sl 2 $. up "0*5 [0*4 [0 12]*3]" |*| up "-5" |*| sp $. slowcat $. map (fa 4 . st') [box (9/7) (13/7)] |*| sd "ps" |*| up "-12" |*| ga "0.9"
+d3 $ sp $. slowcat $. fmap p $. [(11/7)^i|i<-[0..3]] |*| up "-27" |*| sd "f" |*| ga "0.7"
+
+d1 $ sl 2 $. up "0*5 [-7*4 [-1.5 5.52]*3]" |*| sp $. slowcat $. map (fa 4 . st') [box (8/7) (3/2)] |*| sd "ps" |*| up "-12" |*| ga "0.9"
+d2 $ sd $ st ["bd sn", rl (1/12) $ fa 4 $ "hh"]
+
+dur 2
+d1 $ st [sd "~ sn", fa 5 $ sd "hh", fa 4 $ sd "ht"]
+d2 $ sd "sa*5" |*| sp $. stack $. map p $. box (12/21) (11/7) |*| ga "0.7"
+
+d1 $ sp $. st' $. box (4/3) (7/6) |*| sd "ps"
+d1 $ sp $. slowcat $. map (fa 4 . st') [box (6/5) (4/3), box (17/14) (3/2), box (6/5) (3/2), box (7/6) (3/2), box (8/7) (13/8)] |*| sd "ps"
+
+-- arrhythmia
+dur 4
+d1 $ du 2 3 5 (sl 1.333) $ do {f <- cat $ p<$>[fa 1, fa 2, rl $ 1/8, fa 1.5]; f $ fa 4 $ sd "bd*2 sn:2"}
+d2 $ rl (1/8) $ sl 2 $ sd "ga"
+
+-- 20
+
+-- ** with stick, high hat (cheat?) for better apparent rhythm
+dur 1.7
+let fsi = (|*| si)
+d1 $ ev 2 (|*| si) $ sd "bd sn"
+d2 $ fa 4 $ du 4 13 16  (|*| si) $ sd "hh"
+d2 $ rl (1/8) $ unwrap $ (slowcat $ map p [fa 0,fa 1]) <*> (p $ sd "hh")
+
+-- 05 19
+
+let transforms = cat $ map pure [fast 1, fast 2, fast 3]
+d3 $ sound $ transforms <$> ("hh" :: Pattern String)
+
+dur 1.2
+let rhyt p = cat [p, fa 3 p]
+d1 $ sd $. pp (rhyt ("x"::PS)) "bd sn bl:1 ps" -- **
+d2 $ sl 3 $ up $. pp (rhyt ("0"::PS)) "0*2 5.5 7*2 8.4" |*| sp "[1,2,2.5,3]"|*|sd "[ba,ps]"
+d3 $ fa (4/7) $ sd "hc ~ hc ~ [~ hc] [hc ~] ~" -- with next (as altv)
+
+let rhyt p = slowcat $ ($) <$> [rl (1/3),id]<*>[p, fa 2 p, fa 4 p]
+d1 $ every 3 (fast 2) $ sound "bd sn"
+d1 $ sd $. pp (rhyt ("x"::PS)) "bd sn bl:1 ps" -- **
+d2 $ sl 4 $ up $. pp (rhyt ("0"::PS)) "0 3 7" |*| sp "[1,2,2.5,3] [1,1.75,2.25,3.333]"|*|sd "ba"
+d3 $ fa (2/7) $ sd "hc ~ hc ~ [~ hc] [hc ~] ~"
+
+-- want append, for high hat rhythm in above
+  -- looking for a polyrhythm that would codably achieve the same
+
+--prior lang for same
+d1 $ sd $. pp ("x x*3"::PS) "bd sn hh"
+d2 $ sl 4 $ up $. pp ("0 0*3"::PD) "0 3 7" |*| sd "f"
+
+--
+d1 $ sl 2 $ ssr fa [1,4/3,2,3] $ sd "[bd ~ bd] hc*3" |*| ga "0.7"
+d2 $ sl 2 $ sd "ho ht" -- with stick
+
+-- 5 18
+
 dur 1
 let i = sd "bl:4" |*| sp "0.15"
 d1 $ sp $. st' $. ((/) 13) <$> [5,6,7] |*| i
@@ -6,6 +113,8 @@ d1 $ sp $. st' $. ((/) (27) . fr . (*3)) <$> [11+1%3,8+1%3,6+1%3] |*| i
 d1 $ sp $. st' $. (flip (/) (14) . fr . (^2)) <$> [2..5] |*| i
 
 -- **
+dur 0.6
+let i = sd "pl:4" |*| sp "0.15"
 let r1 = sl 4 $ "f*4 f*2 f [~!! [~ f]]"
 d1 $ sd r1 |*| sp $. st' [9,8,7] |*| i
 d2 $ rl (1/3) $ sl 2 $ sd r1 |*| sp $. st' [3,7,11] |*| i
@@ -45,7 +154,6 @@ d2 $ sp $. ((/) 1) <$> "[12,[20 19 18 19]/4] 15" |*| i |*| sp "8"
 d2 $ sp $. ((/) 1) <$> "[10,[17 16 15 16]/4] 12" |*| i |*| sp "6"
 d2 $ sp $. ((/) 1) <$> "[9,[17 16 15 16]/4] 13" |*| i |*| sp "6"
 d1 $ sl 2 $ ssr fa [1,4/3,2,3] $ sd "[bd ~ bd] hc*3" |*| ga "0.7"
-
 
 d1 $ sp $. (/) 1 <$> "[3,2]" |*| i |*| sl 16 $. sp "2 1.6 1.2" -- perfect fifth
   -- strangely, the low pitch is the high number
@@ -274,11 +382,16 @@ d1 $ sp $. f1 $. (* (6/7)) <$> [1,2,6/5]  |*| i
 
 d1 $ sd "f" |*| vowel "o" |*| slow 10 $. sp "[0.5*10, 1 1.1 1.2 1.3 1.333! 1.3125!  1.25!]"
 
-d1 $ stack [sound "bd:5 ~ bd" |*| slow 4 $. sp "1 1.5 1.25 1.1" |*| ga "1 0.65" |*| vowel "[a a e i o u]/6" |*| d "1" |*| df "0.6" |*| dt $. pure (1/9), slow 2 $ sound "bd"] -- **
+d1 $ stack [du 0 4 8 (|*| co "7") $ du 0 8 16 (|*| up "39") $ sound "bd:5 ~ bd" |*| slow 4 $. sp "1 1.5 1.25 1.1" |*| ga "1 0.65" |*| vowel "[a a e i o u]/6" |*| d "1" |*| df "0.6" |*| dt $. pure (1/9), slow 2 $ sound "bd"] -- **
+d2 $ rr (1/9) $ fa 3 $ sound "hh" |*| ga "0.7"
+d3 $ rr (1/3) $ slow 4 $ sd "sn"
+
+-- sim
+d1 $ stack [sound "bd:5 ~ bd" |*| slow 4 $. sp "1 1.5 1.25 1.1" |*| ga "1 0.65" |*| vowel "[a a e i o u]/6" |*| d "1" |*| df "0.6" |*| dt $. pure (1/9), slow 2 $ sound "bd"]
 d2 $ rr (1/9) $ fa 3 $ sound "hc" |*| ga "0.7"
 d3 $ rr (1/3) $ slow 4 $ sd "sn"
 |*| co "1"
-|*| cr "2"
+|*| cr "2" -- broken?
 
 d1 $ sr 10 $ sound "bd:5"
 
