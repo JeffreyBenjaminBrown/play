@@ -1,0 +1,158 @@
+### ### [start scide]
+  init_OSC
+  empty
+  compiling class library...
+  initPassOne started
+  	NumPrimitives = 711
+  initPassOne done
+  	compiling dir: '/usr/local/share/SuperCollider/SCClassLibrary'
+  	compiling dir: '/usr/local/share/SuperCollider/Extensions'
+  	compiling dir: '/home/jeff/.local/share/SuperCollider/downloaded-quarks/Vowel'
+  	compiling dir: '/home/jeff/.local/share/SuperCollider/downloaded-quarks/Dirt-Samples'
+  	compiling dir: '/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt'
+  	pass 1 done
+  	numentries = 823102 / 11633400 = 0.071
+  	5175 method selectors, 2248 classes
+  	method table size 12570176 bytes, big table size 93067200
+  	Number of Symbols 11966
+  	Byte Code Size 364229
+  	compiled 318 files in 0.47 seconds
+  
+  Info: 3 methods are currently overwritten by extensions. To see which, execute:
+  MethodOverride.printAll
+
+  compile done
+  Class tree inited in 0.03 seconds
+  Cleaning up temp synthdefs...
+  WARNING: Extension in '/usr/local/share/SuperCollider/SCClassLibrary/Platform/linux/extMIDIOut.sc' overwrites Meta_MIDIClient:externalSources in main class library.
+  WARNING: Extension in '/usr/local/share/SuperCollider/SCClassLibrary/Platform/linux/extMIDIOut.sc' overwrites Meta_MIDIClient:externalDestinations in main class library.
+  WARNING: Extension in '/usr/local/share/SuperCollider/SCClassLibrary/Platform/linux/extMIDIOut.sc' overwrites Meta_MIDIIn:connectAll in main class library.
+  Intentional overwrites must be put in a 'SystemOverwrites' subfolder.
+  
+  
+  *** Welcome to SuperCollider 3.7.0. *** For help press Ctrl-D.
+  SCDoc: Indexing help-files...
+  SCDoc: Indexed 1350 documents in 1.41 seconds
+
+### ### s.boot()
+  booting 57110
+  -> localhost
+  JackDriver: client name is 'SuperCollider'
+  SC_AudioDriver: sample rate = 44100.000000, driver's block size = 1024
+  JackDriver: connected  system:capture_1 to SuperCollider:in_1
+  JackDriver: connected  system:capture_2 to SuperCollider:in_2
+  JackDriver: connected  SuperCollider:out_1 to system:playback_1
+  JackDriver: connected  SuperCollider:out_2 to system:playback_2
+  SuperCollider 3 server ready.
+  JackDriver: max output latency 46.4 ms
+  Receiving notification messages from server localhost
+  Shared memory server interface initialized
+
+### ### run some init code
+  ### ### the init code
+    (
+    // configure the sound server: here you could add hardware specific options
+    // see http://doc.sccode.org/Classes/ServerOptions.html
+    s.options.numBuffers = 1024 * 16; // increase this if you need to load more samples
+    s.options.memSize = 8192 * 16; // increase this if you get "alloc failed" messages
+    s.options.maxNodes = 1024 * 32; // increase this if you are getting drop outs and the message "too many nodes"
+    s.options.numOutputBusChannels = 2; // set this to your hardware output channel size, if necessary
+    s.options.numInputBusChannels = 2; // set this to your hardware input channel size, if necessary
+    // boot the server and start SuperDirt
+    s.waitForBoot {
+        ~dirt = SuperDirt(2, s); // two output channels, increase if you want to pan across more channels
+        ~dirt.loadSoundFiles;   // load samples (path containing a wildcard can be passed in)
+        s.sync; // wait for samples to be read
+        ~dirt.start(57120, [0, 0]);   // start listening on port 57120, create two orbits, each sending audio to channel 0. You can direct sounds to the orbits from tidal e.g. by: `# orbit "0 1 1"
+    }
+    )
+    // now you should be able to send from tidal via port 57120
+
+  ### ### which prints this
+    -> localhost
+    loading synthdefs in /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../synths/core-modules.scd
+    
+    
+     ---- SC3-Plugins not found. This is not a problem.Note that we are using a comb delay, which may not sound the same as SwitchDelay from the plugins
+    ---- core synth defs loaded ----
+    loading synthdefs in /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../synths/core-synths.scd
+    loading synthdefs in /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../synths/default-synths.scd
+    
+    loading sample banks:
+    20010320-Samples 20020506 808 909 ab ade ades2 ades3 ades4 alex alphabet amencutup armora arp arpy auto baa baa2 bass bass0 bass1 bass2 bass3 bassdm bassfoo battles bd bend bev bin birds3 bleep blip blue bottle breaks125 breaks152 breaks152loud breaks152louder breaks157 breaks165 breath bubble can casio cc chin chink circus clak click co cosmicg cp cr crow d db diphone diphone2 Dirt-Samples.quark dist dork2 dorkbot dr dr2 dr55 dr_few drum drumtraks e east electro1 erk f feel feelfx fest fire flick foo future gab gabba gabbaloud gabbalouder glasstap glitch glitch2 gretsch h hand hardcore haw hc hh hh27 hit hmm ho house ERROR: No more buffer numbers -- free some buffers before allocating more.
+    
+    PROTECTED CALL STACK:
+    	Meta_Buffer:new	0x1965d40
+    		arg this = Buffer
+    		arg server = localhost
+    		arg numFrames = nil
+    		arg numChannels = nil
+    		arg bufnum = nil
+    	Meta_Buffer:readWithInfo	0x2aa2ac0
+    		arg this = Buffer
+    		arg server = localhost
+    		arg path = /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT3D0.wav
+    		arg startFrame = 0
+    		arg numFrames = -1
+    		arg action = nil
+    		arg bufnum = nil
+    		var buffer = nil
+    	a FunctionDef	0x1a78740
+    		sourceCode = "<an open Function>"
+    		arg filepath = PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT3D0.wav)
+    		var buf = nil
+    		var name = nil
+    	ArrayedCollection:do	0x2594080
+    		arg this = [ PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT0D0.wav), PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT0D3.wav), PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT0D7.wav), PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/HT0DA.wav), PathName(/home/jeff/.local/share/SuperColl...etc...
+    		arg function = a Function
+    		var i = 4
+    	PathName:filesDo	0x24d3380
+    		arg this = PathName(/home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/)
+    		arg func = a Function
+    	a FunctionDef	0x1a78440
+    		sourceCode = "<an open Function>"
+    		arg folderPath = /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ht/
+    	ArrayedCollection:do	0x2594080
+    		arg this = [ /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/20010320-Samples/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/20020506/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/808/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/909/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ab/...etc...
+    		arg function = a Function
+    		var i = 101
+    	SuperDirt:loadSoundFiles	0x1a77e00
+    		arg this = a SuperDirt
+    		arg path = /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/
+    		arg fileExtension = wav
+    		var folderPaths = [ /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/20010320-Samples/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/20020506/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/808/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/909/, /home/jeff/.local/share/SuperCollider/downloaded-quarks/SuperDirt/classes/../../Dirt-Samples/ab/...etc...
+    	a FunctionDef	0x3214b68
+    		sourceCode = "{
+        ~dirt = SuperDirt(2, s); // two output channels, increase if you want to pan across more channels
+        ~dirt.loadSoundFiles;   // load samples (path containing a wildcard can be passed in)
+        s.sync; // wait for samples to be read
+        ~dirt.start(57120, [0, 0]);   // start listening on port 57120, create two orbits, each sending audio to channel 0. You can direct sounds to the orbits from tidal e.g. by: `# orbit \"0 1 1\"
+    }"
+    	Routine:prStart	0x22050c0
+    		arg this = a Routine
+    		arg inval = 138.280359776
+    
+CALL STACK:
+	Exception:reportError   0x2d44178
+		arg this = <instance of Error>
+	< closed FunctionDef >   0x331b368
+		arg error = <instance of Error>
+	Integer:forBy   0x3214088
+		arg this = 0
+		arg endval = 0
+		arg stepval = 2
+		arg function = <instance of Function>
+		var i = 0
+		var j = 0
+	SequenceableCollection:pairsDo   0x37998e8
+		arg this = [*2]
+		arg function = <instance of Function>
+	Scheduler:seconds_   0x37972f8
+		arg this = <instance of Scheduler>
+		arg newSeconds = 138.280534217
+	Meta_AppClock:tick   0x37975f8
+		arg this = <instance of Meta_AppClock>
+		var saveClock = <instance of Meta_SystemClock>
+	Process:tick   0x379b278
+		arg this = <instance of Main>
+^^ The preceding error dump is for ERROR: No more buffer numbers -- free some buffers before allocating more.
