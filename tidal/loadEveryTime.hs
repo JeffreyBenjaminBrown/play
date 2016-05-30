@@ -25,7 +25,7 @@
     import Sound.Tidal.Parse
     import Sound.Tidal.Pattern
     import Sound.Tidal.Strategies
-    import Sound.Tidal.Stream hiding (S,F,I)
+    import Sound.Tidal.Stream
     import Sound.Tidal.SuperCollider
     import Sound.Tidal.Tempo
     import Sound.Tidal.Time
