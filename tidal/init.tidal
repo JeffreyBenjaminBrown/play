@@ -1,20 +1,37 @@
 :set -XFlexibleContexts
 -- aliases one can't (why not?) define in a .hs file
   let dur x = cps $ 1 / x
-  let h = hush
   let sa = striate
   let p = pure
-
 -- SuperDirt
   (cps, getNow) <- bpsUtils
-  (d1, t1) <- superDirtSetters getNow
-  (d2, t2) <- superDirtSetters getNow
-  (d3, t3) <- superDirtSetters getNow
-  (d4, t4) <- superDirtSetters getNow
-  (d5, t5) <- superDirtSetters getNow
-
+  -- samples
+    (d0, t0) <- superDirtSetters getNow
+    (d1, t1) <- superDirtSetters getNow
+    (d2, t2) <- superDirtSetters getNow
+    (d3, t3) <- superDirtSetters getNow
+    (d4, t4) <- superDirtSetters getNow
+    (d5, t5) <- superDirtSetters getNow
+    (d6, t6) <- superDirtSetters getNow
+    (d7, t7) <- superDirtSetters getNow
+    (d8, t8) <- superDirtSetters getNow
+    (d9, t9) <- superDirtSetters getNow
+    let hush = do {d0 si; d1 si; d2 si; d3 si; d4 si; d5 si; d6 si; d7 si; d8 si; d9 si}
+    let h = hush
   -- qf is like n from Sound.Tidal.Params, but using Doubles, not Ints
     let qf_p = F "qf" (Just 0) -- Quality: (carrier) Frequency
     let qf = make' VF qf_p :: Pattern Double -> ParamPattern
-    let qaf_p = F "qaf" (Just 0) -- Quality: Amplitude Modulator Frequency
+    -- each of these next is expressed relative to qf
+    -- by default frequencies are 1*qf and amplitudes are 0
+    let qpf_p = F "qpf" (Just 1) -- Quality: Phase modulator Frequency
+    let qpf = make' VF qpf_p :: Pattern Double -> ParamPattern
+    let qpa_p = F "qpa" (Just 0) -- Quality: Phase modulator Amplitude
+    let qpa = make' VF qpa_p :: Pattern Double -> ParamPattern
+    let qff_p = F "qff" (Just 1) -- Quality: Freq modulator Frequency
+    let qff = make' VF qff_p :: Pattern Double -> ParamPattern
+    let qfa_p = F "qfa" (Just 0) -- Quality: Freq modulator Amplitude
+    let qfa = make' VF qfa_p :: Pattern Double -> ParamPattern
+    let qaf_p = F "qaf" (Just 1) -- Quality: Am modulator Frequency
     let qaf = make' VF qaf_p :: Pattern Double -> ParamPattern
+    let qaa_p = F "qaa" (Just 0) -- Quality: Am modulator Amplitude (typ. 0 or 1)
+    let qaa = make' VF qaa_p :: Pattern Double -> ParamPattern

@@ -26,25 +26,31 @@ s.waitForBoot {
 s.latency = 0.3; // increase this if you get "late" messages
 );
 
-( // sine, just-intoned
-SynthDef(\si, { |out, pan, amp = 1, qf, begin = 0, end = 1|
-	var env, sound;
-  env = EnvGen.ar(Env.perc(begin,end), doneAction:2) * amp;
-	sound = Saw.ar(qf);
+(
+(SynthDef(\sy,	{
+	|out, pan, amp = 1, qf=440, begin = 0, end = 1,
+	qfa = 0, qff = 1, qpa = 0, qpf = 1|
+	var env, aMod, pMod, fMod, carrier;
+	env = EnvGen.ar(Env.perc(begin,end), doneAction:2) * amp;
+	fMod = LFSaw.ar(qf * qff, 0, qf*qfa); // freq mod, BIG num
+	pMod = LFSaw.ar(qf * qpf, 0, qpa); // phase mod
+	carrier = SinOsc.ar(qf+fMod,pMod); //wks: qf+fMod
 	OffsetOut.ar(out,
-		DirtPan.ar(sound, ~dirt.numChannels, pan, env)
-	)
-}).add;
-)
+		DirtPan.ar(carrier,
+			~dirt.numChannels, pan, env));
+}).add;);
 
-( // sim, with amp mod
-SynthDef(\sia, { |out, pan, amp = 1, qf, qaf = 1, begin = 0, end = 1|
-	var env, modulator, sound;
-  env = EnvGen.ar(Env.perc(begin,end), doneAction:2) * amp;
-	modulator = SinOsc.kr(qaf, 0, 1);
-	sound = Saw.ar(qf,modulator);
+(SynthDef(\sya,	{
+	|out, pan, amp = 1, qf=440, begin = 0, end = 1,
+	qfa = 0, qff = 1, qpa = 0, qpf = 1, qaf = 1|
+	var env, aMod, pMod, fMod, carrier;
+	env = EnvGen.ar(Env.perc(begin,end), doneAction:2) * amp;
+	fMod = LFSaw.ar(qf * qff, 0, qf*qfa); // freq mod, BIG num
+	pMod = LFSaw.ar(qf * qpf, 0, qpa); // phase mods
+	aMod = Pulse.ar(qf * qaf); // amp mod, bandlimited(not LF)
+	carrier = SinOsc.ar(qf+fMod,pMod); //wks: qf+fMod
 	OffsetOut.ar(out,
-		DirtPan.ar(sound, ~dirt.numChannels, pan, env)
-	)
-}).add;
+		DirtPan.ar(carrier*aMod,
+			~dirt.numChannels, pan, env));
+}).add;)
 )

@@ -1,3 +1,5 @@
+READ HEAD spelunking downward is marked ">>>"
+
 -- **** CHORD PROGRESSIONS (unfinished)
 let s1 = [0,2,3,5,7,9,10]
 d1 $ up $. fmap (sc s1) $. run 7 |*| sd "ps"
@@ -9,7 +11,89 @@ d1 $ do {f <- slowcat $ pure<$>[density 1, density 2, density 3, rev]; f $ sound
 d1 $ do {f <- slowcat $ p<$>[density 1, density 3, rl $ 1/4, density 2]; f $ sound "bd sn:2"} -- with (a shorter) meta-wave
 dur 2
 
-dur 2 -- **
+--
+dur 1.2
+d1 $ sd "syb" |*| qf "440"
+d1 $ qf $. st' [1,9/8,10/8,11/8] |*| qf "400" |*| sd "syb" |*| end "0.9"
+d1 $ qf $. st' [1,9/7,10/7,8/7] |*| qf "400" |*| sd "syb" |*| end "0.9"
+d1 $ qf $. st' [1,9/6,10/6,7/6] |*| qf "400" |*| sd "syb" |*| end "0.9"
+
+
+-- june 7
+
+let triad = "1 1.2 1.5" :: Pattern Double
+let transposes = "1 1.1 1.5 1.2" :: Pattern Double
+d1 $ every 2 (rev . fast 1.5) $ sound "bd sn*2"
+d2 $ qf triad |*| slow 4 $. qf transposes |*| sound "sy" |*| qf "440"
+d3 $ du 0 2 4 (rl (1/8)) $ qf "1 2*2 [3.5 6.5]*2 3" |*| sound "sya" |*| qf "440" |*| qfa "3" |*| qff "1.9" |*| slow 2 $. qaf "0.1 0.01" |*| ga "1.1"
+do d1 si; d2 si; d3 si;
+d4 $ duty 1 1 2 (fast 2) $ sound "[hc hh/3]*8"
+
+dur 1
+let i = sound "sy" |*| qf "440"
+d1 $ duty 0 1 4 (|*| qf "1.25") $ i
+d2 $ duty 1 1 4 (|*| qf "1.25") $ i |*| qf "1.5"
+d3 $ duty 2 1 4 (|*| qf "1.25") $ i |*| sl 2 $. qf $. ca' [8/5,7/4]
+
+d1 $ i |*| qf "[1,1.25,1.5,1.625,1.875]" |*| slow 4 $. qf "1 1 1.333 1.5" |*| end "2"
+d1 $ i |*| slow 8 $. qf "[1,1.25,1.5,1.875] [1,1.25,1.625] [1,1.2,1.5,1.8]" |*| slow 4 $. qf "1 1 1.333 1.5" |*| end "2"
+d2 $ sound "bd [sn ~ ~ sn/4]"
+
+-- with jeff c
+dur 1
+d1 $ sound "[hc hc/5]*8" |*| slow 1.5 $. gain $. ((+ 0.5).(*0.5))<$>tri1
+d2 $ every 2 (rr (1/4)) $ stack [sound "bd ~ bd*2 ~" |*| ga "0.85", sound "~ sn ~ sn"]
+d4 $ sound "cr/4"  |*| sl 8 $. coarse "4 11"
+
+
+dur 3
+d1 $ sound "[bd*4,sn*5]"
+
+d1 $ every 2 (fast 2) $ sound "bd hh*2"
+d2 $ speed "1 1.25*2 1.5 2" |*| slow 3 $. speed "1 1.2 1.3333" |*| sound "ba" |*| gain "1.2"
+
+-- may 5
+
+dur 1.2 -- **
+let i = sd "sya" |*| qf "220"
+d4 $ du 0 1 3 rev $ du 0 2 8 (fa 2) $ sd "[bd sn]/2 ho" |*| ga "0.85"
+d3 $ qaf "0.2 0.25 0.3333 0.75 0.9" |*| qf $. p (1/4) |*| sl 4 $. qf "7 12 9 13" |*| i |*| qfa "1.75" |*| sl 8 $. qff "0.5 1 2" |*| fa 3 $. qpf "0.025 64" |*| sl 16 $. qpa "0.25 1 16 256"
+
+dur 1.2
+d2 $ sl 3 $ qpf $. ca' [1/4,13,3/2,9/7,6/13,4/5,7/6,11/7] |*| sd "sya" |*| qpa "2" |*| qaf $. p (7/5) |*| qfa $. p (11/7) |*| qff "1 2 3 4"
+
+
+dur 0.8 -- sya<->sy : rad
+d1 $ sd "sya*2" |*| qaa "1 0" |*| qaf $. p (11/8)
+
+let tf ch = du 0 2 3 ch . du 0 2 4 rev
+d1 $ tf (fa 2) $. qf "1 1.2 1.9" |*| sl 4 $. qf $. ca' [7/8,8/7,1,9/7] |*| sd "sy" |*| qf "[200,1200]" |*| qaf $. p (1/7) |*| qfa $. p (2/3) |*| sl 4 $. qff $. ca' [1/4,1/2,1,0.1,2] |*| qpa "20" |*| qpf "0.1 1 10 100"
+d2 $ tf (sa 2) $. sd $. st ["bd sn", rl (1/2) "hh*2"] |*| ga "1"
+
+d1 $ fast 2 $ sd "sy" |*| qaf rand |*| qpa rand |*| qpf rand |*| qfa rand |*| qff rand |*| ga "1.1" |*| end "0.6"
+
+d1 $ sa 2 $ du 0 2 8 (rev . fa 2) $. qf "[1,1.25,1.5] [1.3 1.6 1.9]" |*| du 0 4 16 (rev . fa 2) $. sl 3 $. qf "1 1.3 1.4" |*| i |*| sl 2 $. qaf "1 0.016"
+d2 $ du 12 4 16 (|*| si) $ sd "[[bd bd/4] sn]/2 [hh sn/8]"
+
+-- june 1
+
+dur 2
+d1 $ ev 2 rev $ sd "sy*8 sy*4" |*| qf "60 [300 [333,10]]" |*| qaf "[5.5,7]" |*| end "0.3" |*| ga "1" |*| qpf "5" |*| qfa "0.1 [2,7] 16" |*| qff "0.25" |*| sl 4 $. qf "1 1.2 0.75 1.333"
+d2 $ ev 8 (fa 2) $ ev 4 (rev) $ ev 2 (rl $ 1/4) $ sd "bd sn:1" |*| ga "1.2"
+d3 $ rl (1/5) $ sd "hh*2"
+d3 $ qff "0.0625*2 0.125 0.25*4 [0.04 0.002]/2" |*| qfa "1" |*| sd "sy" |*| qf "100" |*| qf "3 [7,[4 3]/4] [11 15]/2"
+d1 $ ev 3 (sl 2) $. ev 2 rev $. qff "0.01*3 0.1 0.2 0.25*2 3.33 4.25" |*| ev 3 rev $. qfa "0.0625 0.25 1 4 16 64" |*| sd "sy" |*| qf "400" |*| ev 5 rev $. qpf "21 111 0.2 3" |*| qaf "0.15 1 4 22"
+d1 $ qf "440 330*2 550*4" |*| sl 4 $. qf $. fmap (flip (/) 8) "5 7 9 11" |*| qpf "0.1" |*| qaf "0.5 [0.222,0.3,0.4] 0.55" |*| sd "sy"
+d3 $ qf "0.2 0.75 2 3 5 6.5" |*| qaf "[2,3,7,11]" |*| sd "sy" |*| sl 4 $. qf "55 110 220 330" |*| ga "0.9"
+d2 $ sl 2 $ sound "[bd ~ bd/3] [sn:1 sn/4 [~ sn:1]/2]"
+
+d1 $ fast 1 $. qpf "1.3" |*| sd "sy" |*| qf "110" |*| sl 4 $. qf "1 2 3 3.5" |*| end "2" |*| qaf "0.35"
+
+d4 $ sd "syb" |*| ga "1.1"
+
+-- May 31
+
+dur 0.2 -- * was great, is now half-broken
 let i = sd "si" |*| qf "[100,150]" |*| slow 4 $. qf "2 2.5 [1 3 5 7 11 13] 3.5"
 let q=12 in d1 $ slow q $ qf $. fmap (flip (/) 5) $. run q |*| i
 let q=20 in d2 $ slow q $ qf $. fmap (flip (/) 4) $. rev $. run q |*| i
@@ -29,6 +113,8 @@ d1 $ qf "1 1.25*3 1.5 1.7" |*| slow 3 $. qf "1 1.75 0.75" |*| qaf "1 400 700 3 1
 d2 $ (ssr sa [3,4,16,64,128]) $ ev 2 (fa 2) $ sd "bd hh sn:1 hh"
 
 d1 $ qf "400" |*| qaf "1" |*| sd "sia" |*| qf "2"
+
+
 
 --
 dur 1
@@ -149,8 +235,8 @@ let r1 = sl 4 $ "f*4 f*2 f [~!! [~ f]]"
 d1 $ sd r1 |*| sp $. st' [9,8,7] |*| i
 d2 $ rl (1/3) $ sl 2 $ sd r1 |*| sp $. st' [3,7,11] |*| i
 
-d1 $ sp $. st' $. ((/) 17) <$> [5,10,7] |*| i
-d1 $ sp $. st' $. ((/) 15) <$> [5,10,7] |*| i
+d1 $ sp $. st' $. ((/) 17) <$> [5,10,7] |*| i |*| sl 8 $. sp "[1 1.4]/2 0.8571" |*| sl 4 $. sp "1 2 3 4"
+d1 $ sl 2 $. up "0 0*2 0 [0*2 0*3]/2" |*| i |*| sp $. st' $. ((/) 15) <$> [5,10,7] |*| sl 4 $. sp "1 [1.2 2.2] 1.5 [3.5 3.66]" |*| sp "1.5"
 
 d2 $ sd $. du 3 4 8 (fmap $ (\spl -> case spl of "sn" -> "hh"; x -> x)) "bd [sn!! sn*3]/4"
 
@@ -159,15 +245,17 @@ d1 $ sp $. st' $. (flip (/) 13) <$> [5,6,7]
 
 -- may 16
 
-let i = sd "pl" |*| sp "12"
+let i = sd "pl" |*| sp "22"
 d1 $ sp $. st' [1/15,1/12,1/10] |*| i
 d1 $ sp $. st' [1,12/11,13/11,14/11] |*| i |*| sp "0.1" -- "major"!
 d1 $ sp $. st' [1,15/11,3/2] |*| i |*| sp "0.0666"
+d1 $ sp $. st' [1,15/11,(5/4)*(15/11)] |*| i |*| sp "0.0666"
+d1 $ sp $. st' [1,5/4,3/2] |*| i |*| sp "0.0666"
 d1 $ sp $. st' [1,11/8,3/2] |*| i |*| sp "0.0666"
 
 let sl' xs = concat $ map (\(a,b) -> [a,b]) $ zip xs xs
 dur 2
-let i = sd "pl" |*| up "12"
+let i = sd "pl" |*| up "30"
 d1 $ sl 3 $ (fa 2 $ sp "2") |*| sp $. ((/) 1) <$> "7 6 5" |*| i
 d2 $ sl 3 $ sp $. ((/) 1) <$> "13 12 11 10 9 8 7 6 5 4 3" |*| i |*| fa 3 $. sp "2 2" -- *** inverse harmonics: 3 (, 6, 12, ...), not 2, sounds fundamental
 
@@ -189,6 +277,8 @@ d1 $ sp $. (/) 1 <$> "[3,2]" |*| i |*| sl 16 $. sp "2 1.6 1.2" -- perfect fifth
   -- strangely, the low pitch is the high number
 d1 $ sp $. (/) 1 <$> "[6,5,4]" |*| i |*| sp "3" -- minor triad
 d1 $ sp $. (/) 1 <$> "[15,12,10]" |*| i |*| sp "6" -- major triad
+
+>>> resume review here moving downward
 
 d1 $ sp $. (/) 1 <$> "[28,24,20]" |*| i |*| sp "8"
 d1 $ sp $. (/) 1 <$> "[28,21,20,16,14]" |*| i |*| sp "8"
