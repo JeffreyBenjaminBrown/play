@@ -12,11 +12,38 @@ d1 $ do {f <- slowcat $ p<$>[density 1, density 3, rl $ 1/4, density 2]; f $ sou
 dur 2
 
 --
+
+
+
+-- ** THE (3^1,5^1,7^1) SCALE!
+dur 12
+let s357 = [1,35/32,5/4,21/16,3/2,105/64,7/4,15/8]
+let reordered = [2,3/2,15/8,5/2,105/64,35/16,7/4,21/16] -- min = 5/4, not 1 or 7/8
+let reordered = [1,5/4,15/8,3/2,105/64,21/16,7/8,35/32] -- 7/8 < 1
+let reordered = [1,3/2,15/8,5/4,105/64,35/32,7/8,21/16] -- 7/8 < 1
+d1 $ qf $. ca' reordered |*| qf "1200" |*| sd "sya" |*| end $. p 5.4 -- **
+
+dur 6
+let reordered = [1,7/6,3/2,11/8,49/24,7/4,77/48,21/8]
+d1 $ qf $. ca' reordered |*| qf "1200" |*| sd "sya" |*| end $. p 3  -- **
+
+let contrast = [1,5/4,3/2,15/8,135/64,27/16,45/32,9/8] -- min = 5/4, not 1 or 7/8
+d1 $ qf $. ca' contrast |*| qf "1200" |*| sd "sya" |*| end $. p 6 -- **
+
+
+
+dur 6 -- ** 1/1 lydian + 5/4 dorian scales, just-intoned
+ -- tricky interweaving so that the triad is always pretty
+let fracs = [1,45/32,15/8,3/2,25/12,5/4]
+d1 $ sl 2 $ qf $. ca' fracs |*| qf "200" |*| sd "sya" |*| end $. p 6
+
+-- june 12
+
 dur 1.2
-d1 $ sd "syb" |*| qf "440"
-d1 $ qf $. st' [1,9/8,10/8,11/8] |*| qf "400" |*| sd "syb" |*| end "0.9"
-d1 $ qf $. st' [1,9/7,10/7,8/7] |*| qf "400" |*| sd "syb" |*| end "0.9"
+d1 $ sd "sya" |*| qf "440" |*| ga "1.2"
 d1 $ qf $. st' [1,9/6,10/6,7/6] |*| qf "400" |*| sd "syb" |*| end "0.9"
+d1 $ qf $. st' [1,9/8,10/8,11/8] |*| qf "400" |*| sd "sya" |*| end "0.9"
+d1 $ qf $. sl 3 $. cat [st' [1,9/7,10/7,8/7],                                                              st' [1,9/8,10/8,11/8],                                                             st' [1,9/6,10/7,7/6]] |*| qf "200" |*| sd "sya" -- **
 
 
 -- june 7
@@ -27,7 +54,7 @@ d1 $ every 2 (rev . fast 1.5) $ sound "bd sn*2"
 d2 $ qf triad |*| slow 4 $. qf transposes |*| sound "sy" |*| qf "440"
 d3 $ du 0 2 4 (rl (1/8)) $ qf "1 2*2 [3.5 6.5]*2 3" |*| sound "sya" |*| qf "440" |*| qfa "3" |*| qff "1.9" |*| slow 2 $. qaf "0.1 0.01" |*| ga "1.1"
 do d1 si; d2 si; d3 si;
-d4 $ duty 1 1 2 (fast 2) $ sound "[hc hh/3]*8"
+d4 $ duty 1 1 2 (fast 1.5) $ sound "[hc hh/3]*8"
 
 dur 1
 let i = sound "sy" |*| qf "440"
