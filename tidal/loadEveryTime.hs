@@ -40,7 +40,7 @@
     duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
 
     -- abbrevs
-    -- @init.hs: h hush, sr striate
+    -- @init.hs: h hush, sa striate
     fl = floor
     (fi,fr,tr) = (fromIntegral,fromRational,toRational)
     si = silence
@@ -57,6 +57,11 @@
     st' fracs = stack $ map pure fracs
     ca' fracs = cat $ map pure fracs
 
+    zipNoTuple :: [a] -> [a] -> [a]
+    zipNoTuple xs     []     = xs
+    zipNoTuple []     ys     = ys
+    zipNoTuple (x:xs) (y:ys) = x : y : zipNoTuple xs ys
+
   -- scales
     remUnif :: Integral a => a -> a -> a
     remUnif num den = -- positive remainder
@@ -71,12 +76,22 @@
     lk :: [Double] -> Int -> Double -- 12 tone scale lookup
     lk sc idx =
       let len = length sc
-          idx' = floor $ fromIntegral $ remUnif idx $ len
+          idx' = floor $ fromIntegral $ remUnif idx len
           octaves = quotUnif idx len
       in (12 * fromIntegral octaves) + (sc !! idx')
 
-    -- transition between two patterns
-      -- based on playWhen, which transitions from silence to one pattern
+    lkji :: [Double] -> Int -> Double -- (scale) lookup, just inton
+    lkji sc idx =
+      let len = length sc
+          idx' = floor $ fromIntegral $ remUnif idx len
+          octaves = quotUnif idx len
+      in (2 ** fromIntegral octaves) * (sc !! idx')
+
+    denSca denom = map (flip (/) denom) [denom..denom*2-1] -- **
+      -- one-octave JI scale defined by a denominator
+
+  -- transition between two patterns
+    -- based on playWhen, which transitions from silence to one pattern
     changeWhen :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
     changeWhen test (Pattern before) (Pattern after) =  
       stack [b,a] where
