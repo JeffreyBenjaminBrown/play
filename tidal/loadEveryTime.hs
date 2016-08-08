@@ -210,7 +210,8 @@
     -- sp  = speed . return 
     -- sps = speed . stack . fmap return
 
-  -- scale functions
+  -- _. scale functions (obsolete, redundant ..
+      -- but used in music/by_date.tidal)
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
     scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remUnif n (fromIntegral $ length scale) 
     -- fmap (scaleElt [0,3,7]) [-5..5] -- test
