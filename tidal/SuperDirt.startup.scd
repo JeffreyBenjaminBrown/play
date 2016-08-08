@@ -1,5 +1,8 @@
+// THIS REALLY HAS TO BE THREE PIECES
+// I don't know why but I got in a lot of trouble trying to group them for faster loading.
+
 s.boot();
-( // << this thing ends at the same symbol backward
+(
 /*
 This is an example startup file. You can load it from your startup file
 (to be found in Platform.userAppSupportDir +/+ "startup.scd")
@@ -24,7 +27,9 @@ s.waitForBoot {
 	);
 };
 s.latency = 0.3; // increase this if you get "late" messages
+);
 
+(
 (SynthDef(\sy,	{
 	|out, pan, amp = 1, qf=440, begin = 0, end = 1,
 	qfa = 0, qff = 1, qpa = 0, qpf = 1|
@@ -51,4 +56,4 @@ s.latency = 0.3; // increase this if you get "late" messages
 		DirtPan.ar(carrier*aMod,
 			~dirt.numChannels, pan, env));
 }).add;)
-) // >> this thing starts at the same symbol backward
+)
