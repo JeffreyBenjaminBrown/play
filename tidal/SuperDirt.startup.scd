@@ -1,7 +1,7 @@
+s.boot();
 // THIS REALLY HAS TO BE THREE PIECES
 // I don't know why but I got in a lot of trouble trying to group them for faster loading.
 
-s.boot();
 (
 /*
 This is an example startup file. You can load it from your startup file
