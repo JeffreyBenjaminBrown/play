@@ -13,15 +13,29 @@ dur 2
 
 --
 
+d1 $ sd "bd sn"
+d2 $ sd "sy"
 
-
--- ** THE (3^1,5^1,7^1) SCALE!
-dur 12
+-- ** THE (3^1,5^1,7^1) SCALE! And a minor!
+dur 8
 let s357 = [1,35/32,5/4,21/16,3/2,105/64,7/4,15/8]
 let reordered = [2,3/2,15/8,5/2,105/64,35/16,7/4,21/16] -- min = 5/4, not 1 or 7/8
 let reordered = [1,5/4,15/8,3/2,105/64,21/16,7/8,35/32] -- 7/8 < 1
 let reordered = [1,3/2,15/8,5/4,105/64,35/32,7/8,21/16] -- 7/8 < 1
-d1 $ qf $. ca' reordered |*| qf "1200" |*| sd "sya" |*| end $. p 5.4 -- **
+let reordered = [5/6,1,5/4,15/8,3/2,  105/64,21/16,7/8,35/48,35/32] -- 7/8 < 1 + minor (5/6 and 35/48), rhyt 5/4
+d1 $ qf $. ca' reordered |*| slow 2 $. qf "80 120" |*| sd "sya" |*| ga "1.1" |*| end $. p 5.4 |*| fast (3/2) $. qaf "2!! 7! 6.5" -- cplx
+d1 $ qf $. ca' reordered |*| qf "100" |*| sd "sya" |*| ga "1.1" |*| end $. p 5.4 |*| fast (3/2) $. qaf "2 5" -- **
+
+dur 3 -- ** red cumbia xylophone
+let denSca denom = map (flip (/) denom) [denom..denom*2-1]
+let sca = denSca 9
+d2 $ cyc fast [1,4,2,4] $ slow 4 $ cyc chop [1,1,3,4] $ fast 2 $ sd "bd:1 ~ ~ sn:2 bd ~ sn:2 ~" -- **
+d1 $ slow 2 $ st [qf $. fmap (lkji sca) $. ca' $. zipNoTuple [1..12] $. reverse [11..30], rr (0.93/16) $. qf "[2,5,7,5.5/4,8.5/4]*8"]  |*| slow 4 $. qf "100 [40,60]" |*| sd "sya" |*| qpa "5" |*| slow 4 $. qpf "2 0.5" -- **
+
+d1 $ qf $. fmap (lkji sca) "0 [7 [10*4 9*4]/8]*2 [1,2] [2,3] [5,4]"   |*| qf "100" |*| sd "sya"
+
+
+let a=1:b; b=4:a in take 10 a
 
 dur 6
 let reordered = [1,7/6,3/2,11/8,49/24,7/4,77/48,21/8]
