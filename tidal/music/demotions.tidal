@@ -1,0 +1,12 @@
+-- 2016 08 08
+dur 1
+-- if you put the rev between the density 2 and density 3, so that over the four of them you get a density wave with a wavelength of 2 cycles, it's even better:
+d1 $ do {f <- slowcat $ pure<$>[density 1, density 2, density 3, rev]; f $ sound "bd sn:2"} -- alex's original
+d1 $ do {f <- slowcat $ p<$>[density 1, density 3, rl $ 1/4, density 2]; f $ sound "bd sn:2"} -- with (a shorter) meta-wave
+dur 2
+
+-- peanuts
+cps $ 1/4
+let scale1 = [1,9/8,5/4,3/2,5/3]
+let fig1 = "0 ~ 1 2 ~ 2 ~ 1 2 ~ 1 ~ 0 ~!!" :: Pattern Int
+d1 $ speed $. fmap (lkji scale1) $. st [fig1, fmap (+3) fig1] |*| sound "ps"
