@@ -1,5 +1,7 @@
 READ HEAD spelunking downward is marked ">>>"
 
+d1 $ sd "bd hh"
+
 -- **** CHORD PROGRESSIONS
 cps 0.2
 let major = [0,2,4,5,7,9,11]
@@ -40,7 +42,7 @@ let reordered = [1,7/6,3/2,11/8,49/24,7/4,77/48,21/8]
 d1 $ qf $. ca' reordered |*| qf "1200" |*| sd "sya" |*| end $. p 3  -- **
 
 let contrast = [1,5/4,3/2,15/8,135/64,27/16,45/32,9/8] -- min = 5/4, not 1 or 7/8
-d1 $ qf $. ca' contrast |*| qf "1200" |*| sd "sya" |*| end $. p 6 -- **
+d1 $ qf $. ca' contrast |*| qf "400" |*| sd "sya" |*| end $. p 6 -- **
 
 
 
@@ -79,7 +81,7 @@ d1 $ i |*| slow 8 $. qf "[1,1.25,1.5,1.875] [1,1.25,1.625] [1,1.2,1.5,1.8]" |*| 
 d2 $ sound "bd [sn ~ ~ sn/4]"
 
 -- with jeff c
-dur 1
+dur 1.5
 d1 $ sound "[hc hc/5]*8" |*| slow 1.5 $. gain $. ((+ 0.5).(*0.5))<$>tri1
 d2 $ every 2 (rr (1/4)) $ stack [sound "bd ~ bd*2 ~" |*| ga "0.85", sound "~ sn ~ sn"]
 d4 $ sound "cr/4"  |*| sl 8 $. coarse "4 11"

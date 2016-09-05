@@ -1,0 +1,12 @@
+d2 $ sd "sy" |*| slow 4 $. qf "[440] 450 475 [480]"
+d3 $ slow 4 $. qf "[550] ~ ~ [660/2]" |*| sd "sy" 
+d1 $ cyc fast [1,1,2] $ sd "sya hh bd" |*| qf "440"
+
+d2 $ cyc slow [4,2] $. sd "sy*3" |*| qf "[440] 450 475 [480]"
+d3 $ slow 4 $. rl (1/4) $. qf "[550] ~ ~ [660/2]" |*| sd "sy" 
+d1 $ cyc rl [1/3,1/2,0] $ sd "sya hh ht" |*| qf "55" |*| ga "1.3 1 1"
+d4 $ slow 2 $ sd "bd"
+
+d3 $ slow 4 $. qf "[550] ~ ~ [660/2]" |*| sd "sy" |*| qf "0.5"
+d2 $ cyc slow [4,2] $. sd "sy*3" |*| qf "[440] 450 475 [480]" |*| qf "0.5"
+d1 $ cyc rl [1/3,1/2,0] $ sd "sya hh ht" |*| qf "55" |*| ga "1.3 1 1"
