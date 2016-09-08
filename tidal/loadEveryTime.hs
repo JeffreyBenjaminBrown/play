@@ -150,10 +150,21 @@
     isAmpQual x = case x of Amp _ -> True; _ -> False
 
   -- construct
-    addNodes :: [GN] -> G -> (G,[Addr]) -- reports their addresses
-    addNodes ns g = (g',is)
+    addNodes :: [GN] -> G -> G
+    addNodes ns g = g'
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
+
+    addNodesRep :: [GN] -> G -> (G,[Addr]) -- also report addresses
+    addNodesRep ns g = (g',is)
+      where g' = L.insNodes (zip is ns) g
+            is = L.newNodes (length ns) g
+
+    view :: G -> [Addr] -> IO ()
+    view g as = let labs = catMaybes $ map (L.lab g) as
+      in if length labs < length as
+         then error "address not present in graph"
+         else mapM_ (putStrLn . show) $ zip as labs
 
 -- fgl, data for tests
     g123 :: G
