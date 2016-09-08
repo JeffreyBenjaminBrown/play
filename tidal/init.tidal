@@ -1,4 +1,5 @@
 :set -XFlexibleContexts
+import Data.Graph.Inductive
 -- aliases one can't (why not?) define in a .hs file
   let dur x = cps $ 1 / x
   let sa = striate
