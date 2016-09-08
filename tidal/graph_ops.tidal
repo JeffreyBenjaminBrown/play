@@ -1,6 +1,10 @@
-h
->>>
 let g = L.empty :: G
 view g $ nodes g
-g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho", Q $ Spd 440, Q $ Spd 550, Q $ Amp 0.7, Q $ Amp 1] g
+g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho"] g
+g <- return $ addNodes [Sd,Sd] g
+
+>>>
 d1 $ sd $ trigListToPatt [(0,"bd"),(1/2,"hh")]
+
+-- a more complex graph
+g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho", Q $ Spd 440, Q $ Spd 550, Q $ Amp 0.7, Q $ Amp 1] g

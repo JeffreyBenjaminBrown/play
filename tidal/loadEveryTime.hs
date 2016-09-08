@@ -130,11 +130,11 @@
   -- types
     type Addr = L.Node
     type Rat = Rational
-    type G = L.Gr GN GE -- Graph, Node, Edge
+    type Alias = String
 
+    type G = L.Gr GN GE -- Graph, Node, Edge
     data SoundQual = Spl String | Spd Float | Amp Float
       deriving (Read, Show, Ord, Eq)
-
     data GE = Has | HasAt Rat | HasAtFor Rat Rat deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
             | Sd -- Sound; has Qualities
