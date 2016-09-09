@@ -1,6 +1,7 @@
 -- SETUP discussed here. Thank you Ben Gold! 
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
     {-# LANGUAGE FlexibleContexts #-}
+    {-# LANGUAGE ViewPatterns #-}
     module JBB where
 
 -- imports (remember, they must come first)
@@ -105,7 +106,7 @@
       -- reps  3 [1,2] = [1,1,1,2,2,2]
 
   -- rhythm factory
-    f              len      p1 n1 seps1   p2 n2 seps2
+    f              len      p1 n1 seps1   p2 n2 seps2 -- was "f"
       = cat $ take len $ _f p1 n1 seps1   p2 n2 seps2
 
     _f p1 n1 seps1   p2 n2 seps2 = 
@@ -129,27 +130,40 @@
 -- ================== FGL ====================
   -- types
     type Addr = L.Node
-    type Rat = Rational
+    type When = Rational
+    type Dur = Rational
     type Alias = String
 
     type G = L.Gr GN GE -- Graph, Node, Edge
     data SoundQual = Spl String | Spd Float | Amp Float
       deriving (Read, Show, Ord, Eq)
-    data GE = Has | HasAt Rat | HasAtFor Rat Rat deriving (Read, Show, Ord, Eq)
+    data GE = Has | HasAt When | HasAtFor When Dur deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
             | Sd -- Sound; has Qualities
             | Ev -- Event; HasAt times sounds and events
       deriving (Read, Show, Ord, Eq)
 
-  -- TODO : rendering strategies
-    -- e.g. swing, or take only a size-n leading subseq
+    trigListToPatt :: [(When, a)] -> Pattern a -- later explained
+      -- the functions used hereing are defined later, access rarer
+    trigListToPatt trigList = 
+      let f time = (time, time + epsilon)
+          evts = map (\(r,a) -> (f r,f r,a)) trigList
+      in evtListToPatt evts
+      -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
+      -- trick: make arcs miniscule, ignore all but first time coordinate
 
-  -- render
-    isSplQual x = case x of Spl _ -> True; _ -> False
-    isSpdQual x = case x of Spd _ -> True; _ -> False
-    isAmpQual x = case x of Amp _ -> True; _ -> False
+    hStar :: G -> Addr -> ParamPattern
+    hStar g (L.lab g -> Nothing) = error "Node absent."
+    hStar g (L.lab g -> Just n) = case n of
+      Q (Spl s) -> sound $ trigListToPatt [(0,s)]
+      _ -> error "to do (finish hStar)"
+    
+    view :: G -> [Addr] -> IO ()
+    view g as = let labs = catMaybes $ map (L.lab g) as
+      in if length labs < length as
+         then error "address not present in graph"
+         else mapM_ (putStrLn . show) $ zip as labs
 
-  -- construct
     addNodes :: [GN] -> G -> G
     addNodes ns g = g'
       where g' = L.insNodes (zip is ns) g
@@ -160,11 +174,10 @@
       where g' = L.insNodes (zip is ns) g
             is = L.newNodes (length ns) g
 
-    view :: G -> [Addr] -> IO ()
-    view g as = let labs = catMaybes $ map (L.lab g) as
-      in if length labs < length as
-         then error "address not present in graph"
-         else mapM_ (putStrLn . show) $ zip as labs
+  -- stale
+    isSplQual x = case x of Spl _ -> True; _ -> False
+    isSpdQual x = case x of Spd _ -> True; _ -> False
+    isAmpQual x = case x of Amp _ -> True; _ -> False
 
 -- fgl, data for tests
     g123 :: G
@@ -291,7 +304,7 @@
             toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
             shift = rotl rotn tones
 
--- time
+-- time => trigListToPatt
     epsilon = 1/2^16 -- surely short enough to rarely cross cycles
       -- I have little reason to believe crossing cycles could cause bad things,
       -- but of even a 60-second cycle this would be only one thousandth.
@@ -328,11 +341,3 @@
         -- > let x = [((0,1%2),(0,1%2),"bd"),((1%2,1),(1%2,1),"sn")] :: [Event String]
         -- > (arc $ evtListToPatt x) (1/2,3/2)
         -- [((1 % 2,1 % 1),(1 % 2,1 % 1),"sn"),((1 % 1,3 % 2),(1 % 1,3 % 2),"bd")]
-
-    trigListToPatt :: [(Rational, a)] -> Pattern a
-    trigListToPatt trigList = 
-      let f time = (time, time + epsilon)
-          evts = map (\(r,a) -> (f r,f r,a)) trigList
-      in evtListToPatt evts
-      -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
-      -- trick: make arcs miniscule, ignore all but first time coordinate

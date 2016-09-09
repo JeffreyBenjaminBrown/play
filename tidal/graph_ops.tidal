@@ -1,7 +1,10 @@
 let g = L.empty :: G
 view g $ nodes g
+-- must hear ! two samples, two parts, two part-parts, ..
 g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho"] g
 g <- return $ addNodes [Sd,Sd] g
+g <- return $ insEdges [(2,0,HasAt 0),(2,1,HasAt $ 1/2)] g
+d1 $ hStar g 0
 
 >>>
 d1 $ sd $ trigListToPatt [(0,"bd"),(1/2,"hh")]
