@@ -164,8 +164,9 @@
     outside n = inside (1/n)
     timeLoop n = outside n loopFirst
 
+    -- WARNING: in a triple (a,b,p), speed of p is indep of a, b
     seqPLoop :: [(Time, Time, Pattern a)] -> Pattern a
-    seqPLoop ps = timeLoop (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
+    seqPLoop ps= timeLoop (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
 
   -- render to audio, text
     hStar :: G -> Addr -> ParamPattern
