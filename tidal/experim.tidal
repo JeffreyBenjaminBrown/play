@@ -1,3 +1,10 @@
+-- 2016 09 10, testing loopSeq by Alex McLean
+d1 $ sound "bd"
+let f k = rl $ 1/k
+dur 0.9
+d1 $ seqPLoop [(1,3,f 6$sd "bd"),(1,2,sd "hc"),(0,3,f 12$sd "hh*5")]
+d1 $ seqPLoop [(0,2,sd "bd"),(1,3,sd "hc*4")]
+
 -- 2016 04 27, the first fractions
 import Data.List (sort)
 import Data.Ratio --just for (%), but I can't (?) qualify to that

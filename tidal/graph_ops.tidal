@@ -1,13 +1,14 @@
 let g = L.empty :: G
 view g $ nodes g
+mapM_ (putStrLn . show) $ labEdges g
 -- must hear ! two samples, two parts, two part-parts, ..
-g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho"] g
-g <- return $ addNodes [Sd,Sd] g
+g <- return $ addNodes [Q$Spl "bd", Q$Spl "ho", Seq] g
 g <- return $ insEdges [(2,0,HasAt 0),(2,1,HasAt $ 1/2)] g
-d1 $ hStar g 0
+let x = trigList g 2
 
->>>
-d1 $ sd $ trigListToPatt [(0,"bd"),(1/2,"hh")]
+d1 $ st [hStar g 2] -- ! next
 
--- a more complex graph
-g <- return $ addNodes [Q $ Spl "bd", Q $ Spl "ho", Q $ Spd 440, Q $ Spd 550, Q $ Amp 0.7, Q $ Amp 1] g
+d1 $ trigListToPatt' $ trigList g 2 -- works!
+d1 $ st [hStar g 0, hStar g 1] -- works!
+
+

@@ -128,7 +128,6 @@
       return ()
 
 -- ================== FGL ====================
-  -- types
     type Addr = L.Node
     type When = Rational
     type Dur = Rational
@@ -140,24 +139,45 @@
     data GE = Has | HasAt When | HasAtFor When Dur deriving (Read, Show, Ord, Eq)
     data GN = Q SoundQual
             | Sd -- Sound; has Qualities
-            | Ev -- Event; HasAt times sounds and events
+            | Seq -- HasAt times sounds and events
       deriving (Read, Show, Ord, Eq)
 
-    trigListToPatt :: [(When, a)] -> Pattern a -- later explained
-      -- the functions used hereing are defined later, access rarer
-    trigListToPatt trigList = 
-      let f time = (time, time + epsilon)
-          evts = map (\(r,a) -> (f r,f r,a)) trigList
-      in evtListToPatt evts
-      -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
-      -- trick: make arcs miniscule, ignore all but first time coordinate
+    trigList :: G -> Addr -> [(When,ParamPattern)]
+    trigList g (L.lab g -> Nothing) = error "Node absent."
+    trigList g a@(L.lab g -> Just n) = case n of
+      Seq -> let
+        contents = L.lsuc g a :: [(Addr,GE)]
+        in map (\(a,HasAt t)->(t,hStar g a)) contents
+      _ -> error "to do (finish hStar)"
 
+    -- WARNING: inputs must all start at beat 0 and have no duration
+      -- and all When values must be in [0,1] (or maybe [0,1)]
+    trigListToPatt' :: [(When, ParamPattern)] -> ParamPattern
+    trigListToPatt' pairs = let f when patt = rl when patt
+      in seqPLoop $ map (\(when,patt) -> (0,1,f when patt)) pairs
+
+  -- seqPLoop. Thanks, Alex McLean!
+    loopFirst p = splitQueries $ Pattern f where
+      f a@(s,e) = mapSnds' plus $ mapFsts' plus $ arc p (minus a) where
+        minus = mapArc (subtract (sam s))
+        plus = mapArc (+ (sam s))
+    outside n = inside (1/n)
+    timeLoop n = outside n loopFirst
+
+    seqPLoop :: [(Time, Time, Pattern a)] -> Pattern a
+    seqPLoop ps = timeLoop (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
+
+  -- render to audio, text
     hStar :: G -> Addr -> ParamPattern
     hStar g (L.lab g -> Nothing) = error "Node absent."
-    hStar g (L.lab g -> Just n) = case n of
-      Q (Spl s) -> sound $ trigListToPatt [(0,s)]
+    hStar g a@(L.lab g -> Just n) = let tp=trigListToPatt in case n of
+      Q (Spl s) -> sound $ tp [(0,s)]
+--      Seq -> let
+--        contents = L.lsuc g a :: [(Addr,GE)]
+--        triples =map (\(a,HasAt t)->(t,t+epsilon,hStar g a)) contents
+--        in sd $ tp triples
       _ -> error "to do (finish hStar)"
-    
+
     view :: G -> [Addr] -> IO ()
     view g as = let labs = catMaybes $ map (L.lab g) as
       in if length labs < length as
@@ -179,10 +199,10 @@
     isSpdQual x = case x of Spd _ -> True; _ -> False
     isAmpQual x = case x of Amp _ -> True; _ -> False
 
--- fgl, data for tests
+   -- fgl, data for tests
     g123 :: G
-    g123 = L.mkGraph [ (1,Sd), (2,Ev), (3,Q $ Spl "ps")
-                     , (4,Sd), (5,Ev), (6,Q $ Spl "cp"), (7,Q $ Spd 2)
+    g123 = L.mkGraph [ (1,Sd), (2,Seq), (3,Q $ Spl "ps")
+                     , (4,Sd), (5,Seq), (6,Q $ Spl "cp"), (7,Q $ Spd 2)
                      ][
                        (1,3,Has) -- the Sound at 1 is the "ps" at 3
                      , (2,1,HasAt $ 1%2) -- the Event at 2 is the Sound at 1
@@ -309,8 +329,8 @@
       -- I have little reason to believe crossing cycles could cause bad things,
       -- but of even a 60-second cycle this would be only one thousandth.
 
-    ceiling_ish :: Arc -> Time
-      -- in a cycle-respesp cting Arc (a,b), b < floor a + 1 = ceiling_ish (a,b)
+    ceiling_ish :: Arc -> Time -- in a "cycle-respecting" Arc (a,b),
+      -- b < floor a + 1 = ceiling_ish (a,b)
     ceiling_ish (a,b) = fromInteger $ floor a + 1
 
     splitArcAtIntegers :: Arc -> [Arc]
@@ -341,3 +361,11 @@
         -- > let x = [((0,1%2),(0,1%2),"bd"),((1%2,1),(1%2,1),"sn")] :: [Event String]
         -- > (arc $ evtListToPatt x) (1/2,3/2)
         -- [((1 % 2,1 % 1),(1 % 2,1 % 1),"sn"),((1 % 1,3 % 2),(1 % 1,3 % 2),"bd")]
+
+    trigListToPatt :: [(When, a)] -> Pattern a
+    trigListToPatt trigList = 
+      let f time = (time, time + epsilon)
+          evts = map (\(r,a) -> (f r,f r,a)) trigList
+      in evtListToPatt evts
+      -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
+      -- trick: make arcs miniscule, ignore all but first time coordinate
