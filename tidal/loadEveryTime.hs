@@ -128,27 +128,27 @@
       return ()
 
 -- ================== FGL ====================
-    type Addr = L.Node
     type When = Rational
     type Dur = Rational
-    type Alias = String
+
+    type Addr = L.Node
+    type SdOrQualAddr = L.Node
 
     type G = L.Gr GN GE -- Graph, Node, Edge
     data SoundQual = Spl String | Spd Float | Amp Float
       deriving (Read, Show, Ord, Eq)
     data GE = Has | HasAt When | HasAtFor When Dur deriving (Read, Show, Ord, Eq)
-    data GN = Q SoundQual
-            | Sd -- Sound; has Qualities
-            | Seq -- HasAt times sounds and events
+    data GN = Q SoundQual | Sd | Seq --REM: add typenames if xtend
       deriving (Read, Show, Ord, Eq)
+
+    -- fromSoundQuals :: G -> SdOrQualAddr -> ParamPattern
 
     trigList :: G -> Addr -> [(When,ParamPattern)]
     trigList g (L.lab g -> Nothing) = error "Node absent."
-    trigList g a@(L.lab g -> Just n) = case n of
-      Seq -> let
-        contents = L.lsuc g a :: [(Addr,GE)]
-        in map (\(a,HasAt t)->(t,hStar g a)) contents
-      _ -> error "to do (finish hStar)"
+    trigList g a@(L.lab g -> Just Seq) =
+      let contents = L.lsuc g a :: [(Addr,GE)] -- any kind?
+      in map (\(a,HasAt t)->(t,hStar g a)) contents
+    trigList g  _ = error "to do (finish hStar)"
 
     -- WARNING: inputs must all start at beat 0 and have no duration
       -- and all When values must be in [0,1] (or maybe [0,1)]

@@ -9,6 +9,4 @@ let x = trigList g 2
 d1 $ st [hStar g 2] -- ! next
 
 d1 $ trigListToPatt' $ trigList g 2 -- works!
-d1 $ st [hStar g 0, hStar g 1] -- works!
-
-
+d1 $ stack [hStar g 0 |*| cr "1.7", hStar g 1] -- works!
