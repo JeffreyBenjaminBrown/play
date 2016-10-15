@@ -14,8 +14,17 @@ Ndef(\a, { Ringz.ar(Ndef.ar(\b), [350, 351.3] * 2, 0.4) });
 Ndef(\b, { Impulse.ar([5, 7]/2, [0, 0.5], 0.15) });
 Ndef.clear(3); // clear all after 3 seconds
 
+( // moogff\help
+x = {
+    MoogFF.ar(
+        Pulse.ar([40,121], [0.3,0.7]),
+        SinOsc.kr(LFNoise0.kr(0.42).range(0.001, 2.2)).range(30, 4200),
+        0.83 * 4)}.play(s);
+)
+x.free;
+
 // 07, Thor Magnusson
-({x=SinOsc;y=LFNoise0;a=y.ar(8);
+({x=Saw;y=LFNoise0;a=y.ar(8);
 	(x.ar(
 		Pulse.ar(1/2)*30)+x.ar(400+(a*50))//last~pitch
 	+ (1*MoogFF.ar(
