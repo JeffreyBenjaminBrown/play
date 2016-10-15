@@ -164,8 +164,8 @@
     outside n = inside (1/n)
     timeLoop n = outside n loopFirst
 
-    -- WARNING: in a triple (a,b,p), speed of p is indep of a, b
     seqPLoop :: [(Time, Time, Pattern a)] -> Pattern a
+    -- WARNING: in a triple (a,b,p), speed of p is indep of a, b
     seqPLoop ps= timeLoop (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
 
   -- render to audio, text
@@ -247,6 +247,9 @@
 -- pitch
   -- hi, spd (speed)
     -- this is a 31et version of up
+
+    to = ((oneMicrotone**) <$>) where oneMicrotone = 2**(1/31)
+
     hi = speed . ((step**) <$>) where step = 2**(1/31)
     hi_ob transp = speed . ((step**) . (+ transp) <$>) 
       where step = 2**(1/31) 
