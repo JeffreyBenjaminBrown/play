@@ -1,17 +1,98 @@
+-- 2016 10 08
+-- use 
+let cp = compress
+dur 2
+d1 $ st [cp (4/32,(4+8)/32) $ sd "hh*4", cp (0,1/2) $ sd "bd*4"]
+
+
+spls = take 8 $ repeat ("bd" :: PS)
+silences = take 7 $ repeat ("~" :: PS)
+f cycDur noteDur notesCt spl = cat $ concat $ [spls, silence] where spls = 1; silence = 2
+  -- ct = count
+-- also considered using densityGap, withQueryArc
+
+-- to underst compress
+dur 2 -- a **
+d1 $ compress (0,5/7) $ sd "lt*4"
+d2 $ fa 4 $ sd "ho"
+
+dur $ 3/2 -- b **
+d1 $ compress (0,6/7) $ sd "bd*4"
+d2 $ fa 7 $ sd "hh"
+
+dur 2 -- a
+d1 $ ssr compress [(0,5/7),(1/7,6/7)] $ sd "lt*4"
+d2 $ fa 4 $ sd "ho"
+
+
+
+-- trying to understand withQueryArc (unfinished)
+d1 $ withQueryArc (\(a,b)-> (a, (a+b)/2)) $ sd "bd*3 sn*2"
+d2 $ sd "~! hh ~!!"
+d1 $ withQueryArc id $ sd "bd*3 sn*2"
+
+d1 $ withQueryArc (\(a,b)-> (a, (a+b)/2)) $ sl 2 $ sd "bd*3 sn*4"
+
+-- during stick
+dur 1.5
+let p1 = sd "hc hh" |*| ga "1 1.2"
+d1 $ sl 2 $ st [p1, rr (1/4) p1 |*| ga "0.8"]
+
+
 READ HEAD spelunking downward is marked ">>>"
 
-d1 $ sd "bd hh"
+dur 2 -- **
+d1 $ sd "bd [ho! ~~]/4"
+d2 $ rl (1/16) $ sd "hh*4"
+d3 $ rl (1/8) $ sd "hc*4" |*| ga "0.8g "
+d3 $ si
+
+-- drbwwa == didn't read below when writing above
+
+dur 0.8
+d1 $ sl 6 $ sd "bd ~! bd ~! bd ~! bd ~! sn ~!! sn ~!! sn ~!!"
+d1 $ si
+d2 $ ev 2 (rr $ 1/4) $ sd "~ hc*2"
+d2 $ si
+
+--
+
+let ch a b c d = st' $ (/) <$> [a..b] <*> [c..d]
+let p1a = cat [ch 2 3 3 4, ch 3 4 5 6] 
+let p1b = cat [ch 3 3 7 11, ch 7 9 5 7] 
+let p1x = cat [ch 7 11 9 9, ch 7 10 11 11] 
+let p2a = cat [p1a, p1b, p1a, p1a]
+let p2b = cat [p1a, p1x, p1x, p1a]
+let p3 = cat [p2a, p2b]
+d1 $ qf $. st' [1,9/7,10/1.5,8/7] |*| qf "400" |*| sd "sya" |*| end "0.9"
+d2 $ fa 1 $. qf "1 ~ 1.2 1.15" |*| slow 2 $. qf p3 |*| qf "400" |*| sd "sya" |*| qpf "20" |*| qpa "2" |*| sl 4 $. ga sine1
+d3 $ rl (1/4) $ sd "bd ~ ~ [sn*6 sn]/4"
+-- next: d1 solo!
+
+d1 $ qf $. st' [1,9/7,3/2,2.2,8/7] |*| qf "400" |*| sd "sya" |*| end "0.9"
+d1 $ qf $. st' [2,9/5,3/2,2,8/7] |*| qf "400" |*| sd "sya" |*| end "0.9"
+d1 $ qf $. st' [5/2,3/4,3,6/15,7/25,2,1/2] |*| qf "400" |*| sd "sya" |*| end "0.9"
+d1 $ si
+
+let p1 = "0 2 4 6 7 ~ 9 10"
+d1 $ rl (1/6) $ slow 2 $ sd "hh [sn ~ sn*2]/2"
+d2 $ si
+d2 $ rl (1/8) $ slow 2 $ sd "hc*2 hc*3"
+d3 $ sd "ba"
+
+d1 $ up "p1" |*| sd "sy"
+
 
 -- **** CHORD PROGRESSIONS
 cps 0.2
 let major = [0,2,4,5,7,9,11]
 let dorian = [0,2,3,5,7,9,10]
-d1 $ up $. unwrap $. (fmap (fmap . lk . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ run 7) |*| sd "ps"
+d1 $ up $. unwrap $. (fmap (fmap . lk . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ Sound.Tidal.Context.run 7) |*| sd "ps"
 -- ** simplifying (unfinished)
 let scales = M.fromList [("maj",major),("dor",dorian)]
 let whichScale scales string = maybe [] id (M.lookup scales string)
 let degreesToPitches scales scalePat degPat = unwrap $. (fmap (fmap . lk . whichScale scales) scalePat) <*> (pure $ degPat)
-d1 $ up $. degreesToPitches scales ("maj!! dor"::PS) (fast 4 $ run 7) |*| sd "psr"
+d1 $ up $. degreesToPitches scales ("maj!! dor"::PS) (fast 4 $ Sound.Tidal.Context.run 7) |*| sd "psr"
 
 -- ** THE (3^1,5^1,7^1) SCALE! And a minor!
 dur 8
