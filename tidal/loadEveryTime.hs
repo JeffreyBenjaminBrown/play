@@ -151,7 +151,7 @@
     trigList g  _ = error "to do (finish hStar)"
 
     -- WARNING: inputs must all start at beat 0 and have no duration
-      -- and all When values must be in [0,1] (or maybe [0,1)]
+      -- and all When values must be in [0,1] (or maybe only [0,1)]
     trigListToPatt' :: [(When, ParamPattern)] -> ParamPattern
     trigListToPatt' pairs = let f when patt = rl when patt
       in seqPLoop $ map (\(when,patt) -> (0,1,f when patt)) pairs
