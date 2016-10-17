@@ -1,3 +1,11 @@
+dur 1.2
+d1 $ slow 4 $ sd "[bd sn] [sn*2 bd] [bd bd*2] ~"
+d2 $ sd "hh*4"
+
+--
+dur 1.2
+d1 $ sd $ st [ev 2 (rl (1/2)) "[bd sn]/2", "hh*5"]
+
 -- 2016 10 08
 -- use 
 let cp = compress
@@ -126,7 +134,6 @@ let contrast = [1,5/4,3/2,15/8,135/64,27/16,45/32,9/8] -- min = 5/4, not 1 or 7/
 d1 $ qf $. ca' contrast |*| qf "400" |*| sd "sya" |*| end $. p 6 -- **
 
 
-
 dur 6 -- ** 1/1 lydian + 5/4 dorian scales, just-intoned
  -- tricky interweaving so that the triad is always pretty
 let fracs = [1,45/32,15/8,3/2,25/12,5/4]
@@ -167,15 +174,15 @@ d1 $ sound "[hc hc/5]*8" |*| slow 1.5 $. gain $. ((+ 0.5).(*0.5))<$>tri1
 d2 $ every 2 (rr (1/4)) $ stack [sound "bd ~ bd*2 ~" |*| ga "0.85", sound "~ sn ~ sn"]
 d4 $ sound "cr/4"  |*| sl 8 $. coarse "4 11"
 
-
+h
 dur 3
-d1 $ sound "[bd*4,sn*5]"
+d1 $ sound $ st [ "[bd*4,sn*5]", rr (1/5) $ "[ho cr]/2" ]
+
 
 d1 $ every 2 (fast 2) $ sound "bd hh*2"
 d2 $ speed "1 1.25*2 1.5 2" |*| slow 3 $. speed "1 1.2 1.3333" |*| sound "ba" |*| gain "1.2"
 
 -- may 5
-
 dur 1.2 -- **
 let i = sd "sya" |*| qf "220"
 d4 $ du 0 1 3 rev $ du 0 2 8 (fa 2) $ sd "[bd sn]/2 ho" |*| ga "0.85"
@@ -183,7 +190,6 @@ d3 $ qaf "0.2 0.25 0.3333 0.75 0.9" |*| qf $. p (1/4) |*| sl 4 $. qf "7 12 9 13"
 
 dur 1.2
 d2 $ sl 3 $ qpf $. ca' [1/4,13,3/2,9/7,6/13,4/5,7/6,11/7] |*| sd "sya" |*| qpa "2" |*| qaf $. p (7/5) |*| qfa $. p (11/7) |*| qff "1 2 3 4"
-
 
 dur 0.8 -- sya<->sy : rad
 d1 $ sd "sya*2" |*| qaa "1 0" |*| qaf $. p (11/8)
@@ -201,6 +207,7 @@ d2 $ du 12 4 16 (|*| si) $ sd "[[bd bd/4] sn]/2 [hh sn/8]"
 
 dur 2
 d1 $ ev 2 rev $ sd "sy*8 sy*4" |*| qf "60 [300 [333,10]]" |*| qaf "[5.5,7]" |*| end "0.3" |*| ga "1" |*| qpf "5" |*| qfa "0.1 [2,7] 16" |*| qff "0.25" |*| sl 4 $. qf "1 1.2 0.75 1.333"
+
 d2 $ ev 8 (fa 2) $ ev 4 (rev) $ ev 2 (rl $ 1/4) $ sd "bd sn:1" |*| ga "1.2"
 d3 $ rl (1/5) $ sd "hh*2"
 d3 $ qff "0.0625*2 0.125 0.25*4 [0.04 0.002]/2" |*| qfa "1" |*| sd "sy" |*| qf "100" |*| qf "3 [7,[4 3]/4] [11 15]/2"
@@ -1308,6 +1315,8 @@ hush -- ** by Phil Freeman
 dur 1
 d1 $ stack [ speed rand4 |+| degrade (sound "hh:4"), slow 2 $ sound "[sn sn ~ bd] [cp bd ~ bd] [bd bd] [hh:2 hh:2 hh:2 hh:2]" |+| speed rand4 |+| cut "1" ]
   -- but where he had "x" I have substituted "~"
+
+d1 $ stack [ speed rand4 |+| degrade (sound "hh:4"),   slow 2 $ sound "[sn sn ~ bd] [cp bd ~ bd] [bd bd] [hh:2 hh:2 hh:2 hh:2]" |+| speed rand4 |+| cut "1" ]
 
 -- 2015 11 21
 
