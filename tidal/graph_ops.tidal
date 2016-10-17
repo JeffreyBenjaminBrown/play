@@ -1,12 +1,14 @@
 let g = L.empty :: G
-view g $ nodes g
-mapM_ (putStrLn . show) $ labEdges g
--- must hear ! two samples, two parts, two part-parts, ..
+view g $ L.nodes g
+mapM_ (putStrLn . show) $ L.labEdges g
 g <- return $ addNodes [Q$Spl "bd", Q$Spl "ho", Seq] g
-g <- return $ insEdges [(2,0,HasAt 0),(2,1,HasAt $ 1/2)] g
-let x = trigList g 2
+g <- return $ L.insEdges [(2,0,HasAt 0),(2,1,HasAt $ 1/2)] g
+-- at this point, evaluating "g" shows the following graph:
+    --tidal> g
+    --mkGraph [(0,Q (Spl "bd")),(1,Q (Spl "ho")),(2,Seq)] [(2,0,HasAt (0 % 1)),(2,1,HasAt (1 % 2))]
+-- mkGraph lists the nodes, then the edges of the graph. Here the graph has 3 nodes: the bd and ho samples (Spls), and a sequence (Seq). It has 2 edges connecting the nodes. The first edge, from 2 to 0, indicates that the bd starts at time 0 in the Seq; the other edge says the ho starts at time 1/2 in the Seq.
 
-d1 $ st [hStar g 2] -- ! next
+-- d1 $ st [hStar g 2] -- todo next
 
 d1 $ trigListToPatt' $ trigList g 2 -- works!
 d1 $ stack [hStar g 0 |*| cr "1.7", hStar g 1] -- works!
