@@ -2,7 +2,7 @@
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
     {-# LANGUAGE FlexibleContexts #-}
     {-# LANGUAGE ViewPatterns #-}
-    module JBB where
+    module Tidal_JBB where
 
 -- imports (remember, they must come first)
   -- general
