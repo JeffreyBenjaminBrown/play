@@ -248,6 +248,8 @@
   -- hi, spd (speed)
     -- this is a 31et version of up
 
+    -- to :: 31 tone pattern -> frequency pattern
+    to :: (Floating b, Functor f) => f b -> f b
     to = ((oneMicrotone**) <$>) where oneMicrotone = 2**(1/31)
 
     hi = speed . ((step**) <$>) where step = 2**(1/31)
