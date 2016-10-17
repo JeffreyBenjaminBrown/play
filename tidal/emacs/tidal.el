@@ -316,7 +316,7 @@
   )
 
 (defun tidal-run-region ()
-  "Place the region in a do block and compile. REPLACED with tidal-run-multiple-lines-separately."
+  "Place the region in a do block and compile. REPLACED(by jbb) with tidal-run-multiple-lines-separately."
   (interactive)
   (tidal-transform-and-store
    "/tmp/tidal.hs"
@@ -375,7 +375,7 @@
 
 (defun tidal-mode-keybindings (map)
   "Haskell Tidal keybindings."
-  (define-key map [?\C-c ?\C-a] 'inferior-haskell-send-command)
+  (define-key map [?\C-c ?\C-a] 'inferior-haskell-send-command) ;; jbb-edit
   (define-key map [?\C-c ?\C-s] 'tidal-start-haskell)
   (define-key map [?\C-c ?\C-v] 'tidal-see-output)
   (define-key map [?\C-c ?\C-q] 'tidal-quit-haskell)
