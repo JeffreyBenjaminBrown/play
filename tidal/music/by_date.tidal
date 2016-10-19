@@ -1,3 +1,9 @@
+-- ? just do these
+dur 1
+d1 $ qf "200 250" |*| sl 6 $. qf "1 1.5 [0.825]" |*| sd "sy"
+
+--
+
 dur 1.2
 d1 $ slow 4 $ sd "[bd sn] [sn*2 bd] [bd bd*2] ~"
 d2 $ sd "hh*4"
@@ -95,7 +101,9 @@ d1 $ up "p1" |*| sd "sy"
 cps 0.2
 let major = [0,2,4,5,7,9,11]
 let dorian = [0,2,3,5,7,9,10]
-d1 $ up $. unwrap $. (fmap (fmap . lk . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ Sound.Tidal.Context.run 7) |*| sd "ps"
+d1 $ up $. unwrap $. (fmap (fmap . lk . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ Sound.Tidal.Context.run 7) |*| sd "ps" 
+-- <*> is infixl 4, applies degree pattern (on right) to scale pattern (on left). |*| is infixl 1.
+
 -- ** simplifying (unfinished)
 let scales = M.fromList [("maj",major),("dor",dorian)]
 let whichScale scales string = maybe [] id (M.lookup scales string)
