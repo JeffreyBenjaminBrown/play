@@ -91,6 +91,15 @@
     denSca denom = map (flip (/) denom) [denom..denom*2-1] -- **
       -- one-octave JI scale defined by a denominator
 
+    runDegPat :: ([Double] -> Int -> Double) -- e.g. lk12, lkji
+      -> (Int -> [Double]) -- probably a map lookup
+      -> Pattern Int -- args for the (probably a)map lookup
+      -> Pattern Int -- scale degrees, i.e. indices into a [Double]
+      -> Pattern Double
+    runDegPat temperedLookup scaleFromInt scalePat degreePat = unwrap
+      $ fmap (fmap . temperedLookup . scaleFromInt) scalePat 
+        <*> pure degreePat
+
   -- transition between two patterns
     -- based on playWhen, which transitions from silence to one pattern
     changeWhen :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a

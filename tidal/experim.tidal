@@ -1,4 +1,11 @@
--- 2016 10 18, scales
+-- 2016 10 18, scales, simplified! **
+import Data.Map as M
+dur 16
+let scales = [[1, 1.2, 1.5, 1.7],   [1, 1.25, 1.5, 15/8],   [1, 1.3, 1.6, 1.9, 2.2]]
+let lkScale = (M.fromList $ zip [1..] scales] !)::Int->[Double]
+d1 $ qf $. runDegPat lkji lkScale (slow 2 $ "1 3 1 2") (fast 16 $ run 7) |*| sd "sy" |*| qf "440"
+
+-- 2016 10 18, scales **
 import Data.Map as M
 dur 16
 let sc1 = [1, 1.2, 1.5, 1.7]
