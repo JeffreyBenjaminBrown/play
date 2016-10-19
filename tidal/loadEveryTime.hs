@@ -74,8 +74,8 @@
     quotUnif num den = if num < 0 then q - 1 else q
       where q = quot num den
 
-    lk :: [Double] -> Int -> Double -- 12 tone scale lookup
-    lk sc idx =
+    lk12 :: [Double] -> Int -> Double -- 12 tone scale lookup
+    lk12 sc idx =
       let len = length sc
           idx' = floor $ fromIntegral $ remUnif idx len
           octaves = quotUnif idx len

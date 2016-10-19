@@ -1,6 +1,10 @@
+-- 2016 10 18
+
+
 -- ? just do these
 dur 1
-d1 $ qf "200 250" |*| sl 6 $. qf "1 1.5 [0.825]" |*| sd "sy"
+d1 $ qf "200 250" |*| sl 6 $. qf "1 1.5 0.825]" |*| qf "1.5" |*| sd "sy" -- 8/7: totally unlike 7/4. lower =(always?) denom.
+d1 $ qf "200 250" |*| sl 6 $. qf "[1, 0.825]" |*| qf "1.5" |*| sd "sy"
 
 --
 
@@ -101,13 +105,13 @@ d1 $ up "p1" |*| sd "sy"
 cps 0.2
 let major = [0,2,4,5,7,9,11]
 let dorian = [0,2,3,5,7,9,10]
-d1 $ up $. unwrap $. (fmap (fmap . lk . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ Sound.Tidal.Context.run 7) |*| sd "ps" 
+d1 $ up $. unwrap $. (fmap (fmap . lk12 . (\v -> case v of 1 -> major; 2 -> dorian)) ("1!! 2" :: PI)) <*> (pure $ fast 4 $ Sound.Tidal.Context.run 7) |*| sd "ps" 
 -- <*> is infixl 4, applies degree pattern (on right) to scale pattern (on left). |*| is infixl 1.
 
 -- ** simplifying (unfinished)
 let scales = M.fromList [("maj",major),("dor",dorian)]
 let whichScale scales string = maybe [] id (M.lookup scales string)
-let degreesToPitches scales scalePat degPat = unwrap $. (fmap (fmap . lk . whichScale scales) scalePat) <*> (pure $ degPat)
+let degreesToPitches scales scalePat degPat = unwrap $. (fmap (fmap . lk12 . whichScale scales) scalePat) <*> (pure $ degPat)
 d1 $ up $. degreesToPitches scales ("maj!! dor"::PS) (fast 4 $ Sound.Tidal.Context.run 7) |*| sd "psr"
 
 -- ** THE (3^1,5^1,7^1) SCALE! And a minor!
@@ -1090,13 +1094,13 @@ cps $ 1/2
 let p1 = run 7
 let insPsr' = insPsr |*| gain "0.9"
 let mains =  [0,2,4,7]
-d1 $ up $. lk mains <$> p1 |*| insPsr'|*| slow 4 $. up "-12 0"
-d2 $ rl (1/2) $. up $. lk [6,9,11] <$> p1 |*| insPsr'
+d1 $ up $. lk12 mains <$> p1 |*| insPsr'|*| slow 4 $. up "-12 0"
+d2 $ rl (1/2) $. up $. lk12 [6,9,11] <$> p1 |*| insPsr'
 d3 $ slow (6/7) $. sound "bd hh*3 sn hh*3"
 let less p = cat [si,p]
 let tat p = pp "x! ~ x ~ x!! ~ x ~ ~ ~ ~" p
 d4 $ slow 4 $ sound $. cat [less $ tat "hc", less $ tat"insect"]
-d5 $ slow (32/7) $ up $. lk mains <$> "{0 3 ~ 0}%16 ~ {1 ~ 2 3}%16 ~" |*| insBass|*| gain "1.1"
+d5 $ slow (32/7) $ up $. lk12 mains <$> "{0 3 ~ 0}%16 ~ {1 ~ 2 3}%16 ~" |*| insBass|*| gain "1.1"
 
 -- 2016 03 18
 
