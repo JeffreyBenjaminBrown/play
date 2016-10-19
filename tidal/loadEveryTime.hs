@@ -39,6 +39,7 @@
     type PI = Pattern Int
 
     duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
+    to1to2 x = x / 2**(fromIntegral $ floor $ log x / log 2) -- for normalizing a just scale with numbers outside of [1,2). For fixed real number r and any integer k, to1to2 $ r*2**k has the same value.
 
     -- abbrevs
     -- @init.hs: h hush, sa striate

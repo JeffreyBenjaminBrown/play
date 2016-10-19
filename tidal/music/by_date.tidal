@@ -1,5 +1,36 @@
--- 2016 10 18
+--
+let scales = [[1,8/7,9/7,10/7,10/6,11/6,12/6,12/5]]
+let lkScale = ((M.fromList $ zip [1..] scales) !)::Int->[Double]
+let ins = sd "sy" |*| qf "125" |*| end "0.5" -- instrument
+let qf' scPat degPat = qf $. runDegPat lkji lkScale scPat degPat |*| ins
+let wav p = cat [p, rev p]
+dur 6
+d1 $ sl 2 $ ssr fa [2,1] $ qf' (slow 4 $ "1") $. (fast 4 $ run 12) |*| ga "0.7"
+d2 $ fa 4 $ ev 2 $. jux (rl $ 1/6) $ sd "bd [sn [hc sn]/2 hc]/3" |*| sl 16 $. ga $. (\x->(x/2)+0.5)<$>tri1 |*| ga "0.6"
 
+
+-- make tandem :: drum parts & series of scales
+let to1to2 x = x / 2**(fromIntegral $ floor $ log x / log 2) -- to the interval [1,2] -- ** was hard!
+let scales = fmap (fmap to1to2) [take n [3,5..] | n <- [6..11]] --  ** was hard! b/c map is obscured and <$> I could not nest properly
+let lkScale = ((M.fromList $ zip [1..] scales) !)::Int->[Double]
+let ins = sd "sy" |*| qf "125" -- instrument
+let rootSeq = qf $. slow 4 $. "2 2.05 2.2 2.1" -- "1 1.2 1 0.9"
+let qf' scPat degPat = qf $. runDegPat lkji lkScale scPat degPat |*| ins |*| rootSeq
+let wav p = cat [p, rev p]
+dur 6
+d1 $ sl 2 $ ssr fa [2,1] $ qf' (slow 4 $ "1 3 [4 5 6] 2") $. (fast 4 $ run 12) |*| ga "0.7"
+d2 $ fa 4 $ ev 2 $. jux (rl $ 1/6) $ sd "bd [sn [hc sn]/2 hc]/3" |*| sl 16 $. ga $. (\x->(x/2)+0.5)<$>tri1 |*| ga "0.6"
+
+-- 2016 10 18 **
+let scales = [take n [5,7..] | n <- [1..6]]
+let lkScale = ((M.fromList $ zip [1..] scales) !)::Int->[Double]
+let ins = sd "sy" |*| qf "20" -- instrument
+let rootSeq = qf $. slow 4 $. "1 1.2 1 0.9"
+let qf' scPat degPat = qf $. runDegPat lkji lkScale scPat degPat |*| ins |*| rootSeq
+let wav p = cat [p, rev p]
+d1 $ sl 4 $ ssr fa [2,1,2,4] $ qf' (slow 4 $ "1 3 [4 5 6] 2") $. (fast 4 $ run 8) |*| qfa "2.4" |*| qff "3"
+d2 $ fa 4 $ ev 2 $. jux (rl $ 1/6) $ sd "bd [sn [hc sn]/2 hc]/3" |*| sl 16 $. ga $. (\x->(x/2)+0.5)<$>tri1
+dur 2
 
 -- ? just do these
 dur 1
