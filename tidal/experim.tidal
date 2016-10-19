@@ -1,3 +1,14 @@
+-- 2016 10 18, scales
+import Data.Map as M
+dur 16
+let sc1 = [1, 1.2, 1.5, 1.7]
+let sc2 = [1, 1.25, 1.5, 15/8]
+let sc3 = [1, 1.3, 1.6, 1.9, 2.2]
+let scaleFromInt = (M.fromList [(1,sc1),(2,sc2),(3,sc3)] !)
+d1 $ qf $. unwrap $. (fmap (fmap . lkji . scaleFromInt) (slow 2 $ "1 3 1 2" :: PI)) <*> (pure $ fast 16 $ Sound.Tidal.Context.run 7) |*| sd "sy" |*| qf "440" |*| fa 2 $. qf "1 [1.1 [1.6 1.5 1.4]]/2"
+d1 $ qf $. unwrap $. (fmap (fmap . lkji . scaleFromInt) (slow 4 $ "1 3 1 2" :: PI)) <*> (pure $ fast 8 $ Sound.Tidal.Context.run 12) |*| sd "sy" |*| qf "440" |*| fa 2 $. qf "1 2.4" |*| sl 2 $. qf "0.33 1" |*| ga "0.9"
+d2 $ fast 8 $ sd $ st ["bd/2 sn",ssr rr [(1/8),(1/4)] "hh*4"]
+
 -- 2016 09 10, testing loopSeq by Alex McLean
 d1 $ seqPLoop [(0,1,sd "bd"),(1,1.5,sd "hc*4")] -- Yes!
 
