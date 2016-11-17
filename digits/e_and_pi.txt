@@ -5,10 +5,13 @@ prelude: lang
   t= tonic in bass, h=tonic high
     don't use a or b for anything else
   .=silence =?= divide
-  , in series = let stand alone, then add concurt
+  , in series = let stand alone, then add concurt (ala piano pedal)
   ' = postfix raise octave
   \ in isolation: downward arpeggio, x-octave
-  
+not sure
+  _ = postfix lower octave
+  ~ 
+
 pi|3 1 8    4.80 949  3,b 91    8 6   64
 e |2 8 752   3   6069 8   219  b a ~7  1 971
        0|b                          7~~~~~~~
