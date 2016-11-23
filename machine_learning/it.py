@@ -3,7 +3,7 @@
 
 # # Programming Exercise 4: Neural Networks Learning
 
-# In[1]:
+# In[75]:
 
 get_ipython().magic('matplotlib inline')
 import numpy as np
@@ -20,7 +20,9 @@ from scipy.special import expit #Vectorized sigmoid function
 
 # ## Visualizing the data
 
-# In[2]:
+# ### This visualization is (roughly) unchanged, from https://github.com/kaleko/CourseraML
+
+# In[76]:
 
 #Note this is actually a symlink... same data as last exercise,
 #so there's no reason to add another 7MB to my github repo...
@@ -35,7 +37,7 @@ print( "'X' shape: %s. X[0] shape: %s"%(X.shape,X[0].shape) )
 #y is a classification for each image. 1-10, where "10" is the handwritten "0"
 
 
-# In[3]:
+# In[77]:
 
 def tenToZero(digit):
     if digit == 10: return 0
@@ -47,7 +49,7 @@ for i in range(Y.shape[0]):
 YBool
 
 
-# In[4]:
+# In[78]:
 
 def getDatumImg(row):
     """
@@ -81,14 +83,14 @@ def displaySomeData(indices_to_display = None):
     plt.imshow(img,cmap = cm.Greys_r)
 
 
-# In[5]:
+# In[79]:
 
 displaySomeData()
 
 
 # ## Architecture
 
-# In[6]:
+# In[80]:
 
 def makeRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
@@ -98,11 +100,11 @@ def makeRandCoeffsSmall(randUnifCoeffs):
     return randUnifCoeffs * e
 
 
-# In[7]:
+# In[81]:
 
 def makeRandCoeffs(lengths):
-    # lengths :: [Int] is input, hidden, and output layer lengths
-    # lengths does NOT include the constant terms
+    # lengths :: [Int] lists input, hidden, and output layer lengths
+    # and it does NOT include the constant terms
     acc = []
     for i in range(len(lengths)-1):
         acc.append(makeRandCoeffsSmall(makeRandCoeffsSymmetric(
@@ -113,7 +115,7 @@ makeRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
 # ## Forward-propogation
 
-# In[8]:
+# In[82]:
 
 def prependUnityColumn(colvec):
     return np.insert(colvec,0,1,axis=0)
@@ -121,13 +123,13 @@ test = np.array([[3,4]]).T
 # (test, prependUnityColumn(test)) # test
 
 
-# In[9]:
+# In[83]:
 
 def forward(nnInputs,coeffMats):
     # nnInputs :: column vector of inputs to the neural net
     # coeffMats :: list of coefficient matrices
-    latents = ["nothing"] # per-layer inputs to the sigmoid function
-      # to make indexing latents the same as activs, give it a dummy "nothing" at position 0
+    latents = ["input layer latent vector does not exist"] # per-layer inputs to the sigmoid function
+      # to make indexing latents the same as activs, give it a dummy string value at position 0
     activs = [nnInputs] # per-layer outputs from the sigmoid function
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
@@ -135,16 +137,17 @@ def forward(nnInputs,coeffMats):
         newActivs = expit( latents[i+1] )
         if i<len(coeffMats)-1: newActivs = prependUnityColumn(newActivs)
             # nnInputs already has the unity column.
-            # The hidden layer activations need it prepended.
+            # The hidden layer activations get it prepended here.
             # The output vector doesn't need it.
+            # Activations ("a") have it, latents ("z") do not.
         activs.append( newActivs )
     prediction = np.argmax(activs[-1])
     return (latents,activs,prediction)
 
 
-# In[10]:
+# In[84]:
 
-# It works! (And the smaller test's arithmetic is human-followable.)
+# It works! (The smaller test's arithmetic is even human-followable.)
 forward(np.array([[1,2,3]]).T
        , [np.array([[5,2,0]])]
        )
@@ -153,12 +156,12 @@ forward(  np.array([[1,1,2]]).T
                     ,[4,5,6]])
            , np.array([[3,2,1]
                       ,[5,5,5]])
-          ] )
+          ] );
 
 
 # ## Cost
 
-# In[11]:
+# In[85]:
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
 def errorCost(observed,predicted):
@@ -176,7 +179,7 @@ def regularizationCost(coeffMats):
 # regulCost([np.array([[10,1,2]])]) # should be 5
 
 
-# In[12]:
+# In[86]:
 
 def testCost():
     nnInputs = np.array([[1,2,-1]]).T
@@ -185,20 +188,62 @@ def testCost():
     latents,activs,predicts = forward(nnInputs,Thetas)
     ec = errorCost(observedCategs,activs[-1])
     rc = regularizationCost(Thetas)
-    print(latents)
-    print("... = the latents\n")
-    print(activs)
-    print("... = the activations\n")
-    print(predicts)
-    print("... = the predictions\n")
-    print(ec)
-    print("... = the error cost\n")
-    print(rc)
-    print("... = the regularization cost\n")
-testCost()
+    print(latents);  print("... = the latents\n")
+    print(activs);   print("... = the activations\n")
+    print(predicts); print("... = the predictions\n")
+    print(ec);       print("... = the error cost\n")
+    print(rc);       print("... = the regularization cost\n")
+# testCost()
 
 
-# In[ ]:
+# ## Gradient
+
+# In[89]:
+
+def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
+    # the derivative of ("expit" = the sigmoid function)
+def lastError(lastActivs,yVec): return lastActivs - yVec
+    # Evaluate once per observation.
+    # Both inputs are column vectors.
 
 
+# In[90]:
+
+def errorSkeleton( coeffMats, activs): # Grokkiing list indexes
+    nLayers = len(activs) # len(coeffMats) + 1 = len(activs)
+    print("for last error vector: ")
+    print(activs[-1])
+    for i in reversed( range( nLayers - 2 ) ): # indexing activs
+        # coeffMat[0] is not used in backprop
+        print("between layers " + str(i) + " and " + str(i+1) + "?")
+        print(coeffMats[i+1])
+        print(activs[i])
+def testErrorSkeleton():
+    errorSkeleton(
+          ["mat0","mat1"]
+        , ["act0","act1","act2"]
+    )
+# testErrorSkeleton() # it works!
+
+
+# In[119]:
+
+# You can ignore the 0th element of each layer's error when creating
+# the derivative matrix, because it only applies|exists rightward.
+def errors(coeffMats,latents,activs,yVec):
+    nLayers = len(latents)
+    errors = list( range( nLayers ) ) # dummy values, just for size
+    errors[0] = "input layer has no error term"
+    errors[nLayers-1] = lastError(activs[-1], yVec)
+    for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
+        errors[i] = ( coeffMats[i].T.dot( errors[i+1] ) 
+                     * expitPrime(latents[i]) )
+    return errors
+def testErrors(): return errors( # y = activs[-1] => errors = 0
+      [np.eye(2),np.ones((2,2))]
+    , ["nonexistent", np.array([[1,1]]).T, "unimportant"]
+    , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
+    , np.array([[2,3]]).T
+    )
+testErrors()
 
