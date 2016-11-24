@@ -226,10 +226,10 @@ def testErrorSkeleton():
 #testErrorSkeleton() # it works!
 
 
-# In[16]:
+# In[15]:
 
-# You can ignore the 0th element of each layer's error when creating
-# the derivative matrix, because it only applies|exists rightward.
+# WARNING: ignore the 0th elt of each layer's error when creating
+# the derivative matrix. It only applies|exists rightward.
 def mkErrors(coeffMats,latents,activs,yVec):
     nLayers = len(latents)
     errs = list( range( nLayers ) ) # dummy values, just for size
@@ -248,9 +248,15 @@ def testMkErrors(): return mkErrors( # y = activs[-1] => errors = 0
 testMkErrors();
 
 
-# In[17]:
+# In[16]:
+
+np.ones((25,1)) * np.zeros((26,1))
+
+
+# In[ ]:
 
 def mkDeltaMats(errs,activs):
+    "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
     nMats = len(activs)-1
     acc = list(range(nMats)) # start with dummy values
     for i in range(nMats):
@@ -262,6 +268,40 @@ def testMkDeltaMats(): # result should be 2 by 3 (1 activation droped)
     activs = [np.ones((3,1)),"unimportant"]
     return mkDeltaMats(errs,activs)
 testMkDeltaMats()
+
+
+# ## Putting it together?
+
+# In[ ]:
+
+# Things I will use:
+# X, YBool
+# lengths # not including constant terms
+# mkRandCoeffs(lengths)
+# forward(nnInputs,coeffMats) -> (latents,activs,prediction)
+# mkErrorCost(observed,predicted)
+# mkErrors(coeffMats,latents,activs,yVec)
+# mkDeltaMats(errs,activs)
+
+
+# In[17]:
+
+def mapShape(arrayList): return list(map(np.shape,arrayList))
+def obsCoeffDeltas(coeffMats,X,YBool):
+    latents,activs,_ = forward(X,coeffMats)
+    print("\ncoeffMats"); print(mapShape(coeffMats))
+    print("\nlatents");   print(mapShape(latents))
+    print("\nactivs");    print(mapShape(activs))
+    print("\nYBool");     print(mapShape(YBool))
+    errs = mkErrors(coeffMats,latents,activs,YBool)
+    return mkDeltaMats(errs,activs)
+lengths = [400,25,10]
+initCoeffs = mkRandCoeffs( lengths )
+
+
+# In[18]:
+
+obsCoeffDeltas(initCoeffs,X[0],YBool[0])
 
 
 # In[ ]:
