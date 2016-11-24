@@ -3,7 +3,7 @@
 
 # # Programming Exercise 4: Neural Networks Learning
 
-# In[75]:
+# In[1]:
 
 get_ipython().magic('matplotlib inline')
 import numpy as np
@@ -22,7 +22,7 @@ from scipy.special import expit #Vectorized sigmoid function
 
 # ### This visualization is (roughly) unchanged, from https://github.com/kaleko/CourseraML
 
-# In[76]:
+# In[2]:
 
 #Note this is actually a symlink... same data as last exercise,
 #so there's no reason to add another 7MB to my github repo...
@@ -37,7 +37,7 @@ print( "'X' shape: %s. X[0] shape: %s"%(X.shape,X[0].shape) )
 #y is a classification for each image. 1-10, where "10" is the handwritten "0"
 
 
-# In[77]:
+# In[3]:
 
 def tenToZero(digit):
     if digit == 10: return 0
@@ -46,10 +46,10 @@ Y = np.vectorize(tenToZero)(Y)
 YBool = np.zeros((Y.shape[0],10)) # because ten categories
 for i in range(Y.shape[0]):
     YBool[i,Y[i]]=1
-YBool
+YBool;
 
 
-# In[78]:
+# In[4]:
 
 def getDatumImg(row):
     """
@@ -83,47 +83,47 @@ def displaySomeData(indices_to_display = None):
     plt.imshow(img,cmap = cm.Greys_r)
 
 
-# In[79]:
+# In[5]:
 
 displaySomeData()
 
 
 # ## Architecture
 
-# In[80]:
+# In[6]:
 
-def makeRandCoeffsSymmetric(randUnifCoeffs):
+def mkRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
-def makeRandCoeffsSmall(randUnifCoeffs):
+def mkRandCoeffsSmall(randUnifCoeffs):
     a,b = randUnifCoeffs.shape
     e = np.sqrt(6) / np.sqrt(a+b)
     return randUnifCoeffs * e
 
 
-# In[81]:
+# In[7]:
 
-def makeRandCoeffs(lengths):
+def mkRandCoeffs(lengths):
     # lengths :: [Int] lists input, hidden, and output layer lengths
     # and it does NOT include the constant terms
     acc = []
     for i in range(len(lengths)-1):
-        acc.append(makeRandCoeffsSmall(makeRandCoeffsSymmetric(
+        acc.append(mkRandCoeffsSmall(mkRandCoeffsSymmetric(
                 np.random.rand(lengths[i+1],lengths[i]+1) ) ) )
     return acc
-makeRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
+mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
 
 # ## Forward-propogation
 
-# In[82]:
+# In[8]:
 
 def prependUnityColumn(colvec):
     return np.insert(colvec,0,1,axis=0)
 test = np.array([[3,4]]).T
-# (test, prependUnityColumn(test)) # test
+(test, prependUnityColumn(test)) # test
 
 
-# In[83]:
+# In[9]:
 
 def forward(nnInputs,coeffMats):
     # nnInputs :: column vector of inputs to the neural net
@@ -145,7 +145,7 @@ def forward(nnInputs,coeffMats):
     return (latents,activs,prediction)
 
 
-# In[84]:
+# In[10]:
 
 # It works! (The smaller test's arithmetic is even human-followable.)
 forward(np.array([[1,2,3]]).T
@@ -156,35 +156,35 @@ forward(  np.array([[1,1,2]]).T
                     ,[4,5,6]])
            , np.array([[3,2,1]
                       ,[5,5,5]])
-          ] );
+          ] )
 
 
 # ## Cost
 
-# In[85]:
+# In[11]:
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
-def errorCost(observed,predicted):
+def mkErrorCost(observed,predicted):
     return np.sum( # -y log hx - (1-y) log (1-hx)
         (-1) * observed * np.log(predicted)
         - (1 - observed) * np.log(1 - predicted)
     )
-# errorCost(np.array([[1,0]]).T  # should be small
-#           , np.array([[.99,0.01]]).T)
-def regularizationCost(coeffMats):
+def mkRegularizationCost(coeffMats):
     flatMats = [np.delete(x,0,axis=1).flatten()
                 for x in coeffMats]
     return np.concatenate(np.array(flatMats)**2).sum()
-# regulCost([np.eye(1),np.eye(2)]) # should be 1
-# regulCost([np.array([[10,1,2]])]) # should be 5
+# mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
+# mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
+mkErrorCost(np.array([[1,0]]).T  # should be small
+           , np.array([[.99,0.01]]).T);
 
 
-# In[86]:
+# In[12]:
 
 def testCost():
     nnInputs = np.array([[1,2,-1]]).T
     observedCategs = np.array([[1,0]])
-    Thetas = makeRandCoeffs([2,2,2])
+    Thetas = mkRandCoeffs([2,2,2])
     latents,activs,predicts = forward(nnInputs,Thetas)
     ec = errorCost(observedCategs,activs[-1])
     rc = regularizationCost(Thetas)
@@ -196,18 +196,18 @@ def testCost():
 # testCost()
 
 
-# ## Gradient
+# ## Errors, and back-propogating them
 
-# In[89]:
+# In[13]:
 
 def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
     # the derivative of ("expit" = the sigmoid function)
-def lastError(lastActivs,yVec): return lastActivs - yVec
+def mkLastError(lastActivs,yVec): return lastActivs - yVec
     # Evaluate once per observation.
     # Both inputs are column vectors.
 
 
-# In[90]:
+# In[14]:
 
 def errorSkeleton( coeffMats, activs): # Grokkiing list indexes
     nLayers = len(activs) # len(coeffMats) + 1 = len(activs)
@@ -223,27 +223,48 @@ def testErrorSkeleton():
           ["mat0","mat1"]
         , ["act0","act1","act2"]
     )
-# testErrorSkeleton() # it works!
+#testErrorSkeleton() # it works!
 
 
-# In[119]:
+# In[16]:
 
 # You can ignore the 0th element of each layer's error when creating
 # the derivative matrix, because it only applies|exists rightward.
-def errors(coeffMats,latents,activs,yVec):
+def mkErrors(coeffMats,latents,activs,yVec):
     nLayers = len(latents)
-    errors = list( range( nLayers ) ) # dummy values, just for size
-    errors[0] = "input layer has no error term"
-    errors[nLayers-1] = lastError(activs[-1], yVec)
+    errs = list( range( nLayers ) ) # dummy values, just for size
+    errs[0] = "input layer has no error term"
+    errs[nLayers-1] = mkLastError(activs[-1], yVec)
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
-        errors[i] = ( coeffMats[i].T.dot( errors[i+1] ) 
+        errs[i] = ( coeffMats[i].T.dot( errs[i+1] ) 
                      * expitPrime(latents[i]) )
-    return errors
-def testErrors(): return errors( # y = activs[-1] => errors = 0
+    return errs
+def testMkErrors(): return mkErrors( # y = activs[-1] => errors = 0
       [np.eye(2),np.ones((2,2))]
     , ["nonexistent", np.array([[1,1]]).T, "unimportant"]
     , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
     , np.array([[2,3]]).T
     )
-testErrors()
+testMkErrors();
+
+
+# In[17]:
+
+def mkDeltaMats(errs,activs):
+    nMats = len(activs)-1
+    acc = list(range(nMats)) # start with dummy values
+    for i in range(nMats):
+        # the [1:] is to drop the "error" on the constant term
+        acc[i] = errs[i+1][1:].dot( activs[i].T )
+    return acc
+def testMkDeltaMats(): # result should be 2 by 3 (1 activation droped)
+    errs = ["nonexistent",np.ones((3,1))]
+    activs = [np.ones((3,1)),"unimportant"]
+    return mkDeltaMats(errs,activs)
+testMkDeltaMats()
+
+
+# In[ ]:
+
+
 
