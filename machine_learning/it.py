@@ -235,15 +235,19 @@ def mkErrors(coeffMats,latents,activs,yVec):
     errs = list( range( nLayers ) ) # dummy values, just for size
     errs[0] = "input layer has no error term"
     errs[-1] = activs[-1] - yVec # the last layer's error is different
-    print("-- IN: mkErrors --")
-    print("\ncoeffMats"); print(mapShape(coeffMats))
-    print("\nlatents"); print(mapShape(latents))
-    print("\nactivs"); print(mapShape(activs))
-    print("\nyVec"); print(mapShape(yVec))
+    # print("-- IN: mkErrors, outside the loop --")
+    # print("coeffMats" + str(mapShape(coeffMats)))
+    # print("latents" + str(mapShape(latents)))
+    # print("activs" + str(mapShape(activs)))
+    # print("yVec" + str(mapShape(yVec)) + "\n")
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
-        print("i = " + str(i))
-        errs[i] = ( coeffMats[i].T.dot( errs[i+1] )
-                     * expitPrime(latents[i]) )
+        # print("IN mkErrors/loop, i = " + str(i))
+        # print("coeffMat shape: " + str(coeffMats[i].shape))
+        # print("errVec shape: " + str(errs[i+1].shape))
+        # print("latents shape: " + str(latents[i].shape))
+        errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
+                    # [1:] because the 0th is the "error" in the extra, constant neuron
+                    * expitPrime(latents[i]) )
     return errs
 def testMkErrors(): return mkErrors(
       [np.eye(2),np.eye(2),np.ones((2,2))]
@@ -257,7 +261,7 @@ def testMkErrors2(): return mkErrors(
     , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
     , np.array([[2,3.1]]).T
     )
-testMkErrors()
+testMkErrors2()
 
 
 # In[16]:
@@ -266,11 +270,13 @@ def mkDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
     nMats = len(activs)-1
     acc = list(range(nMats)) # start with dummy values
+    print("errs: " + str(mapShape(errs)))
+    print("activs: " + str(mapShape(activs)))
     for i in range(nMats):
-        # the [1:] is to drop the "error" on the constant term
-        acc[i] = errs[i+1][1:].dot( activs[i].T )
+        print("i = " + str(i))
+        acc[i] = errs[i+1].dot( activs[i].T )
     return acc
-def testMkDeltaMats(): # result should be 2 by 3 (1 activation droped)
+def testMkDeltaMats(): # result should be 3 by 3
     errs = ["nonexistent",np.ones((3,1))]
     activs = [np.ones((3,1)),"unimportant"]
     return mkDeltaMats(errs,activs)
@@ -295,27 +301,21 @@ testMkDeltaMats()
 
 def obsCoeffDeltas(coeffMats,X,YBool):
     latents,activs,_ = forward(X,coeffMats)
-    print("-- IN: obsCoeffDeltas --")
-    print("\ncoeffMats"); print(mapShape(coeffMats))
-    print("\nlatents");   print(mapShape(latents))
-    print("\nactivs");    print(mapShape(activs))
-    print("\nYBool");     print(mapShape(YBool))
+    # print("-- IN: obsCoeffDeltas --")
+    # print("\ncoeffMats"); print(mapShape(coeffMats))
+    # print("\nlatents");   print(mapShape(latents))
+    # print("\nactivs");    print(mapShape(activs))
+    # print("\nYBool");     print(mapShape(YBool))
     errs = mkErrors(coeffMats,latents,activs,YBool)
     # return errs
     return mkDeltaMats(errs,activs)
 
 
-# In[19]:
+# In[42]:
 
 lengths = [400,25,10]
 initCoeffs = mkRandCoeffs( lengths )
 obsCoeffDeltas(initCoeffs,X[0],YBool[0])
-
-
-# In[20]:
-
-Could "bughunt" with algebra: Write down formulas for the inputs (separately the inputs, output and hidden layers), and see if they match in both invocations.
-Also look for the ">>>" symbols.
 
 
 # In[ ]:
