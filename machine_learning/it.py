@@ -120,7 +120,7 @@ mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 def prependUnityColumn(colvec):
     return np.insert(colvec,0,1,axis=0)
 test = np.array([[3,4]]).T
-(test, prependUnityColumn(test)) # test
+# (test, prependUnityColumn(test)) # test
 
 
 # In[9]:
@@ -154,7 +154,7 @@ def forward(nnInputs,coeffMats):
 forward(np.array([[1,2,3]]).T
        , [np.array([[5,2,0]])]
        )
-forward(  np.array([[1,1,2]]).T
+x = forward(  np.array([[1,1,2]]).T
         , [np.array([[1,2,3]
                     ,[4,5,6]])
            , np.array([[3,2,1]
@@ -191,11 +191,6 @@ def testCost():
     latents,activs,predicts = forward(nnInputs,Thetas)
     ec = errorCost(observedCategs,activs[-1])
     rc = regularizationCost(Thetas)
-    print(latents);  print("... = the latents\n")
-    print(activs);   print("... = the activations\n")
-    print(predicts); print("... = the predictions\n")
-    print(ec);       print("... = the error cost\n")
-    print(rc);       print("... = the regularization cost\n")
 # testCost()
 
 
@@ -207,25 +202,6 @@ def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
     # the derivative of ("expit" = the sigmoid function)
 
 
-# In[14]:
-
-def errorSkeleton( coeffMats, activs): # Grokkiing list indexes
-    nLayers = len(activs) # len(coeffMats) + 1 = len(activs)
-    print("for last error vector: ")
-    print(activs[-1])
-    for i in reversed( range( nLayers - 2 ) ): # indexing activs
-        # coeffMat[0] is not used in backprop
-        print("between layers " + str(i) + " and " + str(i+1) + "?")
-        print(coeffMats[i+1])
-        print(activs[i])
-def testErrorSkeleton():
-    errorSkeleton(
-          ["mat0","mat1"]
-        , ["act0","act1","act2"]
-    )
-#testErrorSkeleton() # it works!
-
-
 # In[15]:
 
 def mapShape(arrayList): return list(map(np.shape,arrayList))
@@ -235,19 +211,11 @@ def mkErrors(coeffMats,latents,activs,yVec):
     errs = list( range( nLayers ) ) # dummy values, just for size
     errs[0] = "input layer has no error term"
     errs[-1] = activs[-1] - yVec # the last layer's error is different
-    # print("-- IN: mkErrors, outside the loop --")
-    # print("coeffMats" + str(mapShape(coeffMats)))
-    # print("latents" + str(mapShape(latents)))
-    # print("activs" + str(mapShape(activs)))
-    # print("yVec" + str(mapShape(yVec)) + "\n")
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
-        # print("IN mkErrors/loop, i = " + str(i))
-        # print("coeffMat shape: " + str(coeffMats[i].shape))
-        # print("errVec shape: " + str(errs[i+1].shape))
-        # print("latents shape: " + str(latents[i].shape))
         errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
-                    # [1:] because the 0th is the "error" in the extra, constant neuron
+                    # [1:] because the 0th is the "error" in the constant unity neuron
                     * expitPrime(latents[i]) )
+    for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
 def testMkErrors(): return mkErrors(
       [np.eye(2),np.eye(2),np.ones((2,2))]
@@ -270,10 +238,7 @@ def mkDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
     nMats = len(activs)-1
     acc = list(range(nMats)) # start with dummy values
-    print("errs: " + str(mapShape(errs)))
-    print("activs: " + str(mapShape(activs)))
     for i in range(nMats):
-        print("i = " + str(i))
         acc[i] = errs[i+1].dot( activs[i].T )
     return acc
 def testMkDeltaMats(): # result should be 3 by 3
@@ -287,35 +252,20 @@ testMkDeltaMats()
 
 # In[17]:
 
-# Things I will use:
-# X, YBool
-# lengths # not including constant terms
-# mkRandCoeffs(lengths)
-# forward(nnInputs,coeffMats) -> (latents,activs,prediction)
-# mkErrorCost(observed,predicted)
-# mkErrors(coeffMats,latents,activs,yVec)
-# mkDeltaMats(errs,activs)
+def obsCoeffDeltas(coeffMats,X,YBool):
+    latents,activs,_ = forward(X,coeffMats)
+    errs = mkErrors(coeffMats,latents,activs,YBool)
+    return mkDeltaMats(errs,activs)
 
 
 # In[18]:
 
-def obsCoeffDeltas(coeffMats,X,YBool):
-    latents,activs,_ = forward(X,coeffMats)
-    # print("-- IN: obsCoeffDeltas --")
-    # print("\ncoeffMats"); print(mapShape(coeffMats))
-    # print("\nlatents");   print(mapShape(latents))
-    # print("\nactivs");    print(mapShape(activs))
-    # print("\nYBool");     print(mapShape(YBool))
-    errs = mkErrors(coeffMats,latents,activs,YBool)
-    # return errs
-    return mkDeltaMats(errs,activs)
-
-
-# In[42]:
-
 lengths = [400,25,10]
 initCoeffs = mkRandCoeffs( lengths )
-obsCoeffDeltas(initCoeffs,X[0],YBool[0])
+obsCoeffDeltas(
+    initCoeffs,
+    X[0].reshape((-1,1)),
+    YBool[0].reshape((-1,1)))
 
 
 # In[ ]:
