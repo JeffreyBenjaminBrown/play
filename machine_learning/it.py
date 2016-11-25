@@ -129,7 +129,10 @@ def forward(nnInputs,coeffMats):
     # nnInputs :: column vector of inputs to the neural net
     # coeffMats :: list of coefficient matrices
     latents = ["input layer latent vector does not exist"] # per-layer inputs to the sigmoid function
-      # to make indexing latents the same as activs, give it a dummy string value at position 0
+      # The last layer has the same number of latent and activ values.
+      # Each hidden layer's latent (aka weighted input) vector is 1 neuron shorter than the corresponding activs vector.
+      # HOWEVER, to make indexing the list of latents the same as the list of activs, 
+          # I give it a dummy string value at position 0.
     activs = [nnInputs] # per-layer outputs from the sigmoid function
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
@@ -202,9 +205,6 @@ def testCost():
 
 def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
     # the derivative of ("expit" = the sigmoid function)
-def mkLastError(lastActivs,yVec): return lastActivs - yVec
-    # Evaluate once per observation.
-    # Both inputs are column vectors.
 
 
 # In[14]:
@@ -228,32 +228,39 @@ def testErrorSkeleton():
 
 # In[15]:
 
-# WARNING: ignore the 0th elt of each layer's error when creating
-# the derivative matrix. It only applies|exists rightward.
+def mapShape(arrayList): return list(map(np.shape,arrayList))
 def mkErrors(coeffMats,latents,activs,yVec):
+    "Returns a list of error vectors, one per layer."
     nLayers = len(latents)
     errs = list( range( nLayers ) ) # dummy values, just for size
     errs[0] = "input layer has no error term"
-    errs[nLayers-1] = mkLastError(activs[-1], yVec)
+    errs[-1] = activs[-1] - yVec # the last layer's error is different
+    print("-- IN: mkErrors --")
+    print("\ncoeffMats"); print(mapShape(coeffMats))
+    print("\nlatents"); print(mapShape(latents))
+    print("\nactivs"); print(mapShape(activs))
+    print("\nyVec"); print(mapShape(yVec))
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
-        errs[i] = ( coeffMats[i].T.dot( errs[i+1] ) 
+        print("i = " + str(i))
+        errs[i] = ( coeffMats[i].T.dot( errs[i+1] )
                      * expitPrime(latents[i]) )
     return errs
-def testMkErrors(): return mkErrors( # y = activs[-1] => errors = 0
+def testMkErrors(): return mkErrors(
+      [np.eye(2),np.eye(2),np.ones((2,2))]
+    , ["nonexistent", np.array([[1,1]]).T,np.array([[1,1]]).T, "unimportant"]
+    , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
+    , np.array([[2,3.1]]).T
+    )
+def testMkErrors2(): return mkErrors(
       [np.eye(2),np.ones((2,2))]
     , ["nonexistent", np.array([[1,1]]).T, "unimportant"]
     , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
-    , np.array([[2,3]]).T
+    , np.array([[2,3.1]]).T
     )
-testMkErrors();
+testMkErrors()
 
 
 # In[16]:
-
-np.ones((25,1)) * np.zeros((26,1))
-
-
-# In[ ]:
 
 def mkDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
@@ -272,7 +279,7 @@ testMkDeltaMats()
 
 # ## Putting it together?
 
-# In[ ]:
+# In[17]:
 
 # Things I will use:
 # X, YBool
@@ -284,24 +291,31 @@ testMkDeltaMats()
 # mkDeltaMats(errs,activs)
 
 
-# In[17]:
+# In[18]:
 
-def mapShape(arrayList): return list(map(np.shape,arrayList))
 def obsCoeffDeltas(coeffMats,X,YBool):
     latents,activs,_ = forward(X,coeffMats)
+    print("-- IN: obsCoeffDeltas --")
     print("\ncoeffMats"); print(mapShape(coeffMats))
     print("\nlatents");   print(mapShape(latents))
     print("\nactivs");    print(mapShape(activs))
     print("\nYBool");     print(mapShape(YBool))
     errs = mkErrors(coeffMats,latents,activs,YBool)
+    # return errs
     return mkDeltaMats(errs,activs)
+
+
+# In[19]:
+
 lengths = [400,25,10]
 initCoeffs = mkRandCoeffs( lengths )
-
-
-# In[18]:
-
 obsCoeffDeltas(initCoeffs,X[0],YBool[0])
+
+
+# In[20]:
+
+Could "bughunt" with algebra: Write down formulas for the inputs (separately the inputs, output and hidden layers), and see if they match in both invocations.
+Also look for the ">>>" symbols.
 
 
 # In[ ]:
