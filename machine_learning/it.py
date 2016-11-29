@@ -18,43 +18,50 @@ import itertools
 from scipy.special import expit #Vectorized sigmoid function
 
 
+# ## Utilities
+
+# In[2]:
+
+def prependUnityColumn(colvec):
+    return np.insert(colvec,0,1,axis=0)
+test = np.array([[3,4]]).T
+# (test, prependUnityColumn(test)) # test
+
+
 # ## Visualizing the data
 
 # ### This visualization is (roughly) unchanged, from https://github.com/kaleko/CourseraML
 
-# In[2]:
+# In[3]:
 
-#Note this is actually a symlink... same data as last exercise,
-#so there's no reason to add another 7MB to my github repo...
 datafile = 'data/ex4data1.mat'
 mat = scipy.io.loadmat( datafile )
 X, Y = mat['X'], mat['y']
-#Insert a column of 1's to X as usual
-X = np.insert(X,0,1,axis=1)
+X = np.insert(X,0,1,axis=1) #Insert a column of 1's
 print( "'Y' shape: %s. Unique elements in y: %s"%(mat['y'].shape,np.unique(mat['y'])) )
 print( "'X' shape: %s. X[0] shape: %s"%(X.shape,X[0].shape) )
 #X is 5000 images. Each image is a row. Each image has 400 pixels unrolled (20x20)
 #y is a classification for each image. 1-10, where "10" is the handwritten "0"
 
 
-# In[3]:
+# In[4]:
 
 def tenToZero(digit):
     if digit == 10: return 0
     else: return digit
 Y = np.vectorize(tenToZero)(Y)
-YBool = np.zeros((Y.shape[0],10)) # because ten categories
-for i in range(Y.shape[0]):
+YBool = np.zeros((Y.shape[0],10)) # ten categories
+for i in range(Y.shape[0]): # YBool is 10 wide
     YBool[i,Y[i]]=1
 YBool;
 
 
-# In[4]:
+# In[5]:
 
 def getDatumImg(row):
     """
-    Function that is handed a single np array with shape 1x400,
-    crates an image object from it, and returns it
+    from a single np array with shape 1x400,
+    returns an image object
     """
     width, height = 20, 20
     square = row[1:].reshape(width,height)
@@ -62,8 +69,10 @@ def getDatumImg(row):
     
 def displaySomeData(indices_to_display = None):
     """
-    Function that picks 100 random rows from X, creates a 20x20 image from each,
-    then stitches them together into a 10x10 grid of images, and shows it.
+    picks 100 random rows from X, 
+    creates a 20x20 image from each,
+    then stitches them together into a 10x10 grid of images, 
+    shows it.
     """
     width, height = 20, 20
     nrows, ncols = 10, 10
@@ -83,14 +92,14 @@ def displaySomeData(indices_to_display = None):
     plt.imshow(img,cmap = cm.Greys_r)
 
 
-# In[5]:
+# In[6]:
 
 displaySomeData()
 
 
-# ## Architecture
+# ## Make random coeffs. Architecture = list of lengths.
 
-# In[6]:
+# In[7]:
 
 def mkRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
@@ -100,7 +109,7 @@ def mkRandCoeffsSmall(randUnifCoeffs):
     return randUnifCoeffs * e
 
 
-# In[7]:
+# In[8]:
 
 def mkRandCoeffs(lengths):
     # lengths :: [Int] lists input, hidden, and output layer lengths
@@ -114,14 +123,6 @@ mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
 
 # ## Forward-propogation
-
-# In[8]:
-
-def prependUnityColumn(colvec):
-    return np.insert(colvec,0,1,axis=0)
-test = np.array([[3,4]]).T
-# (test, prependUnityColumn(test)) # test
-
 
 # In[9]:
 
@@ -176,10 +177,10 @@ def mkRegularizationCost(coeffMats):
     flatMats = [np.delete(x,0,axis=1).flatten()
                 for x in coeffMats]
     return np.concatenate(np.array(flatMats)**2).sum()
-# mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
-# mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
 mkErrorCost(np.array([[1,0]]).T  # should be small
-           , np.array([[.99,0.01]]).T);
+           , np.array([[.99,0.01]]).T)
+mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
+mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
 
 
 # In[12]:
@@ -189,9 +190,10 @@ def testCost():
     observedCategs = np.array([[1,0]])
     Thetas = mkRandCoeffs([2,2,2])
     latents,activs,predicts = forward(nnInputs,Thetas)
-    ec = errorCost(observedCategs,activs[-1])
-    rc = regularizationCost(Thetas)
-# testCost()
+    ec = mkErrorCost(observedCategs,activs[-1])
+    rc = mkRegularizationCost(Thetas)
+    return (ec,rc)
+testCost()
 
 
 # ## Errors, and back-propogating them
@@ -202,7 +204,7 @@ def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
     # the derivative of ("expit" = the sigmoid function)
 
 
-# In[15]:
+# In[14]:
 
 def mapShape(arrayList): return list(map(np.shape,arrayList))
 def mkErrors(coeffMats,latents,activs,yVec):
@@ -213,7 +215,7 @@ def mkErrors(coeffMats,latents,activs,yVec):
     errs[-1] = activs[-1] - yVec # the last layer's error is different
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
         errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
-                    # [1:] because the 0th is the "error" in the constant unity neuron
+                    # [1:] to drop the first, the "error" in the constant unity neuron
                     * expitPrime(latents[i]) )
     for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
@@ -232,7 +234,7 @@ def testMkErrors2(): return mkErrors(
 testMkErrors2()
 
 
-# In[16]:
+# In[15]:
 
 def mkDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
@@ -250,7 +252,7 @@ testMkDeltaMats()
 
 # ## Putting it together?
 
-# In[17]:
+# In[16]:
 
 def obsCoeffDeltas(coeffMats,X,YBool):
     latents,activs,_ = forward(X,coeffMats)
@@ -258,17 +260,12 @@ def obsCoeffDeltas(coeffMats,X,YBool):
     return mkDeltaMats(errs,activs)
 
 
-# In[18]:
+# In[17]:
 
 lengths = [400,25,10]
 initCoeffs = mkRandCoeffs( lengths )
 obsCoeffDeltas(
     initCoeffs,
     X[0].reshape((-1,1)),
-    YBool[0].reshape((-1,1)))
-
-
-# In[ ]:
-
-
+    YBool[0].reshape((-1,1)));
 
