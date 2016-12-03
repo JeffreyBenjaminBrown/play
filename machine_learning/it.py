@@ -50,9 +50,16 @@ def tenToZero(digit):
     if digit == 10: return 0
     else: return digit
 Y = np.vectorize(tenToZero)(Y)
-YBool = np.zeros((Y.shape[0],10)) # ten categories
-for i in range(Y.shape[0]): # YBool is 10 wide
-    YBool[i,Y[i]]=1
+
+def digitVecToBoolArray(digitVec):
+    # >>> I meant to use this somewhere else too
+    height = digitVec.shape[0]
+    boolArray = np.zeros((height,10))
+    for obs in range(height):
+        boolArray[obs,digitVec[obs]] = 1
+    return boolArray
+
+YBool = digitVecToBoolArray(Y)
 YBool;
 
 
@@ -155,7 +162,7 @@ def forward(nnInputs,coeffMats):
 forward(np.array([[1,2,3]]).T
        , [np.array([[5,2,0]])]
        )
-x = forward(  np.array([[1,1,2]]).T
+forward(  np.array([[1,1,2]]).T
         , [np.array([[1,2,3]
                     ,[4,5,6]])
            , np.array([[3,2,1]
@@ -236,36 +243,79 @@ testMkErrors2()
 
 # In[15]:
 
-def mkDeltaMats(errs,activs):
+def mkObsDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
     nMats = len(activs)-1
     acc = list(range(nMats)) # start with dummy values
     for i in range(nMats):
         acc[i] = errs[i+1].dot( activs[i].T )
     return acc
-def testMkDeltaMats(): # result should be 3 by 3
+def testMkObsDeltaMats(): # result should be 3 by 3
     errs = ["nonexistent",np.ones((3,1))]
     activs = [np.ones((3,1)),"unimportant"]
-    return mkDeltaMats(errs,activs)
-testMkDeltaMats()
+    return mkObsDeltaMats(errs,activs)
+testMkObsDeltaMats()
 
 
 # ## Putting it together?
 
 # In[16]:
 
-def obsCoeffDeltas(coeffMats,X,YBool):
+def mkCoeffDeltasFromObs(coeffMats,X,YBool):
     latents,activs,_ = forward(X,coeffMats)
     errs = mkErrors(coeffMats,latents,activs,YBool)
-    return mkDeltaMats(errs,activs)
+    return mkObsDeltaMats(errs,activs)
 
 
 # In[17]:
 
-lengths = [400,25,10]
-initCoeffs = mkRandCoeffs( lengths )
-obsCoeffDeltas(
-    initCoeffs,
-    X[0].reshape((-1,1)),
-    YBool[0].reshape((-1,1)));
+A = np.array([[1,2]]).T.dot( np.array( [[1,10]]) )
+print(A)
+A[:,[1]]
+
+
+# In[18]:
+
+lengths = [400,10,30,10] # was: [400,25,10]
+XT = X.T.copy() # hopefully, extracting columns from this is faster
+nObs = X.shape[0]
+coeffs = mkRandCoeffs( lengths )
+costAcc = []
+changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
+for run in range(5): # 2 is enough if convergence monotonic
+    costThisRun = 0
+    for obs in range( nObs ): # >>> inefficient, runs forward twice for each obs
+        # should combine with the next loop
+        _,activs,_ = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
+                            , coeffs )
+        costThisRun += mkErrorCost( YBool[obs], activs[-1])
+    costAcc.append(costThisRun/nObs)
+    for obs in range( X.shape[0] ):
+        ocd = mkCoeffDeltasFromObs(
+                coeffs,
+                X[obs].reshape((-1,1)),
+                YBool[obs].reshape((-1,1)))
+        changeAcc += ocd
+    for i in range(len(coeffs)):
+        coeffs[i] -= 1000 * (ocd[i] / nObs)
+
+
+# In[19]:
+
+"""Speed ideas: 
+    The "fast sigmoid" f(x) = x / (1 + abs(x)) is differentiable!
+      more ideas (and that one) here: http://stackoverflow.com/questions/10732027/fast-sigmoid-algorithm
+    There's tab-completion!
+    repair SMSN, look at my ML notes there
+    transpose X once initially, not each time
+      YBool, latents, activs, errs might also have this prob|oppor
+      maybe late, when handing it to the forward-backward iterator
+      maybe early; decide by counting where it is used heavily
+    use fmin_cg, ala the original ex4.ipynb in this folder
+      unrollMats :: [length] -> [matrix] -> [coeff]
+      rollMats :: [length] -> [coeff] -> [matrix]
+    loop once, not twice, over the observations per set of coeffs
+Concision
+  lengths ought only to describe the hidden layers
+"""; 
 
