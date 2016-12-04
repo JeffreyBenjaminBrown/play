@@ -28,11 +28,42 @@ test = np.array([[3,4]]).T
 # (test, prependUnityColumn(test)) # test
 
 
+# ### Sigmoids: Expit (1/(1+e^z)) is somehow faster than "fast sigmoid" (1 / (1+abs(x)))
+
+# In[3]:
+
+# obsolete, replaced by the sigmoid functions (which are next)
+def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
+    # the derivative of ("expit" = the sigmoid function)
+
+
+# In[4]:
+
+def _sigmoid(x): return (x / (1 + abs(x)) + 1) / 2
+sigmoid = np.vectorize(_sigmoid)
+# sigmoid(np.array([-10,0,10])) # test
+
+
+# In[5]:
+
+def _sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
+sigmoidPrime = np.vectorize(_sigmoidPrime)
+# sigmoidPrime(np.array([list(range(-10,15,5))])).T # test
+
+
+# In[6]:
+
+data = np.random.rand(1000000)
+get_ipython().magic('prun expit(data)')
+# %prun sigmoid(data)
+# %prun np.vectorize( lambda x: (x / (1 + abs(x)) + 1) / 2 )(data)
+
+
 # ## Visualizing the data
 
 # ### This visualization is (roughly) unchanged, from https://github.com/kaleko/CourseraML
 
-# In[3]:
+# In[7]:
 
 datafile = 'data/ex4data1.mat'
 mat = scipy.io.loadmat( datafile )
@@ -44,7 +75,7 @@ print( "'X' shape: %s. X[0] shape: %s"%(X.shape,X[0].shape) )
 #y is a classification for each image. 1-10, where "10" is the handwritten "0"
 
 
-# In[4]:
+# In[8]:
 
 def tenToZero(digit):
     if digit == 10: return 0
@@ -63,7 +94,7 @@ YBool = digitVecToBoolArray(Y)
 YBool;
 
 
-# In[5]:
+# In[9]:
 
 def getDatumImg(row):
     """
@@ -99,14 +130,14 @@ def displaySomeData(indices_to_display = None):
     plt.imshow(img,cmap = cm.Greys_r)
 
 
-# In[6]:
+# In[10]:
 
 displaySomeData()
 
 
 # ## Make random coeffs. Architecture = list of lengths.
 
-# In[7]:
+# In[11]:
 
 def mkRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
@@ -116,7 +147,7 @@ def mkRandCoeffsSmall(randUnifCoeffs):
     return randUnifCoeffs * e
 
 
-# In[8]:
+# In[12]:
 
 def mkRandCoeffs(lengths):
     # lengths :: [Int] lists input, hidden, and output layer lengths
@@ -131,7 +162,7 @@ mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
 # ## Forward-propogation
 
-# In[9]:
+# In[13]:
 
 def forward(nnInputs,coeffMats):
     # nnInputs :: column vector of inputs to the neural net
@@ -145,7 +176,7 @@ def forward(nnInputs,coeffMats):
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
         latents.append( newLatent )
-        newActivs = expit( latents[i+1] )
+        newActivs = np.vectorize(_sigmoid)( latents[i+1] ) # >>>
         if i<len(coeffMats)-1: newActivs = prependUnityColumn(newActivs)
             # nnInputs already has the unity column.
             # The hidden layer activations get it prepended here.
@@ -156,7 +187,7 @@ def forward(nnInputs,coeffMats):
     return (latents,activs,prediction)
 
 
-# In[10]:
+# In[14]:
 
 # It works! (The smaller test's arithmetic is even human-followable.)
 forward(np.array([[1,2,3]]).T
@@ -172,7 +203,7 @@ forward(  np.array([[1,1,2]]).T
 
 # ## Cost
 
-# In[11]:
+# In[15]:
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
 def mkErrorCost(observed,predicted):
@@ -190,7 +221,7 @@ mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
 mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
 
 
-# In[12]:
+# In[16]:
 
 def testCost():
     nnInputs = np.array([[1,2,-1]]).T
@@ -205,13 +236,7 @@ testCost()
 
 # ## Errors, and back-propogating them
 
-# In[13]:
-
-def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
-    # the derivative of ("expit" = the sigmoid function)
-
-
-# In[14]:
+# In[17]:
 
 def mapShape(arrayList): return list(map(np.shape,arrayList))
 def mkErrors(coeffMats,latents,activs,yVec):
@@ -223,7 +248,7 @@ def mkErrors(coeffMats,latents,activs,yVec):
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
         errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
                     # [1:] to drop the first, the "error" in the constant unity neuron
-                    * expitPrime(latents[i]) )
+                    * np.vectorize(_sigmoidPrime)(latents[i]) ) # >>>
     for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
 def testMkErrors(): return mkErrors(
@@ -241,7 +266,7 @@ def testMkErrors2(): return mkErrors(
 testMkErrors2()
 
 
-# In[15]:
+# In[18]:
 
 def mkObsDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
@@ -259,7 +284,7 @@ testMkObsDeltaMats()
 
 # ## Putting it together?
 
-# In[16]:
+# In[19]:
 
 def mkCoeffDeltasFromObs(coeffMats,X,YBool):
     latents,activs,_ = forward(X,coeffMats)
@@ -267,43 +292,44 @@ def mkCoeffDeltasFromObs(coeffMats,X,YBool):
     return mkObsDeltaMats(errs,activs)
 
 
-# In[17]:
+# In[20]:
 
-A = np.array([[1,2]]).T.dot( np.array( [[1,10]]) )
-print(A)
-A[:,[1]]
-
-
-# In[18]:
-
-lengths = [400,10,30,10] # was: [400,25,10]
+lengths = [400,10,30,10]
 XT = X.T.copy() # hopefully, extracting columns from this is faster
 nObs = X.shape[0]
-coeffs = mkRandCoeffs( lengths )
-costAcc = []
-changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
-for run in range(5): # 2 is enough if convergence monotonic
-    costThisRun = 0
-    for obs in range( nObs ): # >>> inefficient, runs forward twice for each obs
-        # should combine with the next loop
-        _,activs,_ = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
-                            , coeffs )
-        costThisRun += mkErrorCost( YBool[obs], activs[-1])
-    costAcc.append(costThisRun/nObs)
-    for obs in range( X.shape[0] ):
-        ocd = mkCoeffDeltasFromObs(
-                coeffs,
-                X[obs].reshape((-1,1)),
-                YBool[obs].reshape((-1,1)))
-        changeAcc += ocd
-    for i in range(len(coeffs)):
-        coeffs[i] -= 1000 * (ocd[i] / nObs)
+def run():
+    coeffs = mkRandCoeffs( lengths )
+    costAcc = []
+    changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
+    for run in range(5): # 2 is enough if convergence monotonic
+        costThisRun = 0
+        for obs in range( nObs ): # >>> inefficient, runs forward twice for each obs
+            # should combine with the next loop
+            _,activs,_ = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
+                                , coeffs )
+            costThisRun += mkErrorCost( YBool[obs], activs[-1])
+        costAcc.append(costThisRun/nObs)
+        for obs in range( nObs ):
+            ocd = mkCoeffDeltasFromObs(
+                    coeffs,
+                    XT[:,[obs]],
+                    YBool[obs].reshape((-1,1)))
+            changeAcc += ocd
+        for i in range(len(coeffs)):
+            coeffs[i] -= 1000 * (ocd[i] / nObs)
+    return costAcc # >>> also return coeffs
 
 
-# In[19]:
+# In[21]:
+
+get_ipython().magic('prun run()')
+
+
+# In[22]:
 
 """Speed ideas: 
     The "fast sigmoid" f(x) = x / (1 + abs(x)) is differentiable!
+      scaled to [0,1]: f(x) = (x / (1 + abs(x)) + 1) / 2
       more ideas (and that one) here: http://stackoverflow.com/questions/10732027/fast-sigmoid-algorithm
     There's tab-completion!
     repair SMSN, look at my ML notes there
