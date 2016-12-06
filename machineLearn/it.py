@@ -16,19 +16,15 @@ from scipy.special import expit # Vectorized sigmoid function
 def mapShape(arrayList): return list(map(np.shape,arrayList))
 
 
-# ## Sigmoids: Expit (1/(1+e^z)) is somehow faster than "fast sigmoid" (1 / (1+abs(x)))
+# ## Sigmoids, 2 kinds
+  # "fast sigmoid" (1 / (1+abs(x)))
+  # expit (1/(1+e^z)), unused
 
-# obsolete, replaced by the sigmoid functions (which are next)
 def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
-    # the derivative of ("expit" = the sigmoid function)
 
-def _sigmoid(x): return (x / (1 + abs(x)) + 1) / 2
-sigmoid = np.vectorize(_sigmoid)
-# sigmoid(np.array([-10,0,10])) # test
+def sigmoid(x): return (x / (1 + abs(x)) + 1) / 2
 
-def _sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
-sigmoidPrime = np.vectorize(_sigmoidPrime)
-# sigmoidPrime(np.array([list(range(-10,15,5))])).T # test
+def sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
 
 
 # ### Load data
@@ -37,7 +33,8 @@ datafile = 'digits,handwritten.mat'
 mat = scipy.io.loadmat( datafile )
 X, Y = mat['X'], mat['y']
 X = np.insert(X,0,1,axis=1) #Insert a column of 1's
-XT = X.T.copy() # hopefully, rows from XT come faster than columns from X
+XT = X.T.copy()
+  # >>> test: do rows from XT come faster than columns from X?
 nObs = X.shape[0]
 
 def tenToZero(digit):
@@ -46,15 +43,12 @@ def tenToZero(digit):
 Y = np.vectorize(tenToZero)(Y)
 
 def digitVecToBoolArray(digitVec):
-    # >>> I meant to use this somewhere else too
     height = digitVec.shape[0]
     boolArray = np.zeros((height,10))
     for obs in range(height):
         boolArray[obs,digitVec[obs]] = 1
     return boolArray
-
 YBool = digitVecToBoolArray(Y)
-YBool;
 
 
 # ### Make random coeffs. "Architecture" = list of lengths.
@@ -87,13 +81,13 @@ def forward(nnInputs,coeffMats):
       # The last layer has the same number of latent and activ values.
       # Each hidden layer's latent (aka weighted input) vector is 1 neuron shorter than the corresponding activs vector.
       # HOWEVER, to make indexing the list of latents the same as the list of activs, 
-          # I give it a dummy string value at position 0.
+          # I give "latents" a dummy string value at position 0.
     activs = [nnInputs] # per-layer outputs from the sigmoid function
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
         latents.append( newLatent )
         newActivs =  (latents[i+1] / (1 + abs(latents[i+1])) + 1) / 2
-          # >>> wanted to call _sigmoid, but function calls!
+          # >>> wanted to call _sigmoid, but function calls are costly
         if i<len(coeffMats)-1: newActivs = np.insert(newActivs,0,1,axis=0)
             # nnInputs already has the unity term.
             # The hidden layer activations get it prepended here.
@@ -182,11 +176,16 @@ def mkObsDeltaMats(errs,activs):
         acc[i] = errs[i+1].dot( activs[i].T )
     return acc
 
-def testMkObsDeltaMats(): # result should be 3 by 3
+def testMkObsDeltaMats(): # result should be list of 1 3 by 3
     errs = ["nonexistent",np.ones((3,1))]
     activs = [np.ones((3,1)),"unimportant"]
     return mkObsDeltaMats(errs,activs)
 testMkObsDeltaMats()
+
+def testMkObsDeltaMats2(): # result should be list of 2 3 by 3s
+    errs = ["nonexistent",np.ones((3,1)),np.ones((3,1))]
+    activs = [np.ones((3,1)),np.ones((3,1)),"unimportant"]
+    return mkObsDeltaMats(errs,activs)
 
 
 # ### Putting it together?
@@ -213,7 +212,9 @@ def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
                     coeffs,
                     XT[:,[obs]],
                     YBool[obs].reshape((-1,1)))
-            changeAcc += ocd
+            # changeAcc += ocd # >>> A BUG!
+              # This appends ocd, rather than adding it.
+              # That didn't screw things up because later I use ocd where I meant to use changeAcc
         for i in range(len(coeffs)):
             coeffs[i] -= 1000 * (ocd[i] / nObs)
     return costAcc
