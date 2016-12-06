@@ -40,6 +40,7 @@ nObs = X.shape[0]
 def tenToZero(digit):
     if digit == 10: return 0
     else: return digit
+
 Y = np.vectorize(tenToZero)(Y)
 
 def digitVecToBoolArray(digitVec):
@@ -48,6 +49,7 @@ def digitVecToBoolArray(digitVec):
     for obs in range(height):
         boolArray[obs,digitVec[obs]] = 1
     return boolArray
+
 YBool = digitVecToBoolArray(Y)
 
 
@@ -69,7 +71,6 @@ def mkRandCoeffs(lengths):
         acc.append(mkRandCoeffsSmall(mkRandCoeffsSymmetric(
                 np.random.rand(lengths[i+1],lengths[i]+1) ) ) )
     return acc
-mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
 
 # ### Forward-propogation
@@ -96,17 +97,6 @@ def forward(nnInputs,coeffMats):
         activs.append( newActivs )
     return (latents,activs)
 
-# It works! (The smaller test's arithmetic is even human-followable.)
-forward(np.array([[1,2,3]]).T
-       , [np.array([[5,2,0]])]
-       )
-forward(  np.array([[1,1,2]]).T
-        , [np.array([[1,2,3]
-                    ,[4,5,6]])
-           , np.array([[3,2,1]
-                      ,[5,5,5]])
-          ] )
-
 
 # ### Cost
 
@@ -121,26 +111,12 @@ def mkRegularizationCost(coeffMats):
     flatMats = [np.delete(x,0,axis=1).flatten()
                 for x in coeffMats]
     return np.concatenate(np.array(flatMats)**2).sum()
-mkErrorCost(np.array([[1,0]]).T  # should be small
-           , np.array([[.99,0.01]]).T)
-mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
-mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
-
-def testCost():
-    nnInputs = np.array([[1,2,-1]]).T
-    observedCategs = np.array([[1,0]])
-    Thetas = mkRandCoeffs([2,2,2])
-    latents,activs = forward(nnInputs,Thetas)
-    ec = mkErrorCost(observedCategs,activs[-1])
-    rc = mkRegularizationCost(Thetas)
-    return (ec,rc)
-testCost()
 
 
 # ### Errors, and back-propogating them
 
 def mkErrors(coeffMats,latents,activs,yVec):
-    "Returns a list of error vectors, one per layer."
+    "Make a list of error vectors, one per layer."
     nLayers = len(latents)
     errs = list( range( nLayers ) ) # dummy values, just for size
     errs[0] = "input layer has no error term"
@@ -153,21 +129,6 @@ def mkErrors(coeffMats,latents,activs,yVec):
     for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
 
-def testMkErrors(): return mkErrors(
-      [np.eye(2),np.eye(2),np.ones((2,2))]
-    , ["nonexistent", np.array([[1,1]]).T,np.array([[1,1]]).T, "unimportant"]
-    , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
-    , np.array([[2,3.1]]).T
-    )
-
-def testMkErrors2(): return mkErrors(
-      [np.eye(2),np.ones((2,2))]
-    , ["nonexistent", np.array([[1,1]]).T, "unimportant"]
-    , [np.array([[1,1]]).T,np.array([[1,1]]).T,np.array([[2,3]]).T]
-    , np.array([[2,3.1]]).T
-    )
-testMkErrors2()
-
 def mkObsDeltaMats(errs,activs):
     "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
     nMats = len(activs)-1
@@ -175,17 +136,6 @@ def mkObsDeltaMats(errs,activs):
     for i in range(nMats):
         acc[i] = errs[i+1].dot( activs[i].T )
     return acc
-
-def testMkObsDeltaMats(): # result should be list of 1 3 by 3
-    errs = ["nonexistent",np.ones((3,1))]
-    activs = [np.ones((3,1)),"unimportant"]
-    return mkObsDeltaMats(errs,activs)
-testMkObsDeltaMats()
-
-def testMkObsDeltaMats2(): # result should be list of 2 3 by 3s
-    errs = ["nonexistent",np.ones((3,1)),np.ones((3,1))]
-    activs = [np.ones((3,1)),np.ones((3,1)),"unimportant"]
-    return mkObsDeltaMats(errs,activs)
 
 
 # ### Putting it together?
