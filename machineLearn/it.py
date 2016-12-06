@@ -13,12 +13,8 @@ from scipy.special import expit # Vectorized sigmoid function
 
 # ### Utilities
 
-def prependUnityColumn(colvec):
-    return np.insert(colvec,0,1,axis=0)
-test = np.array([[3,4]]).T
-# (test, prependUnityColumn(test)) # test
-
 def mapShape(arrayList): return list(map(np.shape,arrayList))
+
 
 # ## Sigmoids: Expit (1/(1+e^z)) is somehow faster than "fast sigmoid" (1 / (1+abs(x)))
 
@@ -34,14 +30,10 @@ def _sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
 sigmoidPrime = np.vectorize(_sigmoidPrime)
 # sigmoidPrime(np.array([list(range(-10,15,5))])).T # test
 
-data = np.random.rand(1000000)
-get_ipython().magic('prun expit(data)')
-# %prun sigmoid(data)
-# %prun np.vectorize( lambda x: (x / (1 + abs(x)) + 1) / 2 )(data)
 
 # ### Load data
 
-datafile = 'digits,handwritten/data.mat'
+datafile = 'digits,handwritten.mat'
 mat = scipy.io.loadmat( datafile )
 X, Y = mat['X'], mat['y']
 X = np.insert(X,0,1,axis=1) #Insert a column of 1's
@@ -64,6 +56,7 @@ def digitVecToBoolArray(digitVec):
 YBool = digitVecToBoolArray(Y)
 YBool;
 
+
 # ### Make random coeffs. "Architecture" = list of lengths.
 
 def mkRandCoeffsSymmetric(randUnifCoeffs):
@@ -84,6 +77,7 @@ def mkRandCoeffs(lengths):
     return acc
 mkRandCoeffs([3,2,1]) # example: 2 matrices, 3 layers (1 hidden)
 
+
 # ### Forward-propogation
 
 def forward(nnInputs,coeffMats):
@@ -98,9 +92,10 @@ def forward(nnInputs,coeffMats):
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
         latents.append( newLatent )
-        newActivs = expit( latents[i+1] ) # >>>
-        if i<len(coeffMats)-1: newActivs = prependUnityColumn(newActivs)
-            # nnInputs already has the unity column.
+        newActivs =  (latents[i+1] / (1 + abs(latents[i+1])) + 1) / 2
+          # >>> wanted to call _sigmoid, but function calls!
+        if i<len(coeffMats)-1: newActivs = np.insert(newActivs,0,1,axis=0)
+            # nnInputs already has the unity term.
             # The hidden layer activations get it prepended here.
             # The output vector doesn't need it.
             # Activations ("a") have it, latents ("z") do not.
@@ -118,6 +113,7 @@ forward(  np.array([[1,1,2]]).T
            , np.array([[3,2,1]
                       ,[5,5,5]])
           ] )
+
 
 # ### Cost
 
@@ -147,6 +143,7 @@ def testCost():
     return (ec,rc)
 testCost()
 
+
 # ### Errors, and back-propogating them
 
 def mkErrors(coeffMats,latents,activs,yVec):
@@ -158,7 +155,8 @@ def mkErrors(coeffMats,latents,activs,yVec):
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
         errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
                     # [1:] to drop the first, the "error" in the constant unity neuron
-                    * expitPrime(latents[i]) ) # >>>
+                    * 1 / (2 * ((abs(latents[i])+1)**2)) )
+                      # >>> wanted to call _sigmoidPrime, but function calls!
     for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
 
@@ -191,6 +189,7 @@ def testMkObsDeltaMats(): # result should be 3 by 3
     return mkObsDeltaMats(errs,activs)
 testMkObsDeltaMats()
 
+
 # ### Putting it together?
 
 def mkCoeffDeltasFromObs(coeffMats,X,YBool):
@@ -198,7 +197,7 @@ def mkCoeffDeltasFromObs(coeffMats,X,YBool):
     errs = mkErrors(coeffMats,latents,activs,YBool)
     return mkObsDeltaMats(errs,activs)
 
-def run(lengths): # >>> ! refers to global variables
+def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
     coeffs = mkRandCoeffs( lengths )
     costAcc = []
     changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
@@ -218,4 +217,4 @@ def run(lengths): # >>> ! refers to global variables
             changeAcc += ocd
         for i in range(len(coeffs)):
             coeffs[i] -= 1000 * (ocd[i] / nObs)
-    return costAcc # >>> also return coeffs
+    return costAcc
