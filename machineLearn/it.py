@@ -100,8 +100,7 @@ def forward(nnInputs,coeffMats):
             # The output vector doesn't need it.
             # Activations ("a") have it, latents ("z") do not.
         activs.append( newActivs )
-    prediction = np.argmax(activs[-1])
-    return (latents,activs,prediction)
+    return (latents,activs)
 
 # It works! (The smaller test's arithmetic is even human-followable.)
 forward(np.array([[1,2,3]]).T
@@ -137,7 +136,7 @@ def testCost():
     nnInputs = np.array([[1,2,-1]]).T
     observedCategs = np.array([[1,0]])
     Thetas = mkRandCoeffs([2,2,2])
-    latents,activs,predicts = forward(nnInputs,Thetas)
+    latents,activs = forward(nnInputs,Thetas)
     ec = mkErrorCost(observedCategs,activs[-1])
     rc = mkRegularizationCost(Thetas)
     return (ec,rc)
@@ -193,7 +192,7 @@ testMkObsDeltaMats()
 # ### Putting it together?
 
 def mkCoeffDeltasFromObs(coeffMats,X,YBool):
-    latents,activs,_ = forward(X,coeffMats)
+    latents,activs = forward(X,coeffMats)
     errs = mkErrors(coeffMats,latents,activs,YBool)
     return mkObsDeltaMats(errs,activs)
 
@@ -205,7 +204,7 @@ def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
         costThisRun = 0
         for obs in range( nObs ): # >>> inefficient, runs forward twice for each obs
             # should combine with the next loop
-            _,activs,_ = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
+            _,activs = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
                                 , coeffs )
             costThisRun += mkErrorCost( YBool[obs], activs[-1])
         costAcc.append(costThisRun/nObs)
