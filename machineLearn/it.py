@@ -90,7 +90,7 @@ def forward(nnInputs,coeffMats):
         newActivs =  (latents[i+1] / (1 + abs(latents[i+1])) + 1) / 2
           # >>> wanted to call _sigmoid, but function calls are costly
         if i<len(coeffMats)-1: newActivs = np.insert(newActivs,0,1,axis=0)
-            # nnInputs already has the unity term.
+            # nnInputs already has the unity term (a "row" of length 1).
             # The hidden layer activations get it prepended here.
             # The output vector doesn't need it.
             # Activations ("a") have it, latents ("z") do not.
@@ -162,9 +162,8 @@ def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
                     coeffs,
                     XT[:,[obs]],
                     YBool[obs].reshape((-1,1)))
-            # changeAcc += ocd # >>> A BUG!
-              # This appends ocd, rather than adding it.
-              # That didn't screw things up because later I use ocd where I meant to use changeAcc
+            for i in range(len(coeffs)):
+                changeAcc[i] += ocd[i]
         for i in range(len(coeffs)):
-            coeffs[i] -= 1000 * (ocd[i] / nObs)
+            coeffs[i] -= 10 * (changeAcc[i] / nObs)
     return costAcc
