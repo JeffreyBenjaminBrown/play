@@ -6,7 +6,7 @@ import scipy.io # Used to load the OCTAVE *.mat files
 import scipy.misc # Used to show matrix as an image
 import matplotlib.cm as cm # Used to display images in a specific colormap
 import random # To pick random images to display
-import scipy.optimize # fmin_cg to train neural network
+from scipy.optimize import fmin_cg # unconstrained optimization
 import itertools
 from scipy.special import expit # Vectorized sigmoid function
 
@@ -50,7 +50,9 @@ def digitVecToBoolArray(digitVec):
 YBool = digitVecToBoolArray(Y)
 
 
-### Make random coeffs. "Architecture" = list of lengths.
+### Coefficient matrices. "Architecture" = list of lengths.
+
+## Make random coeffs
 
 def mkRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
@@ -70,6 +72,17 @@ def mkRandCoeffs(lengths):
     return acc
 
 
+## Flatten|ravel coeffs
+
+def flattenCoeffs(coeffs):
+    return np.concatenate( # coeffs :: a list of matrices
+        tuple( list( map( np.ndarray.flatten, coeffs ) ) )
+    )
+
+# np.array([1,2,3,4,5,6]).reshape((2,3))
+# np.array([[1,2,3],[4,5,6]]).flatten()
+
+
 ### Forward-propogation
 
 def forward(nnInputs,coeffMats):
@@ -85,7 +98,7 @@ def forward(nnInputs,coeffMats):
         newLatent = coeffMats[i].dot(activs[i])
         latents.append( newLatent )
         newActivs =  (latents[i+1] / (1 + abs(latents[i+1])) + 1) / 2
-          # >>> wanted to call _sigmoid, but function calls are costly
+          # wanted to call _sigmoid, but function calls are costly
         if i<len(coeffMats)-1: newActivs = np.insert(newActivs,0,1,axis=0)
             # nnInputs already has the unity term (a "row" of length 1).
             # The hidden layer activations get it prepended here.
@@ -120,14 +133,14 @@ def mkErrors(coeffMats,latents,activs,yVec):
     errs[-1] = activs[-1] - yVec # the last layer's error is different
     for i in reversed( range( 1, nLayers - 1 ) ): # indexing activs
         errs[i] = ( coeffMats[i].T.dot( errs[i+1] )[1:] 
-                    # [1:] to drop the first, the "error" in the constant unity neuron
+                    # [1:] drops term 0, the "error" in the constant unity neuron
                     * 1 / (2 * ((abs(latents[i])+1)**2)) )
-                      # >>> wanted to call _sigmoidPrime, but function calls!
+                      # wanted to call sigmoidPrime, but function calls costly
     for i in range(1,len(errs)): errs[i] = errs[i].reshape((-1,1))
     return errs
 
 def mkObsDeltaMats(errs,activs):
-    "Compute the change in coefficient matrices implied by the error and activation vectors from a given observation."
+    "For a single observation, compute the change in coefficient matrices implied by the error and activation vectors."
     nMats = len(activs)-1
     acc = list(range(nMats)) # start with dummy values
     for i in range(nMats):
@@ -141,8 +154,8 @@ def run(lengths,X,YBool):
     nObs = X.shape[0]
     coeffs = mkRandCoeffs( lengths )
     costAcc = []
-    changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
-    for run in range(5): # 2 is enough if convergence monotonic
+    changeAcc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
+    for run in range(5): # convex cost => convergence "starts" immediately
         costThisRun = 0
         for obs in range( nObs ):
             latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
@@ -153,4 +166,3 @@ def run(lengths,X,YBool):
         costAcc.append(costThisRun/nObs)
         for i in range(len(coeffs)): coeffs[i] -= 10 * (changeAcc[i] / nObs)
     return costAcc
-
