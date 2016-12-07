@@ -33,8 +33,6 @@ datafile = 'digits,handwritten.mat'
 mat = scipy.io.loadmat( datafile )
 X, Y = mat['X'], mat['y']
 X = np.insert(X,0,1,axis=1) #Insert a column of 1's
-XT = X.T.copy()
-  # >>> test: do rows from XT come faster than columns from X?
 nObs = X.shape[0]
 
 def tenToZero(digit):
@@ -51,7 +49,6 @@ def digitVecToBoolArray(digitVec):
     return boolArray
 
 YBool = digitVecToBoolArray(Y)
-
 
 # ### Make random coeffs. "Architecture" = list of lengths.
 
@@ -138,12 +135,7 @@ def mkObsDeltaMats(errs,activs):
     return acc
 
 
-# ### Putting it together?
-
-def mkCoeffDeltasFromObs(coeffMats,X,YBool):
-    latents,activs = forward(X,coeffMats)
-    errs = mkErrors(coeffMats,latents,activs,YBool)
-    return mkObsDeltaMats(errs,activs)
+# ### Putting it together
 
 def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
     coeffs = mkRandCoeffs( lengths )
@@ -151,19 +143,12 @@ def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
     changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
     for run in range(5): # 2 is enough if convergence monotonic
         costThisRun = 0
-        for obs in range( nObs ): # >>> inefficient, runs forward twice for each obs
-            # should combine with the next loop
-            _,activs = forward( XT[:,[obs]] # >>> was: X[obs].reshape((-1,1))
-                                , coeffs )
-            costThisRun += mkErrorCost( YBool[obs], activs[-1])
-        costAcc.append(costThisRun/nObs)
         for obs in range( nObs ):
-            ocd = mkCoeffDeltasFromObs(
-                    coeffs,
-                    XT[:,[obs]],
-                    YBool[obs].reshape((-1,1)))
-            for i in range(len(coeffs)):
-                changeAcc[i] += ocd[i]
-        for i in range(len(coeffs)):
-            coeffs[i] -= 10 * (changeAcc[i] / nObs)
+            latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
+            errs = mkErrors(coeffs,latents,activs,YBool[obs].reshape((-1,1)))
+            costThisRun += mkErrorCost( YBool[obs], activs[-1])
+            ocd = mkObsDeltaMats(errs,activs)
+            for i in range(len(coeffs)): changeAcc[i] += ocd[i]
+        costAcc.append(costThisRun/nObs)
+        for i in range(len(coeffs)): coeffs[i] -= 10 * (changeAcc[i] / nObs)
     return costAcc
