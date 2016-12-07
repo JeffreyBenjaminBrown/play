@@ -74,11 +74,23 @@ def mkRandCoeffs(lengths):
 
 ## Flatten|ravel coeffs
 
-def flattenCoeffs(coeffs):
+def flattenCoeffs(coeffMats):
     return np.concatenate( # coeffs :: a list of matrices
-        tuple( list( map( np.ndarray.flatten, coeffs ) ) )
+        tuple( list( map( np.ndarray.flatten, coeffMats ) ) )
     )
 
+def ravelCoeffs(lengths, coeffVec):
+    acc = []
+    matArea = 0
+    nexti = 0
+    for i in range( len(lengths)-1 ):
+        matArea = lengths[i] * lengths[i+1]
+        acc.append(
+            coeffVec[ nexti : nexti + matArea ]
+            .reshape( (lengths[i+1],lengths[i] ) )
+        )
+        nexti += matArea
+    return acc
 # np.array([1,2,3,4,5,6]).reshape((2,3))
 # np.array([[1,2,3],[4,5,6]]).flatten()
 
