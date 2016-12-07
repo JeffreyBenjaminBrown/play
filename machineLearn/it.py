@@ -11,12 +11,12 @@ import itertools
 from scipy.special import expit # Vectorized sigmoid function
 
 
-# ### Utilities
+### Utilities
 
 def mapShape(arrayList): return list(map(np.shape,arrayList))
 
 
-# ## Sigmoids, 2 kinds
+## Sigmoids, 2 kinds
   # "fast sigmoid" (1 / (1+abs(x)))
   # expit (1/(1+e^z)), unused
 
@@ -27,13 +27,12 @@ def sigmoid(x): return (x / (1 + abs(x)) + 1) / 2
 def sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
 
 
-# ### Load data
+### Load data
 
 datafile = 'digits,handwritten.mat'
 mat = scipy.io.loadmat( datafile )
 X, Y = mat['X'], mat['y']
 X = np.insert(X,0,1,axis=1) #Insert a column of 1's
-nObs = X.shape[0]
 
 def tenToZero(digit):
     if digit == 10: return 0
@@ -50,7 +49,8 @@ def digitVecToBoolArray(digitVec):
 
 YBool = digitVecToBoolArray(Y)
 
-# ### Make random coeffs. "Architecture" = list of lengths.
+
+### Make random coeffs. "Architecture" = list of lengths.
 
 def mkRandCoeffsSymmetric(randUnifCoeffs):
     return randUnifCoeffs*2 - 1 # rand outputs in [0,1], not [-1,1]
@@ -70,7 +70,7 @@ def mkRandCoeffs(lengths):
     return acc
 
 
-# ### Forward-propogation
+### Forward-propogation
 
 def forward(nnInputs,coeffMats):
     # nnInputs :: column vector of inputs to the neural net
@@ -95,7 +95,7 @@ def forward(nnInputs,coeffMats):
     return (latents,activs)
 
 
-# ### Cost
+### Cost
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
 def mkErrorCost(observed,predicted):
@@ -110,7 +110,7 @@ def mkRegularizationCost(coeffMats):
     return np.concatenate(np.array(flatMats)**2).sum()
 
 
-# ### Errors, and back-propogating them
+### Errors, and back-propogating them
 
 def mkErrors(coeffMats,latents,activs,yVec):
     "Make a list of error vectors, one per layer."
@@ -135,9 +135,10 @@ def mkObsDeltaMats(errs,activs):
     return acc
 
 
-# ### Putting it together
+### Putting it together
 
-def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
+def run(lengths,X,YBool):
+    nObs = X.shape[0]
     coeffs = mkRandCoeffs( lengths )
     costAcc = []
     changeAcc = list(map(lambda x: x.dot(0),coeffs)) # initCoeffs * 0
@@ -152,3 +153,4 @@ def run(lengths): # >>> ! refers to global variables X, XT, nObs, YBool, ?..
         costAcc.append(costThisRun/nObs)
         for i in range(len(coeffs)): coeffs[i] -= 10 * (changeAcc[i] / nObs)
     return costAcc
+
