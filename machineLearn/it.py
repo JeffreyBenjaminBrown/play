@@ -86,7 +86,7 @@ def ravelCoeffs(lengths, coeffVec):
     for i in range( len(lengths) - 1 ):
         matArea = (lengths[i]+1) * lengths[i+1]
         acc.append(
-            coeffVec[ nexti : nexti + matArea ]
+            coeffVec[ nexti : nexti + matArea ] # >>> parens around this line?
             .reshape( (lengths[i+1],lengths[i]+1 ) )
         )
         nexti += matArea
@@ -193,10 +193,12 @@ def mkErrorCost(coeffVec,*args):
 
 def mkCoeffGradVec(coeffVec,*args):
     lengths,X,YBool = args
+    print(lengths)
+    print(coeffVec)
     coeffs = ravelCoeffs(lengths,coeffVec)
     nObs = X.shape[0]
     acc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
-        # accumulates the gradients implied by each observation
+        # will accumulate the gradients implied by each observation
     for obs in range( nObs ):
         latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
         errs = mkErrors(coeffs,latents,activs,YBool[obs].reshape((-1,1)))
@@ -204,4 +206,11 @@ def mkCoeffGradVec(coeffVec,*args):
         for i in range(len(coeffs)): acc[i] += ocd[i]
     return flattenCoeffs(acc)
 
-# def run():
+def run(lengths):
+    return fmin_cg(
+        mkErrorCost
+        , mkRandCoeffs( lengths )
+        , fprime = mkCoeffGradVec
+        , args = (lengths,X,YBool)
+        , maxiter = 5
+    )
