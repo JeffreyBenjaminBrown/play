@@ -29,16 +29,9 @@ def sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
 
 ### Load data
 
-datafile = 'digits,handwritten.mat'
-mat = scipy.io.loadmat( datafile )
-X, Y = mat['X'], mat['y']
-X = np.insert(X,0,1,axis=1) #Insert a column of 1's
-
 def tenToZero(digit):
     if digit == 10: return 0
     else: return digit
-
-Y = np.vectorize(tenToZero)(Y)
 
 def digitVecToBoolArray(digitVec):
     height = digitVec.shape[0]
@@ -47,7 +40,14 @@ def digitVecToBoolArray(digitVec):
         boolArray[obs,digitVec[obs]] = 1
     return boolArray
 
-YBool = digitVecToBoolArray(Y)
+def importTheData():
+    datafile = 'digits,handwritten.mat'
+    mat = scipy.io.loadmat( datafile )
+    X, Y = mat['X'], mat['y']
+    X = np.insert(X,0,1,axis=1)    # Insert a column of 1's
+    Y = np.vectorize(tenToZero)(Y)
+    YBool = digitVecToBoolArray(Y)
+    return X,YBool
 
 
 ### Coefficient matrices. "Architecture" = list of lengths.
@@ -161,7 +161,7 @@ def mkObsDeltaMats(errs,activs):
 #### Optimizing
 ### Optimizing by hand
 
-def run(lengths,X,YBool):
+def handRun(lengths,X,YBool):
     nObs = X.shape[0]
     coeffs = mkRandCoeffs( lengths )
     costAcc = []
@@ -181,7 +181,8 @@ def run(lengths,X,YBool):
 
 ### Optimizing with scipy.optimize.fmin_cg
 
-def mkErrorCost(coeffVec,lengths,X,YBool):
+def mkErrorCost(coeffVec,*args):
+    lengths,X,YBool = args
     coeffs = ravelCoeffs(lengths,coeffVec)
     nObs = X.shape[0]
     acc = 0
@@ -190,7 +191,8 @@ def mkErrorCost(coeffVec,lengths,X,YBool):
         acc += mkObsErrorCost( YBool[i], activs[-1] )
     return acc/nObs
 
-def mkCoeffGradVec(coeffVec,lengths,X,YBool):
+def mkCoeffGradVec(coeffVec,*args):
+    lengths,X,YBool = args
     coeffs = ravelCoeffs(lengths,coeffVec)
     nObs = X.shape[0]
     acc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
@@ -201,3 +203,5 @@ def mkCoeffGradVec(coeffVec,lengths,X,YBool):
         ocd = mkObsDeltaMats(errs,activs)
         for i in range(len(coeffs)): acc[i] += ocd[i]
     return flattenCoeffs(acc)
+
+# def run():
