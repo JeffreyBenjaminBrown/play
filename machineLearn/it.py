@@ -101,8 +101,8 @@ def forward(nnInputs,coeffMats):
     latents = ["input layer latent vector does not exist"] # per-layer inputs to the sigmoid function
       # The last layer has the same number of latent and activ values.
       # Each hidden layer's latent (aka weighted input) vector is 1 neuron shorter than the corresponding activs vector.
-      # HOWEVER, to make indexing the list of latents the same as the list of activs, 
-          # I give "latents" a dummy string value at position 0.
+      # HOWEVER, to make indexing the list of latents the same as the list
+      # of activs, I give "latents" a dummy string value at position 0.
     activs = [nnInputs] # per-layer outputs from the sigmoid function
     for i in range(len(coeffMats)):
         newLatent = coeffMats[i].dot(activs[i])
