@@ -189,3 +189,15 @@ def mkErrorCost(coeffVec,lengths,X,YBool):
         _,activs = forward( X[i], coeffs )
         acc += mkObsErrorCost( YBool[i], activs[-1] )
     return acc/nObs
+
+def mkCoeffGradVec(coeffVec,lengths,X,YBool):
+    coeffs = ravelCoeffs(lengths,coeffVec)
+    nObs = X.shape[0]
+    acc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
+        # accumulates the gradients implied by each observation
+    for obs in range( nObs ):
+        latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
+        errs = mkErrors(coeffs,latents,activs,YBool[obs].reshape((-1,1)))
+        ocd = mkObsDeltaMats(errs,activs)
+        for i in range(len(coeffs)): acc[i] += ocd[i]
+    return flattenCoeffs(acc)

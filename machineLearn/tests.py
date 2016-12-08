@@ -30,8 +30,14 @@ class TheTestCase(unittest.TestCase):
         assert np.array_equal(makeIt[0], mustBe[0]), "problem in ravel"
         assert np.array_equal(makeIt[1], mustBe[1]), "problem in ravel"
 
-    def testMkErrorCost(self):
+    def testMkErrorCost(self): # just make sure it runs
         X,YBool = importTheData()
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
-        mkErrorCost(coeffVec,lengths,X,YBool) # just make sure it runs
+        mkErrorCost(coeffVec,lengths,X,YBool)
+
+    def testMkCoeffGradVec(self): # just make sure it runs
+        X,YBool = importTheData()
+        lengths = [400,26,10]
+        coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
+        mkCoeffGradVec(coeffVec,lengths,X,YBool)
