@@ -17,8 +17,8 @@ forward(  np.array([[1,1,2]]).T
                       ,[5,5,5]])
           ] )
 
-mkErrorCost(np.array([[1,0]]).T  # should be small
-           , np.array([[.99,0.01]]).T)
+mkObsErrorCost(np.array([[1,0]]).T  # should be small
+              , np.array([[.99,0.01]]).T)
 mkRegularizationCost([np.array([[10,1,2]])]) # should be 5
 mkRegularizationCost([np.eye(1),np.eye(2)]) # should be 1
 
@@ -27,7 +27,7 @@ def testCost():
     observedCategs = np.array([[1,0]])
     Thetas = mkRandCoeffs([2,2,2])
     latents,activs = forward(nnInputs,Thetas)
-    ec = mkErrorCost(observedCategs,activs[-1])
+    ec = mkObsErrorCost(observedCategs,activs[-1])
     rc = mkRegularizationCost(Thetas)
     return (ec,rc)
 

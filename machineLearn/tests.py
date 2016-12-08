@@ -1,5 +1,14 @@
 import unittest
 
+def importTheData():
+    datafile = 'digits,handwritten.mat'
+    mat = scipy.io.loadmat( datafile )
+    X, Y = mat['X'], mat['y']
+    X = np.insert(X,0,1,axis=1)    # Insert a column of 1's
+    Y = np.vectorize(tenToZero)(Y)
+    YBool = digitVecToBoolArray(Y)
+    return (X,YBool)
+
 class TheTestCase(unittest.TestCase):
     def testTenToZero(self):
         assert ( list(map(tenToZero, range(1,11))) ==
@@ -20,3 +29,9 @@ class TheTestCase(unittest.TestCase):
         ]
         assert np.array_equal(makeIt[0], mustBe[0]), "problem in ravel"
         assert np.array_equal(makeIt[1], mustBe[1]), "problem in ravel"
+
+    def testMkErrorCost(self):
+        X,YBool = importTheData()
+        lengths = [400,26,10]
+        coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
+        mkErrorCost(coeffVec,lengths,X,YBool) # just make sure it runs

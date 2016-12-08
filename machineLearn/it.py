@@ -121,7 +121,7 @@ def forward(nnInputs,coeffMats):
 ### Cost
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
-def mkErrorCost(observed,predicted):
+def mkObsErrorCost(observed,predicted):
     return np.sum( # -y log hx - (1-y) log (1-hx)
         (-1) * observed * np.log(predicted)
         - (1 - observed) * np.log(1 - predicted)
@@ -158,7 +158,8 @@ def mkObsDeltaMats(errs,activs):
     return acc
 
 
-### Putting it together
+#### Optimizing
+### Optimizing by hand
 
 def run(lengths,X,YBool):
     nObs = X.shape[0]
@@ -170,9 +171,21 @@ def run(lengths,X,YBool):
         for obs in range( nObs ):
             latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
             errs = mkErrors(coeffs,latents,activs,YBool[obs].reshape((-1,1)))
-            costThisRun += mkErrorCost( YBool[obs], activs[-1])
+            costThisRun += mkObsErrorCost( YBool[obs], activs[-1])
             ocd = mkObsDeltaMats(errs,activs)
             for i in range(len(coeffs)): changeAcc[i] += ocd[i]
         costAcc.append(costThisRun/nObs)
         for i in range(len(coeffs)): coeffs[i] -= 10 * (changeAcc[i] / nObs)
     return costAcc
+
+
+### Optimizing with scipy.optimize.fmin_cg
+
+def mkErrorCost(coeffVec,lengths,X,YBool):
+    coeffs = ravelCoeffs(lengths,coeffVec)
+    nObs = X.shape[0]
+    acc = 0
+    for i in range(nObs):
+        _,activs = forward( X[i], coeffs )
+        acc += mkObsErrorCost( YBool[i], activs[-1] )
+    return acc/nObs
