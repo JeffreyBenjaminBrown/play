@@ -83,16 +83,14 @@ def ravelCoeffs(lengths, coeffVec):
     acc = []
     matArea = 0
     nexti = 0
-    for i in range( len(lengths)-1 ):
-        matArea = lengths[i] * lengths[i+1]
+    for i in range( len(lengths) - 1 ):
+        matArea = (lengths[i]+1) * lengths[i+1]
         acc.append(
             coeffVec[ nexti : nexti + matArea ]
-            .reshape( (lengths[i+1],lengths[i] ) )
+            .reshape( (lengths[i+1],lengths[i]+1 ) )
         )
         nexti += matArea
     return acc
-# np.array([1,2,3,4,5,6]).reshape((2,3))
-# np.array([[1,2,3],[4,5,6]]).flatten()
 
 
 ### Forward-propogation
