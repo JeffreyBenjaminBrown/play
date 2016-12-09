@@ -384,4 +384,4 @@
           evts = map (\(r,a) -> (f r,f r,a)) trigList
       in evtListToPatt evts
       -- demo: d1 $ sound $ trigListToPatt [(0,"bd"),(1/2,"sn")]
-      -- trick: make arcs miniscule, ignore all but first time coordinate
+      -- trick: makes arcs miniscule (epsilon), ignore all but first time coordinate
