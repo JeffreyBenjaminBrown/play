@@ -11,7 +11,7 @@ import itertools
 from scipy.special import expit # Vectorized sigmoid function
 
 
-### Utilities
+### Utilities. No matrices yet.
 
 def mapShape(arrayList): return list(map(np.shape,arrayList))
 
@@ -122,6 +122,7 @@ def predict(nnInputs,coeffMats):
     return latents[-1].argmax()
 
 
+#### Optimization, inc. backprop
 ### Cost
 
 # contra tradition, neither cost needs to be scaled by 1/|obs|
@@ -162,7 +163,6 @@ def mkObsDeltaMats(errs,activs):
     return acc
 
 
-#### Optimizing
 ### Optimizing by hand
 
 def handRun(lengths,X,YBool):
