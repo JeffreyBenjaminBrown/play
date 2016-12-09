@@ -193,8 +193,6 @@ def mkErrorCost(coeffVec,*args):
 
 def mkCoeffGradVec(coeffVec,*args):
     lengths,X,YBool = args
-    print(lengths)
-    print(coeffVec)
     coeffs = ravelCoeffs(lengths,coeffVec)
     nObs = X.shape[0]
     acc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
@@ -209,7 +207,7 @@ def mkCoeffGradVec(coeffVec,*args):
 def run(lengths):
     return fmin_cg(
         mkErrorCost
-        , mkRandCoeffs( lengths )
+        , flatten( mkRandCoeffs( lengths ) )
         , fprime = mkCoeffGradVec
         , args = (lengths,X,YBool)
         , maxiter = 5
