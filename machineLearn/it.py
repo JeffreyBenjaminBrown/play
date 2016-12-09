@@ -47,7 +47,7 @@ def importTheData():
     X = np.insert(X,0,1,axis=1)    # Insert a column of 1's
     Y = np.vectorize(tenToZero)(Y)
     YBool = digitVecToBoolArray(Y)
-    return X,YBool
+    return X,Y,YBool
 
 
 ### Coefficient matrices. "Architecture" = list of lengths.
@@ -194,20 +194,18 @@ def mkErrorCost(coeffVec,*args):
 def mkCoeffGradVec(coeffVec,*args):
     lengths,X,YBool = args
     coeffs = ravelCoeffs(lengths,coeffVec)
-    nObs = X.shape[0]
-    acc = list(map(lambda x: x.dot(0),coeffs)) # = initCoeffs * 0
-        # will accumulate the gradients implied by each observation
-    for obs in range( nObs ):
+    acc = [x.dot(0) for x in coeffs]
+    for obs in range( X.shape[0] ): # accumulate gradient from each observation
         latents,activs = forward(X[obs].reshape((-1,1)),coeffs)
         errs = mkErrors(coeffs,latents,activs,YBool[obs].reshape((-1,1)))
         ocd = mkObsDeltaMats(errs,activs)
         for i in range(len(coeffs)): acc[i] += ocd[i]
     return flattenCoeffs(acc)
 
-def run(lengths):
+def run(lengths,X,YBool):
     return fmin_cg(
         mkErrorCost
-        , flatten( mkRandCoeffs( lengths ) )
+        , flattenCoeffs( mkRandCoeffs( lengths ) )
         , fprime = mkCoeffGradVec
         , args = (lengths,X,YBool)
         , maxiter = 5

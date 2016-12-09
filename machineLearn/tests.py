@@ -22,13 +22,13 @@ class TheTestCase(unittest.TestCase):
         assert np.array_equal(makeIt[1], mustBe[1]), "problem in ravel"
 
     def testMkErrorCost(self): # just make sure it runs
-        X,YBool = importTheData()
+        X,_,YBool = importTheData()
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
         mkErrorCost(coeffVec,lengths,X,YBool)
 
     def testMkCoeffGradVec(self): # just make sure it runs
-        X,YBool = importTheData()
+        X,_,YBool = importTheData()
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
         mkCoeffGradVec(coeffVec,lengths,X,YBool)
