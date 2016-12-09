@@ -7,6 +7,15 @@ class TheTestCase(unittest.TestCase):
         assert ( list(map(tenToZero, range(1,11))) ==
           list(range(1,10)) + [0] ), "problem in tenToZero"
 
+    def testRavel(self):
+        lengths = [2,3]
+        x1 = mkRandCoeffs(lengths)
+        x2 = flattenCoeffs(x1)
+        x3 = ravelCoeffs(lengths,x2)
+        x4 = flattenCoeffs(x3)
+        assert np.isclose(x1,x3).all(), "problem in ravel"
+        assert np.isclose(x2,x4).all(), "problem in ravel"
+
     def testDigitVecToBoolArray(self):
         x = np.array([[ 1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],
                       [ 0.,  0.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  0.],
@@ -15,7 +24,7 @@ class TheTestCase(unittest.TestCase):
         assert np.array_equal(x,y), "problem in digitVecToBoolArray"
         
     def testFlattenCoeffs(self):
-        assert np.array_equal( 
+        assert np.array_equal(
             flattenCoeffs( [np.eye(1),np.eye(2)] )
             , np.array( [1,1,0,0,1] )
         ), "problem in flatten"
