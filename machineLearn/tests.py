@@ -7,15 +7,6 @@ class TheTestCase(unittest.TestCase):
         assert ( list(map(tenToZero, range(1,11))) ==
           list(range(1,10)) + [0] ), "problem in tenToZero"
 
-    def testRavel(self):
-        lengths = [2,3]
-        x1 = mkRandCoeffs(lengths)
-        x2 = flattenCoeffs(x1)
-        x3 = ravelCoeffs(lengths,x2)
-        x4 = flattenCoeffs(x3)
-        assert np.isclose(x1,x3).all(), "problem in ravel"
-        assert np.isclose(x2,x4).all(), "problem in ravel"
-
     def testDigitVecToBoolArray(self):
         x = np.array([[ 1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],
                       [ 0.,  0.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  0.],
@@ -29,6 +20,15 @@ class TheTestCase(unittest.TestCase):
             , np.array( [1,1,0,0,1] )
         ), "problem in flatten"
 
+    def testRavelIdempotent(self):
+        lengths = [2,3]
+        x1 = mkRandCoeffs(lengths)
+        x2 = flattenCoeffs(x1)
+        x3 = ravelCoeffs(lengths,x2)
+        x4 = flattenCoeffs(x3)
+        assert np.isclose(x1,x3).all(), "problem in ravel"
+        assert np.isclose(x2,x4).all(), "problem in ravel"
+
     def testRavelCoeffs(self):
         makeIt = ravelCoeffs( [1,2,2]
                               , np.array( [ 1,2,3,4,
@@ -39,6 +39,16 @@ class TheTestCase(unittest.TestCase):
         assert np.array_equal(makeIt[0], mustBe[0]), "problem in ravel"
         assert np.array_equal(makeIt[1], mustBe[1]), "problem in ravel"
 
+    def testForward(self):
+        # Is human-followable math. The 100 causes an activation near unity.
+        latents,activs = forward(np.array([[1,2,3]]).T
+                                 , [np.array([[5,2,0],
+                                              [0,1,100]]),
+                                    np.array([[555,0,1]])
+        ] )
+        assert np.array_equal( latents[1], np.array( [[9],[302]] ) ),"testForward"
+        assert np.isclose( latents[2], np.array( [[-99]] ), atol=.01),"testForward"
+        
     def testMkErrorCost(self): # just make sure it runs
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
