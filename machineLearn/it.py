@@ -185,7 +185,7 @@ def handRun(lengths,X,YBool):
 
 ### Optimizing with scipy.optimize.fmin_cg
 
-def mkErrorCost(coeffVec,*args):
+def mkTotalCost(coeffVec,*args):
     lengths,X,YBool = args
     coeffs = ravelCoeffs(lengths,coeffVec)
     nObs = X.shape[0]
@@ -208,10 +208,9 @@ def mkCoeffGradVec(coeffVec,*args):
 
 def run(lengths,X,YBool):
     return fmin_cg(
-        mkErrorCost
+        mkTotalCost
         , flattenCoeffs( mkRandCoeffs( lengths ) )
         , fprime = mkCoeffGradVec
         , args = (lengths,X,YBool)
         , maxiter = 100
     )
-
