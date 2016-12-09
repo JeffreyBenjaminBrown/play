@@ -5,7 +5,6 @@ import pandas as pd
 import scipy.io # Used to load the OCTAVE *.mat files
 import scipy.misc # Used to show matrix as an image
 import matplotlib.cm as cm # Used to display images in a specific colormap
-import random # To pick random images to display
 from scipy.optimize import fmin_cg # unconstrained optimization
 import itertools
 from scipy.special import expit # Vectorized sigmoid function
