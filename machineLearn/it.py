@@ -117,6 +117,10 @@ def forward(nnInputs,coeffMats):
         activs.append( newActivs )
     return (latents,activs)
 
+def predict(nnInputs,coeffMats):
+    latents,activs = forward(nnInputs,coeffMats)
+    return latents[-1].argmax()
+
 
 ### Cost
 
@@ -208,5 +212,6 @@ def run(lengths,X,YBool):
         , flattenCoeffs( mkRandCoeffs( lengths ) )
         , fprime = mkCoeffGradVec
         , args = (lengths,X,YBool)
-        , maxiter = 5
+        , maxiter = 100
     )
+
