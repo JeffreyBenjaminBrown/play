@@ -44,12 +44,29 @@ class TheTestCase(unittest.TestCase):
         latents,activs = forward(np.array([[1,2,3]]).T
                                  , [np.array([[5,2,0],
                                               [0,1,100]]),
-                                    np.array([[555,0,1]])
+                                    np.array([[555,0,-1]])
         ] )
         assert np.array_equal( latents[1], np.array( [[9],[302]] ) ),"testForward"
-        assert np.isclose( latents[2], np.array( [[-99]] ), atol=.01),"testForward"
+        assert np.isclose( latents[2], np.array( [[554]] ), atol=.01),"testForward"
+
+    def testMkObsErrorCost(self):
+        one = 0.9999
+        nearOne = 0.9
+        nearZero = 0.1
+        zero = 0.0001
+        close = mkObsErrorCost( np.array([1,0,0]),
+                                np.array([ one,zero,zero]) )
+        swap = mkObsErrorCost( np.array([    0,  1,   0]),
+                               np.array([ zero,one,zero]) )
+        lessClose = mkObsErrorCost( np.array([      1,   0,   0]),
+                                    np.array([nearOne,zero,zero]) )
+        lessCloseWithNoise = mkObsErrorCost( np.array([      1,       0,   0]),
+                                             np.array([nearOne,nearZero,zero]) )
+        assert ( np.isclose( close, swap ) ), "mkObsErrorCost"
+        assert ( close < lessClose < lessCloseWithNoise ), "mkObsErrorCost"
         
-    def testMkErrorCost(self): # just make sure it runs
+    def testMkErrorCost(self):
+        # just make sure it runs
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
         mkErrorCost(coeffVec,lengths,X,YBool)

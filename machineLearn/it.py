@@ -118,7 +118,7 @@ def forward(nnInputs,coeffMats):
 
 def predict(nnInputs,coeffMats):
     latents,activs = forward(nnInputs,coeffMats)
-    return latents[-1].argmax()
+    return activs[-1].argmax()
 
 
 #### Optimization, inc. backprop
@@ -131,6 +131,7 @@ def mkObsErrorCost(observed,predicted):
         - (1 - observed) * np.log(1 - predicted)
     )
 
+# >>> Resume testing here
 def mkRegularizationCost(coeffMats):
     flatMats = [np.delete(x,0,axis=1).flatten()
                 for x in coeffMats]
