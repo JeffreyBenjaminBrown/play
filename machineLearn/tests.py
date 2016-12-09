@@ -1,10 +1,19 @@
 import unittest
 
 class TheTestCase(unittest.TestCase):
+    ## WARNING: Expects the following to exist:
+      ## X,Y,YBool = importTheData()
     def testTenToZero(self):
         assert ( list(map(tenToZero, range(1,11))) ==
           list(range(1,10)) + [0] ), "problem in tenToZero"
 
+    def testDigitVecToBoolArray(self):
+        x = np.array([[ 1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],
+                      [ 0.,  0.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  0.],
+                      [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  1.]])
+        y = digitVecToBoolArray(np.array([0,4,9]))
+        assert np.array_equal(x,y), "problem in digitVecToBoolArray"
+        
     def testFlattenCoeffs(self):
         assert np.array_equal( 
             flattenCoeffs( [np.eye(1),np.eye(2)] )
@@ -22,13 +31,11 @@ class TheTestCase(unittest.TestCase):
         assert np.array_equal(makeIt[1], mustBe[1]), "problem in ravel"
 
     def testMkErrorCost(self): # just make sure it runs
-        X,_,YBool = importTheData()
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
         mkErrorCost(coeffVec,lengths,X,YBool)
 
     def testMkCoeffGradVec(self): # just make sure it runs
-        X,_,YBool = importTheData()
         lengths = [400,26,10]
         coeffVec = flattenCoeffs( mkRandCoeffs( lengths ) )
         mkCoeffGradVec(coeffVec,lengths,X,YBool)
