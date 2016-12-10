@@ -1,0 +1,41 @@
+I wrote a function "trigListToPatt" that you might find useful. It's old; I was trying to build a graph library for Tidal using it, and intended to share that. It only recently occurred to me that sharing trigListToPatt itself might be useful.
+
+This is its type signature:
+
+tidal> :t trigListToPatt
+trigListToPatt :: [(When, a)] -> Pattern a
+
+where the newtype When is a synonym for Rational, a number indicating start time. It lets you bypass the within-String syntax (e.g. the stuff between the apostrophes in d1 $ sd "bd sn*2").
+
+But it's broken.
+
+tidal> :t trigListToPatt $ (\x -> (x,"hc")) <$> [1/2]
+trigListToPatt $ (\x -> (x,"hc")) <$> [1/2]
+  :: IsString a => Pattern a
+
+tidal> sd $ trigListToPatt $ (\x -> (x,"hc")) <$> [1/2]
+
+tidal> trigListToPatt [(0,"bd"),(1/2,"sn")]
+("bd" 0 1/65536)
+tidal> 
+tidal> (\x -> (x,"hc")) <$> [1/2]
+[(0.5,"hc")]
+tidal> trigListToPatt $ (\x -> (x,"hc")) <$> [1/2]
+
+tidal> :t sd
+sd :: Pattern String -> ParamPattern
+tidal> (\x -> (x,"hc")) <$> [1/2]
+[(0.5,"hc")]
+tidal> trigListToPatt [(0,"bd"),(1/2,"sn")]
+("bd" 0 1/65536)
+tidal> (\x -> (x,"hc")) <$> [1/2]
+[(0.5,"hc")]
+tidal> trigListToPatt $ (\x -> (x,"hc")) <$> [1/2]
+
+tidal> :t trigListToPatt
+trigListToPatt :: [(When, a)] -> Pattern a
+tidal> trigListToPatt $ ((\x -> (x,"hc")) <$> [1/2] :: [(When,String)])
+
+tidal> " " :: Pattern String
+
+tidal> 
