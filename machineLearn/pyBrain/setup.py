@@ -11,7 +11,7 @@ if 1: # create network
   inLayer = LinearLayer(2,name = "inputs") # names are optional
     # if used, the number of neurons vanishes from the text representation of the object (what you get if you evaluate its name)
   hiddenLayer = SigmoidLayer(3, name = "middle")
-  outLayer = LinearLayer(1)
+  outLayer = LinearLayer(1) # cool : no need for a sigmoid here
   n.addInputModule(inLayer)
   n.addModule(hiddenLayer)
   n.addOutputModule(outLayer)
