@@ -1,11 +1,9 @@
--- SETUP discussed here. Thank you Ben Gold! 
+-- SETUP discussed here. Thanks, Ben Gold! 
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
     {-# LANGUAGE FlexibleContexts #-}
     {-# LANGUAGE ViewPatterns #-}
     module Tidal_JBB where
 
--- imports (remember, they must come first)
-  -- general
     import qualified Data.List as List
     import qualified Data.Map as M
     import Data.Maybe
@@ -21,17 +19,58 @@
 
     import Data.Fixed (mod',div')
 
-  -- Tidal    
-    import Sound.Tidal.Params
-    import Sound.Tidal.Parse
-    import Sound.Tidal.Pattern
-    import Sound.Tidal.Strategies
-    import Sound.Tidal.Stream
-    import Sound.Tidal.SuperCollider
-    import Sound.Tidal.Tempo
-    import Sound.Tidal.Time
-    import Sound.Tidal.Transition
+    import Sound.Tidal.Context
     import Sound.Tidal.Utils
+
+-- ================== Native ====================
+    data Sample = BassDrum | Snare | Silence
+    type Sentence = [Sample]
+
+    sampleToPattern :: Parseable a => Sample -> Pattern a
+    sampleToPattern BassDrum = "bd"
+    sampleToPattern Snare = "sn"
+    sampleToPattern Silence = "~"
+
+    say :: Parseable a => Sentence -> Pattern a
+    say = cat . map sampleToPattern
+
+    swing :: Sentence -> Sentence
+    swing = (>>= \s -> [s, Silence, s])
+
+    collatz :: Int -> Maybe (Sample, Int)
+    collatz n | n <= 1 = Nothing
+              | n `mod` 2 == 0 = Just (BassDrum, n `div` 2)
+              | otherwise = Just (Snare, 3*n + 1)
+
+  --
+    data Expr = Sample String
+              | Bd | Sn | Si
+              | At When Expr -- assumes length 1?
+              | For Dur Expr
+              | Expr :+ Expr
+
+    aTest = Bd :+ Sn
+    
+    eval :: Parseable a => Expr -> Pattern a
+    eval Si = "~"
+    eval Bd = "bd"
+    eval Sn = "sn"
+    eval (At w e) = w ~> eval e
+    eval (e1 :+ e2) = cat [ eval e1, eval e2 ]
+
+    everywhere :: (Expr -> Expr) -> (Expr -> Expr)
+    everywhere f (e1 :+ e2) = f $ everywhere f e1 :+ everywhere f e2
+    everywhere f (At w e) = f $ At w $ everywhere f e
+    everywhere f e = f e
+
+    doubleSample :: Expr -> Expr
+    doubleSample e = e :+ e
+
+    doubleSwing :: Expr -> Expr
+    doubleSwing e = e :+ Si :+ e
+
+    quadSwing :: Expr -> Expr
+    quadSwing e = e :+ e :+ Si :+ e
 
 -- promote here the old useful
     type PS = Pattern String
@@ -138,8 +177,8 @@
       return ()
 
 -- ================== FGL ====================
-    type When = Rational
-    type Dur = Rational
+    type Dur = Rational -- absolute (duration) time
+    type When = Rational -- relative (start) time
 
     type Addr = L.Node
     type SdOrQualAddr = L.Node
