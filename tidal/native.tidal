@@ -1,29 +1,35 @@
-d1 $ sound $ eval aTest
-d1 $ sound $ eval $ At 0 Bd
-d1 $ si
-d2 $ sound $ eval $ At 0.5 Sn
+-- say a sentence
+    d1 $ sound $ say [BassDrum, Snare, Snare, Silence]
+    
+    dur 2
+    length $ unfoldr collatz 29
+    d1 $ sound $ say $ unfoldr collatz 29
+    d2 $ sd "ps*3"
+    
+    let x = 3
+    dur 7
+    d1 $ sd $ say $ swing $ unfoldr collatz 6
+    d2 $ sd $ say $ swing $ unfoldr collatz 7
+    d3 $ sd "hc*2"
+    
+    d1 $ sd $ say $ swing $ unfoldr collatz 24
+    d2 $ si
+    d2 $ sd $ say $ swing $ unfoldr collatz 32
+    
+    filter ((<= 10) . fst) $ zip (map (length . unfoldr collatz) $ take 50 [1..]) [1..]
+    
+-- eval an expr
+    d1 $ sound $ eval aTest
+    d1 $ sound $ eval $ At 0 Bd
+    d1 $ si
+    d2 $ sound $ eval $ At 0.5 Sn
+    
+    d1 $ sd $ eval $ everywhere doubleSample aTest
+    d1 $ slow 2 $ sd $ eval $ doubleSwing $ doubleSwing $ aTest
+    d1 $ slow 4 $ sd $ eval $ quadSwing $ doubleSample $ aTest
+    
 
-d1 $ sd $ eval $ everywhere doubleSample aTest
-d1 $ slow 2 $ sd $ eval $ doubleSwing $ doubleSwing $ aTest
-d1 $ slow 4 $ sd $ eval $ quadSwing $ doubleSample $ aTest
-
-d1 $ sound $ say [BassDrum, Snare, Snare, Silence]
-
-dur 2
-length $ unfoldr collatz 29
-d1 $ sound $ say $ unfoldr collatz 29
-d2 $ sd "ps*3"
-
-let x = 3
-dur 7
-d1 $ sd $ say $ swing $ unfoldr collatz 6
-d2 $ sd $ say $ swing $ unfoldr collatz 7
-d3 $ sd "hc*2"
-
-d1 $ sd $ say $ swing $ unfoldr collatz 24
-d2 $ si
-d2 $ sd $ say $ swing $ unfoldr collatz 32
 
 
 
-filter ((<= 10) . fst) $ zip (map (length . unfoldr collatz) $ take 50 [1..]) [1..]
+
