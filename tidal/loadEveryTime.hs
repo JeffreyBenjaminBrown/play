@@ -40,18 +40,19 @@
               | otherwise = Just (Snare, 3*n + 1)
 
   -- eval an expr
-    data Expr = Sample String
-              | Bd | Sn | Si
+    data Expr = Snd (Pattern String)
+              | Bd | Sn | Si -- special cases of Snd
               | At When Expr -- assumes length 1? 0 unless there's a Dur in it?
               | For Dur Expr
               | Expr :+ Expr
 
     aTest = Bd :+ Sn
     
-    eval :: Parseable a => Expr -> Pattern a
-    eval Si = "~"
-    eval Bd = "bd"
-    eval Sn = "sn"
+    eval :: Expr -> ParamPattern
+    eval (Snd s) = sound s
+    eval Si = sound "~"
+    eval Bd = sound "bd"
+    eval Sn = sound "sn"
     eval (At w e) = w ~> eval e
     -- eval (For d e) = stack[ compress ... ]
     eval (e1 :+ e2) = cat [ eval e1, eval e2 ]
