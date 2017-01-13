@@ -10,15 +10,11 @@
     import Control.Applicative
     import Data.String
     import Data.Ratio
-
     import Test.HUnit
     import qualified Data.Graph.Inductive as L
-
     import Data.Random
     import Data.Random.Source.DevRandom
-
     import Data.Fixed (mod',div')
-
     import Sound.Tidal.Context
     import Sound.Tidal.Utils
 
@@ -45,7 +41,7 @@
   --
     data Expr = Sample String
               | Bd | Sn | Si
-              | At When Expr -- assumes length 1?
+              | At When Expr -- assumes length 1? 0 unless there's a Dur in it?
               | For Dur Expr
               | Expr :+ Expr
 
@@ -56,6 +52,7 @@
     eval Bd = "bd"
     eval Sn = "sn"
     eval (At w e) = w ~> eval e
+    -- eval (For d e) = compress ...
     eval (e1 :+ e2) = cat [ eval e1, eval e2 ]
 
     everywhere :: (Expr -> Expr) -> (Expr -> Expr)
