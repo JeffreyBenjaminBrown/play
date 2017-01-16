@@ -1,4 +1,5 @@
 -- say a sentence
+    d1 $ slow 4 $ sound $ say $ nstriate $ nstriate [BassDrum,Snare]
     d1 $ sound $ say [Bassoundrum, Snare, Snare, Silence]
     
     dur 2
@@ -17,7 +18,10 @@
     d2 $ sound $ say $ swing $ unfoldr collatz 32
     
     filter ((<= 10) . fst) $ zip (map (length . unfoldr collatz) $ take 50 [1..]) [1..]
-    
+
+-- event rep
+    d1 $ sound $ say $ render $ [(0,BassDrum),(1%3,Snare),(2%3,Snare)]
+  
 -- eval an expr
     d1 $ eval aTest
     d1 $ eval $ At 0 Bd

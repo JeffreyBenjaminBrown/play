@@ -2,6 +2,8 @@
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
     {-# LANGUAGE FlexibleContexts #-}
     {-# LANGUAGE ViewPatterns #-}
+    {-# LANGUAGE KindSignatures #-}
+    {-# LANGUAGE RecordWildCards #-}
     module Tidal_JBB where
 
     import qualified Data.List as List
@@ -15,12 +17,14 @@
     import Data.Random
     import Data.Random.Source.DevRandom
     import Data.Fixed (mod',div')
+    import Control.Arrow (first)
     import Sound.Tidal.Context
     import Sound.Tidal.Utils
-
+    import GHC.TypeLits (Nat)
+   
 -- ================== Native ====================
   -- say a sentence
-    data Sample = BassDrum | Snare | Silence
+    data Sample = BassDrum | Snare | Silence deriving Show
     type Sentence = [Sample]
 
     sampleToPattern :: Parseable a => Sample -> Pattern a
@@ -31,6 +35,12 @@
     say :: Parseable a => Sentence -> Pattern a
     say = cat . map sampleToPattern
 
+    dilate :: Sentence -> Sentence
+    dilate = (>>= \s -> [s, Silence])
+
+    nstriate :: Sentence -> Sentence
+    nstriate s = dilate s ++ s ++ s
+
     swing :: Sentence -> Sentence
     swing = (>>= \s -> [s, Silence, s])
 
@@ -38,6 +48,30 @@
     collatz n | n <= 1 = Nothing
               | n `mod` 2 == 0 = Just (BassDrum, n `div` 2)
               | otherwise = Just (Snare, 3*n + 1)
+
+  -- event rep
+    data NEvSeq = NEvSeq {
+      nEvDur :: Ratio Int,
+      nEvs :: [(Ratio Int,Sample)] } deriving Show
+
+    bass :: Ratio Int -> NEvSeq
+    bass d = NEvSeq d [(0,BassDrum)]
+
+    snare :: Ratio Int -> NEvSeq
+    snare d = NEvSeq d [(0,Snare)]
+
+    (.+) :: NEvSeq -> NEvSeq -> NEvSeq
+    (NEvSeq a b) .+ (NEvSeq c d) = NEvSeq (a+c) (b ++ map (first (a+)) d)
+
+    render :: NEvSeq -> Sentence
+    render NEvSeq {..} = let 
+        theLcm = foldl lcm (denominator nEvDur) $ map (denominator . fst) nEvs
+        stretcha a = (theLcm * numerator a) `div` denominator a
+        intEvents = map (\(a,b) -> (stretcha a, b)) nEvs
+        go lastTime [] = replicate ((stretcha nEvDur) - lastTime - 1) Silence
+        go lastTime ((time, samp) : rest) =
+          samp : replicate (time - lastTime - 1) Silence ++ go time rest
+      in go 0 intEvents
 
   -- eval an expr
     data Expr = Snd (Pattern String)
