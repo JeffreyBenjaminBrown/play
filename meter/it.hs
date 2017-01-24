@@ -8,8 +8,8 @@ type Meter = [Count] -> When
   -- TODO: inverseMeter :: Meter -> When -> [Count]
     -- done the obvious way, this might not terminate, if the When is from a different Meter
 
-straight :: Count -> Meter
-straight divisor = sum . snd 
+straightTime :: Count -> Meter
+straightTime divisor = sum . snd 
   $ foldl (\(unitLength, lengths) nUnits
             -> ( unitLength / divisor
                , unitLength * nUnits : lengths))
