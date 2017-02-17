@@ -1,5 +1,5 @@
 (
-(SynthDef(\sy,	{
+(SynthDef(\sy,	{ // by default, sine wav
 	|out, pan, amp = 1, qf=440, begin = 0, end = 1,
 	qfa = 0, qff = 1, qpa = 0, qpf = 1|
 	var env, aMod, pMod, fMod, carrier;
@@ -8,7 +8,7 @@
 	pMod = LFSaw.ar(qf * qpf, 0, qpa); // phase mod
 	carrier = SinOsc.ar(qf+fMod,pMod); //wks: qf+fMod
 	OffsetOut.ar(out,
-		DirtPan.ar(carrier,
+		DirtPan.ar(amp*carrier, // IS IT GOOD? Then copy to other synth.
 			~dirt.numChannels, pan, env));
 }).add;);
 
