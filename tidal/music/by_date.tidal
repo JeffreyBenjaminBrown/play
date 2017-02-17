@@ -1,3 +1,25 @@
+h
+dur 1
+d1 $ qf "250 300 350" |*| sound "sya"
+d4 $ rr (1/4) $ sound "bd sn"
+
+dur 0.5
+d1 $ qf $. st' [1,5/4,3/2,16/9] |*| qf "250" |*| sd "sya"
+d2 $ rr (1/2) $ qf $. st' [1,5/4,3/2,7/4] |*| qf "250" |*| sd "sya"
+d3 $ rr (3/4) $ qf $. st' [1,3/2,13/8] |*| qf "[250,500]" |*| sd "sya"
+
+
+d1 $ qf $. st' [1,13/7,13/8] |*| qf "[250,500]" |*| sd "sya"
+d1 $ qf $. st' [1,13/10,13/7,13/8] |*| qf "[250,500]" |*| sd "sya"
+
+d1 $ qf "[1,6/5]" |*| qf "300" |*| sound "sy"
+
+d1 $ qf "0.66" |*| qf "[400,500,600,700,900]" |*| sound "sy"
+d1 $ qf "0.66" |*| qf "[400,500,600,750,900]" |*| sound "sy"
+
+
+-- 2017 02 09
+
 dur 1.6
 let beats = 5
 d3 $ st [rl (1/beats) $ sd "bd ~!!!", rl (0.1/beats) $ sd "bd ~!!!"]
@@ -135,7 +157,7 @@ d2 $ si
 
 --
 
-let ch a b c d = st' $ (/) <$> [a..b] <*> [c..d]
+let ch a b c d = st' $ (/) <$> [a..b] <*> [c..d] -- (((
 let p1a = cat [ch 2 3 3 4, ch 3 4 5 6] 
 let p1b = cat [ch 3 3 7 11, ch 7 9 5 7] 
 let p1x = cat [ch 7 11 9 9, ch 7 10 11 11] 
