@@ -1,0 +1,8 @@
+import Data.Graph.Inductive
+
+trigListToPatt :: [(Rational,a)] -> Pattern a
+
+
+d2 $ sd "sy" |*| slow 4 $. qf "[440] 450 475 [480]"
+d3 $ slow 4 $. qf "[550] ~ ~ [660/2]" |*| sd "sy" 
+d1 $ sd "sya hh bd" |*| qf "440"

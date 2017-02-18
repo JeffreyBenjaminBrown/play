@@ -1,6 +1,6 @@
-od1 $ sound "sy"
-let tone = qf "100" |*| sound "sy"
-let sd = sound
+d1 $ sound "sy"
+let tone = qf "400" |*| sound "sy"
+let tone2 = qf $. (/13) <$> st' [11,13] |*| tone
 
 h
 d1 $ qf "1 2 3.5" |*| tone
@@ -99,3 +99,148 @@ let p1 = fmap (/2) "11 24 14" :: Pattern Double
 d1 $ qf p1 |*| tone
 d2 $ sl 2 $ rl (1/8) $ qf $. cat [p1,rev p1] |*| tone
 d3 $ sl 6 $ qf $. fmap (/3) p1 |*| tone
+
+d1 $ qf $. "[1,1.2,1.5]" |*| tone
+d1 $ qf $. "[1,1.2,1.5,1.8]" |*| tone
+d1 $ qf $. "[1,1.2,1.5,1.9]" |*| tone
+
+d1 $ qf $. st' [1,9/7,3/2,2.2,8/7] |*| tone
+-- variations of that needed
+
+d1 $ qf $. st' [7/8,35/32,21/16] |*| tone
+d1 $ qf $. (*(7/8)) <$> st' [1,7/6,4/3] |*| tone
+d1 $ qf $. (*(7/8)) <$> st' [7/6,4/3,5/3] |*| tone
+d1 $ qf $. (*(7/8)) <$> st' [7/6,16/9,5/3] |*| tone
+d1 $ qf $. (*(14/9)) <$> st' [1,5/8,3/4] |*| tone
+
+dur 0.5
+d1 $ qf $. (*(14/9)) <$> st' [1/2,7/10,3/4] |*| tone
+d1 $ qf $. (*(14/18)) <$> st' [1,5/4,3/2] |*| tone
+d1 $ qf $. st' [1,5/4,3/2] |*| qf $. sl 8 $. cat [st' [5/9], st' [11/18], st' [2/3], st' [13/18],st' [14/18]] |*| tone
+d1 $ qf $. st' [1/5,1/6,1/7,1/8] |*| qf "7" |*| tone
+d1 $ qf $. st' [1/5,1/6,1/7,1/8,1/9,1/10,2/11,1/12] |*| qf "7" |*| tone -- 1/6 feels like root: strange fact of subharmonics
+d1 $ qf $. st' [2/11,1/14] |*| qf "7" |*| tone
+d1 $ qf $. st' [1,14/11,17/11] |*| qf "1" |*| tone -- ! major
+d1 $ qf $. st' [1,5/4,3/2] |*| qf "1" |*| tone
+d1 $ qf $. st' [1,13/11,16/11] |*| qf "1" |*| tone -- ! min
+d1 $ qf $. st' [10/11,13/11,15/11] |*| qf "1" |*| tone -- = nxt
+d1 $ qf $. st' [10,13,15] |*| qf $. st' [1/11] |*| tone
+d1 $ qf $. st' [9,11,15] |*| qf $. st' [1/11] |*| tone
+d1 $ qf $. st' [8,10,12] |*| qf $. st' [1/11] |*| tone
+d1 $ qf $. st' [10,15,8.5] |*| qf $. st' [1/11] |*| tone
+d1 $ qf $. st' [20,30,17] |*| sl 8 $. qf $. cat [st' [1/22], st'[1/15]] |*| tone
+d1 $ qf $. st' [20,30,19] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [19,29,18] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [18,27,17] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [18,22,17] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [15,18,21] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [14,18,21] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [14,17,21] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [1,5/4,3/2] |*| qf $. st' [14/22] |*| tone
+
+d1 $ qf $. st' [7,35/4,21/2] |*| qf $. st' [1/11] |*| tone
+d1 $ qf $. st' [28,35,42] |*| qf $. st' [1/44] |*| tone
+d1 $ qf $. st' [26,39,48] |*| qf $. st' [1/44] |*| tone
+d1 $ qf $. st' [30,40,50] |*| qf $. st' [1/44] |*| tone
+d1 $ qf $. st' [26,39,41,43,49,51,52] |*| qf $. st' [1/44] |*| tone
+d1 $ qf $. st' [39,41,43,26,24] |*| qf $. st' [1/44] |*| tone
+d1 $ qf $. st' [26,24] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [24,26,32,39] |*| qf $. st' [1/22] |*| tone
+d1 $ qf $. st' [12,13,16,19.5] |*| qf $. st' [1/13] |*| tone
+d1 $ qf $. st' [12,13,16,19.5] |*| qf $. st' [1/13] |*| tone
+
+d1 $ qf $. st' [13,16.25,19.5,24] |*| qf $. st' [1/13] |*| tone
+d1 $ qf $. st' [13,16,19.5] |*| qf $. st' [1/13] |*| tone
+d1 $ qf $. st' [13,15.6,19] |*| qf $. st' [1/13] |*| tone
+d1 $ qf $. st' [13,15,19.5] |*| qf $. st' [1/13] |*| tone
+d1 $ qf $. st' [12.5,15,20] |*| qf $. st' [1/13] |*| tone
+
+d1 $ qf $. st' [25,28,30,33] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [25,27,30,32] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [25,30,35] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [26,31.2,39] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [24,32,37] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [24,29,36] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [23,29,36] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [22,29,33] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [22,28,33] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [21,28,33] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [21,27,32] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [19,27,32] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [19,27,30] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [20,27,30] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [20,25,30] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [19,27,29] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [18,27,30] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [18,27,33] |*| qf $. st' [1/26] |*| tone
+
+d1 $ qf $. st' [18,27,21.5] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [14,21,17] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [14,17.5,21] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [14,18,20] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [13,18,21] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [11,17,20] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [11,16,19] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [10,16,19] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [15,16,20] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [13.333,16,20] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [12,16,20] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [11,16,19] |*| qf $. st' [1/26] |*| tone
+
+h
+dur 0.8 -- nice
+let root = st' [1/26]
+d1 $ qf $. st' [10,15,23] |*| qf $. root |*| tone
+d1 $ qf $. st' [15,18,23] |*| qf $. root |*| tone
+d1 $ qf $. st' [15,18,22] |*| qf $. root |*| tone
+d1 $ qf $. st' [15,20,22] |*| qf $. root |*| tone
+d1 $ qf $. st' [14,20,22] |*| qf $. root |*| tone
+-- accomp for those
+d2 $ rl (1/3) $ sl 2 $ sound "[[bd*2 sn*2]/2 ~ ~] hh/2"
+d3 $ qf $. st' [7.5] |*| qf $. root |*| tone
+
+-- next: abandoned tones for rhythm education
+h
+d2 $ sl 2 $ sound "ba gabba:5"
+d1 $ sl 2 $ sound "{bd sn hh hh ~}%4"
+
+d2 $ sl 2 $ sound "ba gabba:5"
+d1 $ fa 2 $ sound "{bd sn hh hh ~}%4" -- faster
+
+d2 $ sl 2 $ sound "[ba*4 ba]/2 [~ [gab:1 gabba:4]/4]" -- more bass, 50% duty
+d1 $ fa 2 $ sound "{bd sn hh hh ~}%4"
+
+d2 $ sound "[ba,bd*4 [~ sn/2]]" -- simpler & faster
+d1 $ fa 2 $ sound "{bd sn hh hh ~}%4"
+
+d1 $ si
+d2 $ sound "[ba,bd*4 [~ sn/2]]"
+d1 $ rl (1/2) $ sl 4 $ sd "hc*4 ~!!"
+d3 $ rl (1/4) $ sl 8 $ sd "gab ps!!" |*| ga "0.66"
+
+-- abrupt: less drums, some tones
+h
+d2 $ sl 2 $ sound "[[hh?, bd]*4 [[hh?]*4 sn/2]]" -- slow
+d1 $ sl 4 $ fa 2 $. sound "[sy sy?]*2 [sy sy?]*2 sy/2]" |*| qf "[2,3]" |*| qf $. (/13) <$> st' [11,13] |*| tone
+
+d2 $ sl 2 $ sound "[[hh?, bd]*4 [[hh?]*4 sn/2]]"
+d1 $ sl 4 $ fa 2 $. sound "sy*4 sy*2 sy/2]" |*| fa 2 $. qf "0.6 [0.8,1.2] 1" |*| qf "[2,3]" |*| qf $. (/13) <$> st' [11,13] |*| tone -- tones moving
+
+d2 $ sl 2 $ sound "[[hh?, bd]*4 [[hh?]*4 sn/2]]" -- simpler better
+d1 $ sl 2 $ sound "sy*8]" |*| fa 2 $. qf "0.6 [0.8,1.2] 1" |*| qf "[2,3]" |*| qf $. (/13) <$> st' [11,13] |*| tone
+
+let p1 = slow 4 $ "sy*3 sy*2 sy*5 sy*2"
+d2 $ sl 2 $ sound "[[hh?, bd]*4 [[hh?]*4 sn/2]]"
+d1 $ sound p1 |*| qf "[[11 10]/2,13]" |*| qf "[4,7]" |*| qf "0.01" |*| tone -- chill
+
+d1 $ sound p1 |*| qf "[[11 10]/2,13]" |*| qf "[4,7] 5" |*| qf "0.01" |*| tone 
+d1 $ sound p1 |*| qf "[[11 9]/2,13]" |*| qf "[3,7] 5" |*| qf "0.01" |*| tone 
+d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[3,5] 7" |*| qf "0.01" |*| tone 
+d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[4,5] 6" |*| qf "0.01" |*| tone 
+d1 $ sound p1 |*| qf "[[12 10]/2,15]" |*| qf "[4,5] 4" |*| qf "0.02" |*| tone 
+d1 $ sound p1 |*| qf "[[12 11]/2,15]" |*| qf "[4,5] 4" |*| qf "0.02" |*| tone 
+
+d2 $ si
+
+d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[4,5] 6" |*| qf "0.01" |*| tone 
+

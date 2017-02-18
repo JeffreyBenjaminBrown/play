@@ -1,0 +1,5 @@
+-- I don't think this is needed.
+let tone = qf "400" |*| sound "sy"
+let tone2 = qf $. (/13) <$> st' [11,13] |*| tone
+
+let p1 = slow 4 $ "sy*3 sy*2 sy*5 sy*2" :: PS
