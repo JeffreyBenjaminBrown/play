@@ -18,6 +18,10 @@
     (d9, t9) <- superDirtSetters getNow
     let hush = do {d0 si; d1 si; d2 si; d3 si; d4 si; d5 si; d6 si; d7 si; d8 si; d9 si}
     let h = hush
+    let gain_p = F "gain" (Just 1) -- Amplitude
+    let gain = make' VF gain_p :: Pattern Double -> ParamPattern
+    let amp_p = F "amp" (Just 1) -- Amplitude
+    let amp = make' VF amp_p :: Pattern Double -> ParamPattern
   -- qf is like n from Sound.Tidal.Params, but using Doubles, not Ints
     let qf_p = F "qf" (Just 0) -- Quality: (carrier) Frequency
     let qf = make' VF qf_p :: Pattern Double -> ParamPattern
