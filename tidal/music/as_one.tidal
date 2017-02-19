@@ -244,3 +244,22 @@ d2 $ si
 
 d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[4,5] 6" |*| qf "0.01" |*| tone 
 
+let p1 = slow 4 $ "sy*3 sy*2 sy*5 sy*2"
+let p1 = slow 4 $ "sy*2 sy*3 sy*5 sy*7"
+d2 $ sd "bd sn/4"
+d1 $ sound p1 |*| fa 2 $. qf "2 3" |*| sl 2 $. qf "3 5" |*| qf "0.2" |*| tone 
+
+d2 $ sd "[bd bd/2] sn/4"
+d1 $ sound p1 |*| fa 2 $. qf "2 3" |*| sl 2 $. qf "1 2.5 1.2" |*| qf "0.2" |*| tone -- next is better
+d1 $ sound p1 |*| sl 2 $. qf "[1*2 3.5*2]/4 2 3" |*| fa 2 $. qf "1 2.5 1.2" |*| qf "0.2" |*| tone -- yes
+d3 $ sound p1 |*| sl 2 $. qf "[1*2 3.5*2]/4 2 3" |*| qf "0.8" |*| tone
+  -- gets half the melody d1 got
+
+d1 $ rl (1/2) $ sl 2 $. sound p1 |*| fa 2 $. qf "1 2.5 1.2" |*| sl 2 $. qf "0.2 0.55" |*| tone
+d3 $ sound p1 |*| sl 2 $. qf "[[7 6 5]*2 3.5*2]/4 2 3" |*| sl 4 $. qf "0.8" |*| tone
+d3 $ si
+
+-- **
+d1 $ rl (1/2) $ sl 2 $. sound p1 |*| fa 2 $. qf "1 2.5 1.2" |*| sl 2 $. qf "0.2 0.55" |*| tone
+d2 $ sd "[bd bd/2] sn/4"
+d3 $ rl (3/4) $ sl 4 $. sd "hh*8 ~!!" |*| sl 8 $. ga "0.7 1"
