@@ -8,7 +8,7 @@
 	pMod = LFSaw.ar(qf * qpf, 0, qpa); // phase mod
 	carrier = SinOsc.ar(qf+fMod,pMod); //wks: qf+fMod
 	OffsetOut.ar(out,
-		DirtPan.ar(amp*carrier, // IS IT GOOD? Then copy to other synth.
+		DirtPan.ar(0.5*carrier,
 			~dirt.numChannels, pan, env));
 }).add;);
 
