@@ -1,5 +1,5 @@
 d1 $ sound "sy"
-let tone = qf "400" |*| sound "sy"
+let tone = qf "100" |*| sound "sy"
 let tone2 = qf $. (/13) <$> st' [11,13] |*| tone
 
 h
@@ -16,18 +16,21 @@ d2 $ rl (1/4) $ sd "hc*2"
 d3 $ qf "1 2" |*| tone
 d4 $ qf "~ 5 ~ 3" |*| tone
 
-hush
+hush -- **
 dur 2
+let tone = qf "250" |*| sound "sy"
+let p1 = qf "[9 11 13 15] [16 12 10 8]"
 d1 $ sd "bd hh [sn sn hh hh hh]"
 d2 $ rl (1/4) $ sd "hc*2"
-d3 $ qf "[9 11 13 15] [16 12 10 8]" |*| tone
+d3 $ ssr slow [4,8,12,8] $. cat $. take 8 $. repeat p1 |*| qf "[0.25*4 [0.2 0.15 0.1 0.5]]/8" |*| tone
 d4 $ si -- qf "~ 5 ~ 3" |*| tone
-d4 $ qf "7 [5 [6 8]/2]" |*| qf "[0.25*4 0.33*4]/8" |*| tone
+d4 $ qf "7 [5 [6 8]/2]" |*| qf "[0.25*4 0.33*4]/8" |*| qf "0.5" |*| tone
 
 h
 dur 0.5
 
 -- an instrument-song
+let tone = qf "150" |*| sound "sy"
 d1 $ sl 2 $ qf "[10,12.5,15,19]" |*| qf "0.25" |*| tone
 d1 $ qf "[10,[11 12.5]/4,15,18.75]" |*| qf "0.25" |*| tone
 d1 $ qf "[[8 21]/8,12,15,19]" |*| qf "0.25" |*| tone
@@ -55,9 +58,11 @@ d1 $ qf "[8.5,12.75/2,[~ [~ 19] ~ [~ [25 25.5]/2]]/4]" |*| qf "0.25" |*| tone
 d1 $ qf "[8.5,12.75/2]" |*| qf "0.5" |*| tone
 
 h
+dur 1
+let tone = qf "100" |*| sound "sy"
 d1 $ qf "[1,1.4,1.6]" |*| qf "2" |*| tone
 d1 $ qf "[1.8,1.333,1.6]" |*| qf "2" |*| tone
-d1 $ qpf "[13 5] ~ 3 [2 3]" |*| qf "[3,1.333,1.6]" |*| qf "2" |*| qpa "5 [0.2 1.2]/2" |*| tone
+d1 $ sl 2 $. qpf "[2 1 13 5] ~ 3 [2 3]" |*| qf "[3,1.333,1.6]" |*| qf "2" |*| qpa "0 5 [0.2 1.2]/2" |*| qf $. sl 16 $. "0.5 0.666" |*| tone -- ** 
 
 let f1 p = qpf "[13 5] ~ 3 [2 3]" |*| qf "2" |*| qpa "5 [0.2 1.2]/2" |*| tone |*| p
 d1 $ qpf "[13 5] ~ 3 [2 3]" |*| qf "[3,1.333,1.6]" |*| qf "2" |*| qpa "5 [0.2 1.2]/2" |*| tone
@@ -90,16 +95,23 @@ d1 $ qf "2 2.333" |*| tone
 d3 $ qf "1.5 ~ 2.75" |*| tone
 d1 $ qf "2.5 ~ [~ 2.333]" |*| tone
 
+dur 1
+let tone = qf "200" |*| sound "sy" -- **
 d3 $ qf "1.75 ~ [2.75 2.5]/6" |*| tone
 d1 $ qf "[2.625 2.25]/4 ~ [~ 2.333]" |*| tone
 d2 $ sl 2 $ sd "bd [sn*3 sn]/4"
-d4 $ fa 6 $ sd "hc ~ [hh*28 hh]/8" |*| sl 12 $. gain "0.7 0 0 0.5 0.7"
+d4 $ fa 6 $ sd "hc ~ [hh*2 hh]/8" |*| sl 12 $. gain "0.7 0 0 0.5 0.7"
 
+dur 2
+let tone = qf "100" |*| sound "sy"
 let p1 = fmap (/2) "11 24 14" :: Pattern Double
 d1 $ qf p1 |*| tone
 d2 $ sl 2 $ rl (1/8) $ qf $. cat [p1,rev p1] |*| tone
 d3 $ sl 6 $ qf $. fmap (/3) p1 |*| tone
 
+h
+dur 0.5
+let tone = qf "400" |*| sound "sy" -- **
 d1 $ qf $. "[1,1.2,1.5]" |*| tone
 d1 $ qf $. "[1,1.2,1.5,1.8]" |*| tone
 d1 $ qf $. "[1,1.2,1.5,1.9]" |*| tone
@@ -113,7 +125,6 @@ d1 $ qf $. (*(7/8)) <$> st' [7/6,4/3,5/3] |*| tone
 d1 $ qf $. (*(7/8)) <$> st' [7/6,16/9,5/3] |*| tone
 d1 $ qf $. (*(14/9)) <$> st' [1,5/8,3/4] |*| tone
 
-dur 0.5
 d1 $ qf $. (*(14/9)) <$> st' [1/2,7/10,3/4] |*| tone
 d1 $ qf $. (*(14/18)) <$> st' [1,5/4,3/2] |*| tone
 d1 $ qf $. st' [1,5/4,3/2] |*| qf $. sl 8 $. cat [st' [5/9], st' [11/18], st' [2/3], st' [13/18],st' [14/18]] |*| tone
@@ -174,8 +185,8 @@ d1 $ qf $. st' [19,27,29] |*| qf $. st' [1/26] |*| tone
 d1 $ qf $. st' [18,27,30] |*| qf $. st' [1/26] |*| tone
 d1 $ qf $. st' [18,27,33] |*| qf $. st' [1/26] |*| tone
 
-d1 $ qf $. st' [18,27,21.5] |*| qf $. st' [1/26] |*| tone
-d1 $ qf $. st' [14,21,17] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [18,27  ,21.5] |*| qf $. st' [1/26] |*| tone
+d1 $ qf $. st' [14,17  ,21] |*| qf $. st' [1/26] |*| tone
 d1 $ qf $. st' [14,17.5,21] |*| qf $. st' [1/26] |*| tone
 d1 $ qf $. st' [14,18,20] |*| qf $. st' [1/26] |*| tone
 d1 $ qf $. st' [13,18,21] |*| qf $. st' [1/26] |*| tone
@@ -190,9 +201,9 @@ d1 $ qf $. st' [11,16,19] |*| qf $. st' [1/26] |*| tone
 h
 dur 0.8 -- nice
 let root = st' [1/26]
-d1 $ qf $. st' [10,15,23] |*| qf $. root |*| tone
+d1 $ qf $. st' [15,20,23] |*| qf $. root |*| tone
 d1 $ qf $. st' [15,18,23] |*| qf $. root |*| tone
-d1 $ qf $. st' [15,18,22] |*| qf $. root |*| tone
+d1 $ qf $. st' [15,18,22] |*| qf $. root |*| tone -- minor center
 d1 $ qf $. st' [15,20,22] |*| qf $. root |*| tone
 d1 $ qf $. st' [14,20,22] |*| qf $. root |*| tone
 -- accomp for those
@@ -210,16 +221,18 @@ d1 $ fa 2 $ sound "{bd sn hh hh ~}%4" -- faster
 d2 $ sl 2 $ sound "[ba*4 ba]/2 [~ [gab:1 gabba:4]/4]" -- more bass, 50% duty
 d1 $ fa 2 $ sound "{bd sn hh hh ~}%4"
 
-d2 $ sound "[ba,bd*4 [~ sn/2]]" -- simpler & faster
+dur 0.8 -- nice
+d2 $ sound "[ba,bd*4 [~ sn/2]]" -- ** simpler, faster, fun
 d1 $ fa 2 $ sound "{bd sn hh hh ~}%4"
 
-d1 $ si
+d1 $ si -- fun **
 d2 $ sound "[ba,bd*4 [~ sn/2]]"
-d1 $ rl (1/2) $ sl 4 $ sd "hc*4 ~!!"
+d1 $ rl (1/2) $ sl 4 $ sd "hc*4 ~ hc/2 ~ "
 d3 $ rl (1/4) $ sl 8 $ sd "gab ps!!" |*| ga "0.66"
 
--- abrupt: less drums, some tones
+-- abrupt: less drums, some tones -- ** good in series
 h
+dur 1
 d2 $ sl 2 $ sound "[[hh?, bd]*4 [[hh?]*4 sn/2]]" -- slow
 d1 $ sl 4 $ fa 2 $. sound "[sy sy?]*2 [sy sy?]*2 sy/2]" |*| qf "[2,3]" |*| qf $. (/13) <$> st' [11,13] |*| tone
 
@@ -236,9 +249,9 @@ d1 $ sound p1 |*| qf "[[11 10]/2,13]" |*| qf "[4,7]" |*| qf "0.01" |*| tone -- c
 d1 $ sound p1 |*| qf "[[11 10]/2,13]" |*| qf "[4,7] 5" |*| qf "0.01" |*| tone 
 d1 $ sound p1 |*| qf "[[11 9]/2,13]" |*| qf "[3,7] 5" |*| qf "0.01" |*| tone 
 d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[3,5] 7" |*| qf "0.01" |*| tone 
-d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[4,5] 6" |*| qf "0.01" |*| tone 
+d1 $ sound p1 |*| qf "[[12 8]/2,10]" |*| qf "[4,5] 6" |*| qf "0.015" |*| tone 
 d1 $ sound p1 |*| qf "[[12 10]/2,15]" |*| qf "[4,5] 4" |*| qf "0.02" |*| tone 
-d1 $ sound p1 |*| qf "[[12 11]/2,15]" |*| qf "[4,5] 4" |*| qf "0.02" |*| tone 
+d1 $ sound p1 |*| qf "[[12 11]/2,15]" |*| qf "[4,[~ 5 6]/3] 4" |*| qf "0.02" |*| tone 
 
 d2 $ si
 
@@ -259,14 +272,16 @@ d1 $ rl (1/2) $ sl 2 $. sound p1 |*| fa 2 $. qf "1 2.5 1.2" |*| sl 2 $. qf "0.2 
 d3 $ sound p1 |*| sl 2 $. qf "[[7 6 5]*2 3.5*2]/4 2 3" |*| sl 4 $. qf "0.8" |*| tone
 d3 $ si
 
--- **
+-- ** weird, mellow
+let p1 = slow 4 $ "sy*3 sy*2 sy*5 sy*2"
+let p1 = slow 4 $ "sy*2 sy*3 sy*5 sy*7"
 d1 $ rl (1/2) $ sl 2 $. sound p1 |*| fa 2 $. qf "1 2.5 1.2" |*| sl 2 $. qf "0.2 0.55" |*| tone
 d2 $ sd "[bd bd/2] sn/4"
 d3 $ rl (3/4) $ sl 4 $. sd "hh*8 ~!!" |*| sl 8 $. ga "0.7 1"
 
 d1 $ ssr fa [4,3,2,3] $. sd "sy" |*| qf "2 3" |*| sl 2 $. qf "4 6.5" |*| qf "0.04" |*| tone
 
-d1 $ fa 2 $. sd p1 |*| qf $. cat [st' [4,6.5], st'[11/3,10,9/7],"[2,5]"] |*| sl 4 $. qf "5 [7 8] [4 3] [2 1 3]" |*| qf "0.05" |*| tone
+d1 $ sd p1 |*| qf $. cat [st' [4,6.5], st'[11/3,10,9/7],"[2,5]"] |*| sl 4 $. qf "5 [7 8] [4 3] [2 1 3]" |*| qf "0.05" |*| tone
 
 d1 $ qf $. st' [11/8,3,9/7] |*| qf "1"|*|tone
 d1 $ qf $. st' [11/8,9/7] |*| qf "1"|*|tone
@@ -298,26 +313,55 @@ d1 $  qf "1 2 3" |*| qf "0.5" |*| tone
 d2 $  qf "[1 ~ 1.75/2] [2 ~ 2.2/4]" |*| qf "0.25" |*| tone
 d2 $  qf "1            2"           |*| qf "0.25" |*| tone
 d3 $  sl 4 $. qf "2.333 [~ 2.25] 3 [3.5*2]" |*| qf "[1.2]" |*| tone
-d3 $ si --rl (1/4) $ sound "bd hh sn hh"
+d3 $ rl (1/4) $ sound "bd hh sn hh"
 
-h
+h -- ** next 6 paragraphs
 d1 $  qf "1 2 3" |*| sl 4 $. qf "0.6 1" |*| sl 2 $. qf "0.8 1.1" |*| qf "[1, 1.2 1.3 0.7 1.4]" |*| tone
 d1 $  qf "1 2 3" |*| sl 4 $. qf "0.8 1" |*| sl 2 $. qf "0.75 1" |*| sl 8 $. qf "[1 2, 1.25 [1.333,1.666/2] 1.5 [1.4 1.2]/2]" |*| tone
 d1 $  qf "1 2 3" |*| sl 4 $. qf "0.75 1" |*| sl 2 $. qf "0.8 1" |*| qf "[1 2, 1.2 1.333 0.5 1.4]" |*| tone
 d2 $ sl 2 $. sd "[[cp,bd] [hh hc]/2 sn]/2(11,16)" |*| ga "1 0.85" |*| sl 3 $. ga "1 0.85" |*| fa 4 $. up "0 5"
 
-
 d1 $ sound "bd sn"
-d2 $ rl (1/8) $ sound "[[hh hc sn]/3]*4" |*| sl 1.5 $. ga "1 0.7" |*| fa 2 $. ga "1 0.8" |*| sl 4 $. up "0 7 3 14"
+d2 $ rl (1/8) $ sound "[[hh hc [sn sn sn*2]/3]/3]*4" |*| sl 1.5 $. ga "1 0.7" |*| fa 2 $. ga "1 0.8" |*| sl 4 $. up "0 7 3 14"
 
 d3 $ qf "1 [1.15 1.2/2] 1.5 [3 2.5]/2" |*| qf "1 0.75" |*| tone
 d4 $ sl 2 $ qf "1 [1.15 1.2/2] 1.5 [3 2.5]/2" |*| qf "1 0.75" |*| qf "1.5" |*| tone
 
-d1 $ sl 4 $. sound "bd*4 sn!!" |*| ga "0.9"
+d1 $ sl 4 $. sound "bd*4 sn!!" |*| ga "0.9" -- simpler drums
 d2 $ rl (1/4) $ sl 2 $. sound "hh*4 sn!!" |*| fa 2 $. ga "0.8 1" |*| ga "0.9"
 
-d5 $ qf "[1, 1.5, 2]*2" |*| qf "0.25" |*| sl 8 $. qf $. ca' [1,7/8,4/5,15/16] |*| tone
+d5 $ qf "[1, 1.5, 2]*2" |*| qf "0.25" |*| sl 8 $. qf $. ca' [1,7/8,4/5,15/16] |*| tone 
 
-d3 $        qf "1 [1.25 1.333/2] 1.5 [3 2.5]/2" |*| qf "1 0.75" |*| tone
-d4 $ sl 2 $ qf "1 [1.25 1.333/2] 1.5 [3 2.5]/2" |*| qf "0.75 1" |*| qf "1.5" |*| tone
-d5 $ sl 6 $. qf "[1, 1.5, 2](11,24)" |*| qf "0.25" |*| sl 8 $. qf $. ca' [1,15/16,8/7,15/16] |*| qf "[1, 2.5]" |*| tone 
+dur 1
+d3 $              qf "1 [1.25 1.333/2] 1.5 [3 2.5]/2" |*| qf "1 0.75" |*| tone
+d4 $ sa 4 $ sl 2$ qf "1 [1.25 1.333/2] 1.5 [3 2.5]/2" |*| qf "0.75 1" |*| qf "1.5" |*| tone
+d5 $ sl 6 $. qf "[1, 1.5, 2](11,24)" |*| qf "0.25" |*| sl 8 $. qf $. ca' [1,15/16,8/7,15/16] |*| qf "[1, 2.5]" |*| tone
+
+-- abrupt (next day)
+d1 $ sd "h*4" |*| qf "[15, 20, 25]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[15, 18, 21, 23]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[14, 17, 21, 23]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[14, 17, 21, 22]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[14, 16, 21, 22]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[14, 16, 20]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[21,16]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[25,21,16]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[24,21,16]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[24,20,16]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[24,19,16]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[24,19,17]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[25,19,17]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[25,19,16,12.5]" |*| tone |*| qf "0.1"
+d1 $ sd "h*4" |*| qf "[18.75,12.5]" |*| tone |*| qf "[0.1,0.025,0.1666]"
+d1 $ sd "h*4" |*| qf "[19,12.5]" |*| tone |*| qf "[0.1,0.125,0.2]"
+
+d1 $ sd "h*4" |*| qf "[19]" |*| tone |*| qf "[0.05,0.025,0.075]"
+d1 $ sd "h*4" |*| sl 2 $. qf "[19,[12.5 13 12]/3]" |*| tone |*| qf "[0.05,0.025,0.075]"
+
+d1 $ sl 2 $. sd "h([5 7]/2,[12! 16]/3)" |*| sl 2 $. qf "[19,[12.5 13 12]/3]" |*| tone |*| qf "[0.05,0.025,0.075]" 
+d2 $ sd "[bd hh/3] [sn hc/4]" |*| ga "0.85" |*| sl 2 $. ga $. (\x -> x/4+0.85)<$> tri1
+
+d1 $ sl 2 $. sd "h([5 7]/2,[12! 16]/3)" |*| sl 2 $. qf "[19,[13.5 12.5]/2,[21 23 24 25]/3]" |*| tone |*| qf "[0.05,0.025,0.075]" 
+
+d1 $ sl 2 $. sd "h([5 7]/2,[12! 16]/3)" |*| sl 2 $. qf "[16,[14 12]/2,[20 22 [25 28] 24]/3]" |*| tone |*| qf "[0.05,0.025]" 
+
