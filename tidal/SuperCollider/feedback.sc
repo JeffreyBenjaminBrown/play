@@ -1,3 +1,5 @@
+// notes from a brief study of feedback in SuperCollider
+
 // examples, modded a little, from
 // file:///home/jeff/.local/share/SuperCollider/downloaded-quarks/Feedback/Fb.html
 
