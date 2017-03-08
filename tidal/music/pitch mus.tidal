@@ -1,0 +1,10 @@
+dur 6
+let theSd = sd "sy" |*| qf "880"
+let theSd = sd "sy" |*| qf "440" |*| qff "3" |*| qfa "3"
+
+d1 $ qf "2 3 4 3" |*| theSd |*| qf "0.25" -- simplest
+d2 $ rl (1/4) $ qf "[~ 2 3]*2 [~ 2 2.8125]*2" |*| theSd
+
+d1 $ qf "[2 [2 3 4 5]]/2 3 4 3" |*| qf "0.25" |*| theSd
+d2 $ rl (1/4) $ rr $. (1/4)*(1/6) $ qf "[~ 2 3]*2 [~ 2 2.8125]*2" |*| theSd
+
