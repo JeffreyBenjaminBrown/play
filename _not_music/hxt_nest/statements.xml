@@ -1,0 +1,16 @@
+<statement>
+  <id><0></id>
+  <text>organism</text>
+  <statement>
+    <id>1</id>
+    <text>plant</text>
+  </statement>
+  <statement>
+    <id>2</id>
+    <text>animal</text>
+    <statement>
+      <id>3</id>
+      <text>fish</text>
+    </statement>
+  </statement>
+</statement>

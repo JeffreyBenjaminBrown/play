@@ -1,0 +1,11 @@
+<organism>
+  <node>
+    <name>plant</name>
+  </node>
+  <node>
+    <name>animal</name>
+    <node>
+      <name>fish</name>
+    </node>
+  </node>
+</organism>

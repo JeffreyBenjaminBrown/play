@@ -1,0 +1,22 @@
+def mapShape(arrayList): return list(map(np.shape,arrayList))
+def expitPrime(colVec): return expit(colVec) * expit(1-colVec)
+def sigmoid(x): return (x / (1 + abs(x)) + 1) / 2
+def sigmoidPrime(x): return 1 / (2 * ((abs(x)+1)**2))
+def tenToZero(digit):
+def digitVecToBoolArray(digitVec):
+def importTheData():
+def mkRandCoeffsSymmetric(randUnifCoeffs):
+def mkRandCoeffsSmall(randUnifCoeffs):
+def mkRandCoeffs(lengths):
+def flattenCoeffs(coeffMats):
+def ravelCoeffs(lengths, coeffVec):
+def forward(nnInputs,coeffMats):
+def predict(nnInputs,coeffMats):
+def mkObsErrorCost(observed,predicted):
+def mkRegularizationCost(coeffMats):
+def mkErrors(coeffMats,latents,activs,yVec):
+def mkObsDeltaMats(errs,activs):
+def handRun(lengths,X,YBool):
+def mkErrorCost(coeffVec,*args):
+def mkCoeffGradVec(coeffVec,*args):
+def run(lengths,X,YBool):
