@@ -1,6 +1,8 @@
-Jeffrey Benjamin Brown, April 27, 2017
-
 # Cover Letter to Amper Music
+# Jeffrey Benjamin Brown, April 27, 2017
+
+This is a Markdown document. If you don't see clickable links in it, please visit it [online](http://www.github.com/jeffreybenjaminbrown/play/haskell-music-cover-letter.md).
+
 
 ## Why I want this job
 
