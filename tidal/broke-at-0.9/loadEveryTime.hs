@@ -1,4 +1,4 @@
--- SETUP discussed here. Thanks, Ben Gold! 
+-- SETUP discussed here. (Thanks, Ben!)
   -- http://lurk.org/groups/tidal/messages/topic/123JqmA0MsCFrOUb9zOfzc/
     {-# LANGUAGE FlexibleContexts #-}
     {-# LANGUAGE ViewPatterns #-}
@@ -21,8 +21,36 @@
     import Sound.Tidal.Context
     import Sound.Tidal.Utils
     import GHC.TypeLits (Nat)
-   
--- ================== Native ====================
+
+-- === Tweaks
+    jrand n = irand (n+1) - 1 -- ranges in [0,n] not [1,n]
+    proba = sometimesBy -- probabilistic application
+
+-- ========== Parameters for my SuperCollider synths
+  -- these are based on the definition of "gain"
+    amp_p = F "amp" (Just 1) -- Amplitude
+    amp = make' VF amp_p :: Pattern Double -> ParamPattern
+  
+  -- qf is like n from Sound.Tidal.Params, but using Doubles, not Ints
+    qf_p = F "qf" (Just 0) -- Quality: (carrier) Frequency
+    qf = make' VF qf_p :: Pattern Double -> ParamPattern
+  
+  -- each of these next is expressed relative to qf
+    -- by default frequencies are 1*qf and amplitudes are 0
+    qpf_p = F "qpf" (Just 1) -- Quality: Phase modulator Frequency
+    qpf = make' VF qpf_p :: Pattern Double -> ParamPattern
+    qpa_p = F "qpa" (Just 0) -- Quality: Phase modulator Amplitude
+    qpa = make' VF qpa_p :: Pattern Double -> ParamPattern
+    qff_p = F "qff" (Just 1) -- Quality: Freq modulator Frequency
+    qff = make' VF qff_p :: Pattern Double -> ParamPattern
+    qfa_p = F "qfa" (Just 0) -- Quality: Freq modulator Amplitude
+    qfa = make' VF qfa_p :: Pattern Double -> ParamPattern
+    qaf_p = F "qaf" (Just 1) -- Quality: Am modulator Frequency
+    qaf = make' VF qaf_p :: Pattern Double -> ParamPattern
+    qaa_p = F "qaa" (Just 0) -- Quality: Am modulator Amplitude (typ. 0 or 1)
+    qaa = make' VF qaa_p :: Pattern Double -> ParamPattern
+  
+-- ================== Native  ====================
   -- say a sentence
     data Sample = BassDrum | Snare | Silence deriving Show
     type Sentence = [Sample]
@@ -64,7 +92,7 @@
     (NEvSeq a b) .+ (NEvSeq c d) = NEvSeq (a+c) (b ++ map (first (a+)) d)
 
     render :: NEvSeq -> Sentence
-    render NEvSeq {..} = let 
+    render NEvSeq {..} = let
         theLcm = foldl lcm (denominator nEvDur) $ map (denominator . fst) nEvs
         stretcha a = (theLcm * numerator a) `div` denominator a
         intEvents = map (\(a,b) -> (stretcha a, b)) nEvs
@@ -81,7 +109,7 @@
               | Expr :+ Expr
 
     aTest = Bd :+ Sn
-    
+
     eval :: Expr -> ParamPattern
     eval (Snd s) = sound s
     eval Si = sound "~"
@@ -170,13 +198,13 @@
       -> Pattern Int -- scale degrees, i.e. indices into a [Double]
       -> Pattern Double
     runDegPat temperedLookup scaleFromInt scalePat degreePat = unwrap
-      $ fmap (fmap . temperedLookup . scaleFromInt) scalePat 
+      $ fmap (fmap . temperedLookup . scaleFromInt) scalePat
         <*> pure degreePat
 
   -- transition between two patterns
     -- based on playWhen, which transitions from silence to one pattern
     changeWhen :: (Time -> Bool) -> Pattern a -> Pattern a -> Pattern a
-    changeWhen test (Pattern before) (Pattern after) =  
+    changeWhen test (Pattern before) (Pattern after) =
       stack [b,a] where
       b = Pattern $ (filter $ \e -> not $ test $ eventOnset e) . before
       a = Pattern $ (filter $ \e ->       test $ eventOnset e) . after
@@ -191,10 +219,10 @@
     f              len      p1 n1 seps1   p2 n2 seps2 -- was "f"
       = cat $ take len $ _f p1 n1 seps1   p2 n2 seps2
 
-    _f p1 n1 seps1   p2 n2 seps2 = 
+    _f p1 n1 seps1   p2 n2 seps2 =
        let sep = flip replicate si;
            g seps = concatMap (\e -> e:sep seps);
-           s1 = g seps1 $ replicate n1 p1; 
+           s1 = g seps1 $ replicate n1 p1;
            s2 = g seps2 $ replicate n2 p2;
        in concat $ repeat $ s1 ++ s2
        --  repeat $ concat $ s1 ++ s2
@@ -239,16 +267,17 @@
       in seqPLoop $ map (\(when,patt) -> (0,1,f when patt)) pairs
 
   -- seqPLoop. Thanks, Alex McLean!
-    loopFirst p = splitQueries $ Pattern f where
+    -- obsoleted by (loopFirst, outside, timeLoop,seqPLoop) in Sound.Tidal.Pattern
+    loopFirst' p = splitQueries $ Pattern f where
       f a@(s,e) = mapSnds' plus $ mapFsts' plus $ arc p (minus a) where
         minus = mapArc (subtract (sam s))
         plus = mapArc (+ (sam s))
-    outside n = inside (1/n)
-    timeLoop n = outside n loopFirst
+    outside' n = inside (1/n)
+    timeLoop' n = outside' n loopFirst'
 
-    seqPLoop :: [(Time, Time, Pattern a)] -> Pattern a
+    seqPLoop' :: [(Time, Time, Pattern a)] -> Pattern a
     -- WARNING: in a triple (a,b,p), speed of p is indep of a, b
-    seqPLoop ps= timeLoop (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
+    seqPLoop' ps= timeLoop' (maximum $ map (\(_,x,_) -> x) ps) $ seqP ps
 
   -- render to audio, text
     hStar :: G -> Addr -> ParamPattern
@@ -323,7 +352,6 @@
     -- group more spaces between ) and (, let each be a separate grammar within
 
 -- synonyms and near-synonyms
-    fast = density
     cyc = slowspread
 
 -- pitch
@@ -335,24 +363,24 @@
     to = ((oneMicrotone**) <$>) where oneMicrotone = 2**(1/31)
 
     hi = speed . ((step**) <$>) where step = 2**(1/31)
-    hi_ob transp = speed . ((step**) . (+ transp) <$>) 
-      where step = 2**(1/31) 
+    hi_ob transp = speed . ((step**) . (+ transp) <$>)
+      where step = 2**(1/31)
       --obsoleted by |*|, but used in early portion of music.tidal
 
-    -- sp  = speed . return 
+    -- sp  = speed . return
     -- sps = speed . stack . fmap return
 
   -- _. scale functions (obsolete, redundant ..
       -- but used in music/by_date.tidal)
     scaleElt :: (Num c, Integral a, Integral s) => [a] -> s -> c
-    scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remUnif n (fromIntegral $ length scale) 
+    scaleElt scale n = fromIntegral .(scale !!) $ fromIntegral $ remUnif n (fromIntegral $ length scale)
     -- fmap (scaleElt [0,3,7]) [-5..5] -- test
-    
+
     -- scaleOctave :: [Double] -> Int -> Double -- type sig breaks it
-    scaleOctave scale n = (31 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
+    scaleOctave scale n = (31 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale
       -- fmap (scaleOctave s) [-1..1] --test
       -- fmap (scaleOctave s) [-5..5] --test
-    scaleOctave12 scale n = (12 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale  
+    scaleOctave12 scale n = (12 *) . fromIntegral . floor . ((fromIntegral n) /) $ fromIntegral $ length scale
 
     sc s n = scaleOctave s n + scaleElt s n -- Tidal."scale" already = stretch
       -- scale s 1              -- test
@@ -400,14 +428,14 @@
     rotl :: Int -> [a] -> [a] -- rotate left
     rotl n xs = take (length xs) . drop n . cycle $ xs
 
-    md tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order 
+    md tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order
       . (relToRotatedTones rotn tones) <$> shift
       where relToRotatedTones rotn tones x = x - (shift !! 0)
             toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
             shift = rotl rotn tones
 
-    md12 tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order 
-      . (relToRotatedTones rotn tones) <$> shift 
+    md12 tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order
+      . (relToRotatedTones rotn tones) <$> shift
       where relToRotatedTones rotn tones x = x - (shift !! 0)
             toFirstOctaveIfJustUnder x = if x < 0 then x + 12 else x
             shift = rotl rotn tones
@@ -423,9 +451,9 @@
 
     splitArcAtIntegers :: Arc -> [Arc]
     splitArcAtIntegers (a,b) = let c = ceiling_ish (a,b) in
-      if      b <= a then []    
+      if      b <= a then []
       else if b <= c then [(a,b)]
-      else (a,c) : splitArcAtIntegers (c,b)  
+      else (a,c) : splitArcAtIntegers (c,b)
 
     arcOverlaps :: Arc -> Event a -> Bool
     arcOverlaps (s,e) ((a,b),_,evt) = a <= s && b > s ||  a < e && b >= e
@@ -435,14 +463,14 @@
       -- (s,e) in the unit interval
     firstUnitIntersection evts (s,e) = List.filter (arcOverlaps (s,e)) evts
 
-    anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects 
+    anyUnitIntersection :: [Event a] -> Arc -> [Event a] -- warning: expects
       -- e <= floor s + 1
     anyUnitIntersection evts (s,e) = let f = fromInteger $ floor s in
-      List.map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e)) 
+      List.map (\((a,b),(c,d),e) -> ((a+f,b+f),(c+f,d+f),e))
       $ firstUnitIntersection evts (s-f,e-f)
 
     evtListToPatt :: [Event a] -> Pattern a
-    evtListToPatt evts = Pattern $ \(s,e) -> concat 
+    evtListToPatt evts = Pattern $ \(s,e) -> concat
       $ List.map (\(s',e') -> anyUnitIntersection evts (s',e'))
       $ splitArcAtIntegers (s,e)
       -- seems to work:
@@ -451,7 +479,7 @@
         -- [((1 % 2,1 % 1),(1 % 2,1 % 1),"sn"),((1 % 1,3 % 2),(1 % 1,3 % 2),"bd")]
 
     trigListToPatt :: [(When, a)] -> Pattern a
-    trigListToPatt trigList = 
+    trigListToPatt trigList =
       let f time = (time, time + epsilon)
           evts = map (\(r,a) -> (f r,f r,a)) trigList
       in evtListToPatt evts

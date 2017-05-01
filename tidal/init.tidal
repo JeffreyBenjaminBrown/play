@@ -1,25 +1,12 @@
-:set -XFlexibleContexts
+    :set -XFlexibleContexts
 -- aliases one can't (why not?) define in a .hs file
-  let dur x = cps $ 1 / x
-  let sa = striate
-  let p = pure
--- SuperDirt
-  (cps, getNow) <- bpsUtils
-  -- samples
-    (d0, t0) <- superDirtSetters getNow
-    (d1, t1) <- superDirtSetters getNow
-    (d2, t2) <- superDirtSetters getNow
-    (d3, t3) <- superDirtSetters getNow
-    (d4, t4) <- superDirtSetters getNow
-    (d5, t5) <- superDirtSetters getNow
-    (d6, t6) <- superDirtSetters getNow
-    (d7, t7) <- superDirtSetters getNow
-    (d8, t8) <- superDirtSetters getNow
-    (d9, t9) <- superDirtSetters getNow
-    let hush = do {d0 si; d1 si; d2 si; d3 si; d4 si; d5 si; d6 si; d7 si; d8 si; d9 si}
+    let dur x = cps $ 1 / x
+    let sa = striate
+    let p = pure
     let h = hush
-    let gain_p = F "gain" (Just 1) -- Amplitude
-    let gain = make' VF gain_p :: Pattern Double -> ParamPattern
+  -- the model for the following
+      -- let gain_p = F "gain" (Just 1) -- Amplitude
+      -- let gain = make' VF gain_p :: Pattern Double -> ParamPattern
     let amp_p = F "amp" (Just 1) -- Amplitude
     let amp = make' VF amp_p :: Pattern Double -> ParamPattern
   -- qf is like n from Sound.Tidal.Params, but using Doubles, not Ints
@@ -39,3 +26,19 @@
     let qaf = make' VF qaf_p :: Pattern Double -> ParamPattern
     let qaa_p = F "qaa" (Just 0) -- Quality: Am modulator Amplitude (typ. 0 or 1)
     let qaa = make' VF qaa_p :: Pattern Double -> ParamPattern
+
+
+
+  -- SuperDirt
+      (cps, getNow) <- bpsUtils
+  -- samples
+        (d0, t0) <- superDirtSetters getNow
+        (d1, t1) <- superDirtSetters getNow
+        (d2, t2) <- superDirtSetters getNow
+        (d3, t3) <- superDirtSetters getNow
+        (d4, t4) <- superDirtSetters getNow
+        (d5, t5) <- superDirtSetters getNow
+        (d6, t6) <- superDirtSetters getNow
+        (d7, t7) <- superDirtSetters getNow
+        (d8, t8) <- superDirtSetters getNow
+        (d9, t9) <- superDirtSetters getNow
