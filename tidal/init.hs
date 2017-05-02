@@ -26,6 +26,7 @@
 --    instBass = sound "bass" |*| up "0.4"
 --
 -- ========== Synonyms: short for my screen, long enough to understand
+    fromi = fromIntegral
     jrand n = irand (n+1) - 1 -- ranges in [0,n] not [1,n]
     prob = sometimesBy -- probabilistic application
     euclid = e
