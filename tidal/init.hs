@@ -22,9 +22,9 @@
     f $. x = f x
 
 ---- ========== Tuning the samples to 100 Hz
---    instPsr = sound ("psr"::PS) |*| up 4 |*| speed (400/440)
---    instBass = sound "bass" |*| up "0.4"
---
+    instPsr = sound "psr" |*| up 4 |*| speed (400/440)
+    instBass = sound "bass" |*| up "0.4"
+
 -- ========== Synonyms: short for my screen, long enough to understand
     fromi = fromIntegral
     jrand n = irand (n+1) - 1 -- ranges in [0,n] not [1,n]

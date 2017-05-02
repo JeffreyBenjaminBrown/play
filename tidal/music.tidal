@@ -2,11 +2,10 @@
 hush
 d1 $ slow 4 $ sound "psr*16" |*| speed (sine - 0.1)
 
--- broken; was tuning samples to 100 Hz
-let scale = [0,2,3,5,7,8,11]
+-- tuned! to 100 Hz
 v1 $ instPsr
-v2 $ rl (1/6) $ up "0*3" |*| instBass |*| gain 1.2
-v2 $ sound "sy" |*| qf 400
+v2 $ instBass
+v3 $ sound "sy" |*| qf 200
 
 -- moving scale figures!
 v1 $ up $. fromi <$> toScale' 12 scale ("0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8") |*| sound "bass"
