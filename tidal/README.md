@@ -1,11 +1,12 @@
 # What it is
 
 ## The file `synths sy, sya.scd`
-initializes SuperCollider, and defines two synths:
-* sy: a synth with frequency and phase modulation
-* sya: similar, but also with amplitude modulation
+initializes SuperCollider, and defines two synths. Both offer optional FM, AM and PM synthesis. How they differ:
 
-Parameters:
+* sya offers "ordinary" AM synthesis: The AM wave oscillates between 0 and `qaa`. This has some nice acoustic properties, but it means you can't turn off the AM.
+* sy offers a variety of AM synthesis in which the AM wave oscillates in `[1-qaa, 1+qaa]`. This means if qaa = 0, there is no AM.
+
+Parameters (`p` was already taken, so I use `q` for "quality"):
 * Control amplitude with `gain` or `amp`. `amp` operates within the synth, `gain` outside it.
 * Control frequency with `qf`.
 * Control frequency modulation amplitude and frequency with `qfa` and `qff`.

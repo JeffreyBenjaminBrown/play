@@ -1,9 +1,10 @@
-:reload
-3
+:load "git_play/tidal/init.hs"
+import Data.List
 d1 $ sound "psr*16" |*| speed (sine - 0.1)
-d2 $ sound "sy" |*| qf 444
-
+d2 $ sound "sya" |*| qf 444 |*| qaa 1 |*| qaf (14/13)
+:t samp
 hush
+
 dur 3
 d1 $ sound "psr*16" |*| up (scale 0 3 sine)
 
