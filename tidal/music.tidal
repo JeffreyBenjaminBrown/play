@@ -1,0 +1,9 @@
+:reload
+d1 $ sound "psr*16" |*| speed (sine - 0.1)
+
+hush
+dur 3
+d1 $ sound "psr*16" |*| up (scale 0 3 sine)
+
+d1 $ sound $ stack[ "ho*3", "bd sn:2"]
+d1 $ sound "psr*24" # up "0 [3 10] [7!! -1]" |+| up (sine*3.0)
