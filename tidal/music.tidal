@@ -1,12 +1,44 @@
-:load "git_play/tidal/init.hs"
-import Data.List
-d1 $ sound "psr*16" |*| speed (sine - 0.1)
-d2 $ sound "sya" |*| qf 444 |*| qaa 1 |*| qaf (14/13)
-:t samp
+-- slow bells
 hush
+d1 $ slow 4 $ sound "psr*16" |*| speed (sine - 0.1)
 
-dur 3
-d1 $ sound "psr*16" |*| up (scale 0 3 sine)
+-- broken; was tuning samples to 100 Hz
+let scale = [0,2,3,5,7,8,11]
+v1 $ instPsr
+v2 $ rl (1/6) $ up "0*3" |*| instBass |*| gain 1.2
+v2 $ sound "sy" |*| qf 400
 
+-- broken. moving scale figures!
+let scale = [0,2,3,5,7,8,11]
+v1 $ up $. fromi <$> toScale' 12 scale ("0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8") |*| sound "bass"
+v1 $ up $. fromi <$> toScale' 12 [0,2,3,5,7,9,11] ("1 2 3*2 4 6*2 5" + slow 2 "0 2") |*| sound "psr"
+
+-- just intonation
+d1 $ sound "bd sn:1"
+d2 $ rl (1/6) $ sound "hc hc"
+v1 $ slow 2 $ qf "8*8 [7*2 [13 11]]" |*| sound "sy" |*| qf 25
+v2 $ fast 4 $ sound "sy" |*| qf "[1200,[1300 1500]/3,1600]"
+v3 $ sound "sy" |*| slow 8 $. qf "[1000 [900!! [950 800]/2]]"
+
+-- pm fm am variety
+d1 $ slow 2 $ sound "sy*12" |*| qf 200
+  |*| (slow 2 $ qpa "0 [1 2] 0.5" |*| qpf "2 3 7")
+  |*| (slow 3 $ qfa "1 7 0.1" |*| qff "0.01 0.1 1 10")
+  |*| (slow 5 $ qaa "0 1" |*| qpf "0.02 0.2 2 20")
+
+d1 $ slow 4 $ qf (run 24)
+  |*| slow 2 (rev $ qf $ run 10)
+  |*| slow 3 (qfa $ run 8)
+  |*| slow 5 (qpa $ run 8)
+  |*| slow 7 (qaf $ run 8) |*| qaa (0.1 * run 8)
+  |*| sound "sy" |*| qf 100
+
+d2 $ (slow 3 $ qf (run 24)) |*| sound "sya" |*| qf 100
+  |*| qaa 1 |*| qaf (run 12/(slow 2 $ run 7))
+  |*| gain 0.7 |*| crush 3
+
+d1 $ slow 3 $ sound "psr*16" |*| up (scale 0 3 sine)
+
+3
 d1 $ sound $ stack[ "ho*3", "bd sn:2"]
 d1 $ sound "psr*24" # up "0 [3 10] [7!! -1]" |+| up (sine*3.0)
