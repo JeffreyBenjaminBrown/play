@@ -1,6 +1,6 @@
 :set -XFlexibleContexts
 
-:module "git_play/tidal/init.hs"
+:load "git_play/tidal/init.hs"
 
 import Sound.Tidal.Context
 import qualified Data.List as L
@@ -41,3 +41,4 @@ let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9,c1,c2,c3,c4,c5,c6,c7,c8
 let solo = (>>) hush
 
 :set prompt "tidal> "
+

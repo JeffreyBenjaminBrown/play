@@ -1,4 +1,7 @@
 (
+s.options.numBuffers = 1024 * 64;
+SuperDirt.start;
+
 (SynthDef(\sy,	{ // by default, sine wav
 	|out, pan, amp = 1, qf=440, begin = 0, end = 1,
 	qfa = 0, qff = 1, qpa = 0, qpf = 1|

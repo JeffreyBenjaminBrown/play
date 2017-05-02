@@ -1,5 +1,7 @@
 :reload
+3
 d1 $ sound "psr*16" |*| speed (sine - 0.1)
+d2 $ sound "sy" |*| qf 444
 
 hush
 dur 3
