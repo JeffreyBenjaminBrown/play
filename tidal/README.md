@@ -1,4 +1,4 @@
-# What is this stuff?
+# What it is
 
 ## The file `synths sy, sya.scd`
 initializes SuperCollider, and defines two synths:
