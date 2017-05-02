@@ -52,7 +52,11 @@ import Data.Fixed (mod',div')
 let dur x = cps $ 1 / x
 let bps x = cps (x/2)
 let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9,v1,v2,v3,v4,v5,v6,v7,v8,v9]
+let hushd = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9]
+let hushv = mapM_ ($ silence) [v1,v2,v3,v4,v5,v6,v7,v8,v9]
 let solo = (>>) hush
+let solod = (>>) hushd
+let solov = (>>) hushv
 
 :set prompt "tidal> "
 

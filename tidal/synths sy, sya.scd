@@ -9,7 +9,6 @@ SuperDirt.start;
 	env = EnvGen.ar(Env.perc(begin,end), doneAction:2) * amp;
 	fMod = LFSaw.ar(qf * qff, 0, qf*qfa); // freq mod, BIG num
 	pMod = LFSaw.ar(qf * qpf, 0, qpa); // phase mod
-	// aMod = 1 + LFSaw.ar(qf*qaf)*qaa;
 	aMod = 1+(qaa*Pulse.ar(qf * qaf,0.5,2,-1)); // amp mod, bandlimited(not LF)
 	  // if qaa = 0, this has no effect
 	carrier = SinOsc.ar(qf+fMod,pMod); //wks: qf+fMod

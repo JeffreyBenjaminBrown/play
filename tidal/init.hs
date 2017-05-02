@@ -21,17 +21,21 @@
     ($.) :: (a -> b) -> a -> b
     f $. x = f x
 
--- ========== Some names I prefer
-
+---- ========== Tuning the samples to 100 Hz
+--    instPsr = sound ("psr"::PS) |*| up 4 |*| speed (400/440)
+--    instBass = sound "bass" |*| up "0.4"
+--
+-- ========== Synonyms: short for my screen, long enough to understand
+    fromi = fromIntegral
     jrand n = irand (n+1) - 1 -- ranges in [0,n] not [1,n]
-    proba = sometimesBy -- probabilistic application
+    prob = sometimesBy -- probabilistic application
     euclid = e
     samp = s
     sampNum = n
 
     type PS = Pattern String
     type PD = Pattern Double
-    type PI = Pattern Int
+    type PI = Pattern Integer
 
     duty phase duty wavelen = when (\n -> mod (n - phase) wavelen < duty)
     si = silence
@@ -68,6 +72,26 @@
           idx' = floor $ fromIntegral $ remUnif idx len
           octaves = quotUnif idx len
       in (2 ** fromIntegral octaves) * (sc !! idx')
+
+    rotl :: Int -> [a] -> [a] -- rotate left
+    rotl n xs = take (length xs) . drop n . cycle $ xs
+
+    equalTemperamentMode :: Int -> Int -> [Int] -> [Int]
+    equalTemperamentMode temperament rotation scale = -- maybe flip order
+      toFirstOctaveIfJustUnder . (relToRotatedScale rotation scale) <$> shift
+      where relToRotatedScale rotation scale x = x - (shift !! 0)
+            toFirstOctaveIfJustUnder x = if x < 0 then x + temperament else x
+            shift = rotl rotation scale
+    
+    mode12 :: Int -> [Int] -> [Int]
+    mode12 = equalTemperamentMode 12
+
+    mode31 :: Int -> [Int] -> [Int]
+    mode31 tones rotn = toFirstOctaveIfJustUnder  -- maybe flip order
+      . (relToRotatedTones rotn tones) <$> shift
+      where relToRotatedTones rotn tones x = x - (shift !! 0)
+            toFirstOctaveIfJustUnder x = if x < 0 then x + 31 else x
+            shift = rotl tones rotn
 
     denSca denom = map (flip (/) denom) [denom..denom*2-1] -- **
       -- one-octave JI scale defined by a denominator
