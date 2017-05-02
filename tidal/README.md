@@ -5,16 +5,12 @@ initializes SuperCollider, and defines two synths:
 * sy: a synth with frequency and phase modulation
 * sya: similar, but also with amplitude modulation
 
-### Parameters in that file
-Control amplitude with `gain` or `amp`. `amp` operates within the synth, `gain` outside it.
-
-Control frequency with `qf`.
-
-Control frequency modulation amplitude and frequency with `qfa` and `qff`.
-
-Control phase modulation amplitude and frequency with `qpa` and `qpf`.
-
-Control amplitude modulation amplitude and frequency with `qaa` and `qaf`.
+Parameters:
+* Control amplitude with `gain` or `amp`. `amp` operates within the synth, `gain` outside it.
+* Control frequency with `qf`.
+* Control frequency modulation amplitude and frequency with `qfa` and `qff`.
+* Control phase modulation amplitude and frequency with `qpa` and `qpf`.
+* Control  amplitude modulation amplitude and frequency with `qaa` and `qaf`.
 
 ## the file `init.hs`
 * abbreviates some types (e.g. `PI` for `Pattern Int`)
