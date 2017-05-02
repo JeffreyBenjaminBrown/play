@@ -8,10 +8,12 @@ v1 $ instPsr
 v2 $ rl (1/6) $ up "0*3" |*| instBass |*| gain 1.2
 v2 $ sound "sy" |*| qf 400
 
--- broken. moving scale figures!
+-- moving scale figures!
+v1 $ up $. fromIntegral <$> toScale' 12 scale ("0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8") |*| sound "bass"
+v1 $ up $. fromIntegral <$> toScale' 12 scale ("1 2 3*2 4 6*2 5" + slow 2 "0 2") |*| sound "psr"
+
+let pat = ("1 2 3*2 4 6*2 5" + slow 2 "0 2")
 let scale = [0,2,3,5,7,8,11]
-v1 $ up $. fromi <$> toScale' 12 scale ("0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8") |*| sound "bass"
-v1 $ up $. fromi <$> toScale' 12 [0,2,3,5,7,9,11] ("1 2 3*2 4 6*2 5" + slow 2 "0 2") |*| sound "psr"
 
 -- just intonation
 d1 $ sound "bd sn:1"
