@@ -6,8 +6,6 @@ d1 $ slow 4 $ sound "psr*16" |*| speed (sine - 0.1)
 v1 $ instPsr
 v2 $ instBass
 
-v3 $ sound "sy"
-
 v3 $ sound "sya" |*| qf 0.5 |*| slow 2 $. qf "200 300"
   |*| gain 1.35 |*| sustain 2 |*| attack 0.3 |*| release 2
 
