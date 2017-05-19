@@ -1,3 +1,11 @@
+-- ratios with two odd primes, primes under 16
+let rTo12 f = (*12) $ log (fromRational f) / log 2 
+rTo12 $ 8/7 -- wanted to def&use rnd x = round (100*x)/100; fails
+let octave1 n = if n<= 0 then n else if n<1 then octave1 (n*2) else if n>2 then octave1 (n/2) else n
+let theFirstRatios = nub $ fmap octave1 $ (%)<$>[1..16]<*>[1..16]
+fmap (\r -> (octave1 r, rTo12 $ fromRational  r)) theFirstRatios
+  -- for 16 X 16 there are only 50 ratios!
+
 (10 % 9,1.8240371213406008)
   The classic narrow just major second.
   Down 9 = down 7.02*2 = down 2.04
@@ -29,9 +37,13 @@ The two 7ish tritones.
 (9 % 5,10.175962878659401)
 (13/7,10.717017553001858) = 8.41+2.31
 
-
-
-
-
-
-
+-- ratios with 3 odd primes, primes under 8
+let 
+3 * 3 % 5
+3 * 3 % 7
+3 * 5 % 7
+5 * 5 % 3
+5 * 5 % 7
+3 * 7 % 5
+7 * 7 % 3
+7 * 7 % 5

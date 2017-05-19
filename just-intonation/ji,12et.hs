@@ -1,12 +1,12 @@
 -- module Normalize where
 
-import Data.Ratio
-
+    import Data.Ratio
+    
 -- octave-normalize any value to be in [1,2)
-normz r = if r >= 2 then normz $ r/2
-          else if r < 1 then normz $ r*2
-          else r
-et12 r = 12 * log r / log 2
+    normz r = if r >= 2 then normz $ r/2
+              else if r < 1 then normz $ r*2
+              else r
+    et12 r = 12 * log r / log 2
 
 -- all the just ratios
 -- mapM_ print $ map (\x->(x,et12 $ fromRational x)) $ nub $ map normz $ (%)<$>[2..32]<*>[2..32]
