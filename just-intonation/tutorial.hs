@@ -2,8 +2,8 @@
     import Data.Ratio
 
   -- This code also relies on
-    -- the "sy" synth defined at "git_play/tidal/synths sy, sya.scd.hs"
-    -- the "qf" parameter defined at "git_play/tidal/init.hs"
+    -- the "sy" synth defined at "play/tidal/synths sy, sya.scd.hs"
+    -- the "qf" parameter defined at "play/tidal/init.hs"
 
 -- Octaves
   -- For some reason, frequencies that differ by a power of two sound similar
