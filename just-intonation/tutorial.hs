@@ -20,9 +20,9 @@
   -- You might hear this ratio called a "fifth" or a "power chord".
   -- Next to the octave, the ratio 2/3 is as close as two frequencies come to
   -- being the same frequency -- a quality harmony theorists call "simplicity".
-    d1 $ sound "sy" |*| qf [200,300]
-    d1 $ sound "sy" |*| qf [250,375]
-    d1 $ sound "sy" |*| qf [300,450]
+    d1 $ sound "sy" |*| qf "[200,300]"
+    d1 $ sound "sy" |*| qf "[250,375]"
+    d1 $ sound "sy" |*| qf "[300,450]"
 
 -- Separating root from ratio
   -- Computing (3/2)*F in your head can be difficult for certain values of F.
@@ -35,10 +35,10 @@
 
 -- 4/3 is the inverse of 3/2
   -- Here is another power chord:
-    d1 $ sound "sy" |*| qf [200,300]
+    d1 $ sound "sy" |*| qf "[200,300]"
   -- Recall that 200 and 400 are the same note, except 400 is an octave higher.
   -- Therefore this sounds similar:
-    d1 $ sound "sy" |*| qf [400,300]
+    d1 $ sound "sy" |*| qf "[400,300]"
   -- We call 3/2 and 4/3 "inverses".
     -- In math, 3/2 and 2/3 are inverses: 3/2 * 2/3 = 1.
     -- But in music, 2/3 is the same as 4/3, except an octave higher,
@@ -73,7 +73,7 @@
     -- But for some reason the 4 in [4,5,6] sounds like the center, so it's useful to normalize to the 4.
 
   -- A "minor chord" contains three notes, in the ratio [10,12,15]:
-    d1 $ sound "sy" |*| qf 50 |*| qf "[10,12,15]
+    d1 $ sound "sy" |*| qf 50 |*| qf "[10,12,15]"
     -- Equivalently, relative to the root: [10,12,15]/10 = [1,6/5,3/2] = [1,1.2,1.5]
     d1 $ sound "sy" |*| qf 500 |*| qf "[1,1.2,1.5]" -- TODO: ratios, not decimal
 
