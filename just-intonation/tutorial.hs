@@ -1,6 +1,10 @@
 -- Harmony is about ratios.
     import Data.Ratio
 
+  -- This code also relies on
+    -- the "sy" synth defined at "git_play/tidal/synths sy, sya.scd.hs"
+    -- the "qf" parameter defined at "git_play/tidal/init.hs"
+
 -- Octaves
   -- For some reason, frequencies that differ by a power of two sound similar
     d1 $ sound "sy" |*| qf 100 -- This plays the `sy` synthesizer at the frequency 100 Hz. (`qf` stands for "the quality of frequency".)
