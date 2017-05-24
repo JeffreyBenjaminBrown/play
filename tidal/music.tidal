@@ -1,12 +1,17 @@
 -- slow bells
 hush
-d1 $ slow 4 $ sound "psr*16" |*| speed (sine - 0.1)
+d1 $ slow 4 $ sound "psr*16" |*| speed (tri + 0.1)
+d2 $ slow 4 $ (<~) (1/32) $ sound "psr*16" |*| speed (tri + 0.1)
+d3 $ slow 4 $ (<~) (1/64) $ sound "psr*16" |*| speed (tri + 0.1)
+d4 $ slow 8 $ (<~) (1/64) $ sound "psr*16" |*| speed (tri + 1.1)
 
 -- tuned! to 100 Hz
 v1 $ instPsr
 v2 $ instBass
 
-v3 $ sound "sya" |*| qf 0.5 |*| slow 2 $. qf "200 300"
+v3 $ sound "sy" |*| qf 200
+
+v3 $ qf "400 <600 <[700 600] [750, 900 930]> >" |*| sound "sya"
   |*| gain 1.35 |*| sustain 2 |*| attack 0.3 |*| release 2
 
 -- moving scale figures!
