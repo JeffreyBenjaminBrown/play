@@ -37,7 +37,7 @@
   "Remove bird literate marks"
   (replace-regexp-in-string "^> " "" s))
 
-(defun tidal-intersperse (e l) ;; if l=(a b) then this=(e a e b)
+(defun tidal-intersperse (e l)
   (if (null l)
       '()
     (cons e (cons (car l) (tidal-intersperse e (cdr l))))))
@@ -54,28 +54,27 @@
      nil
      tidal-interpreter-arguments)
     (tidal-see-output))
-  (tidal-send-string ":set prompt \"\"")       
+  (tidal-send-string ":set prompt \"\"")
+  (tidal-send-string ":set prompt2 \"\"")
+  (tidal-send-string ":module Sound.Tidal.Context")
+  ;; jbb edit
+    (tidal-send-string ":load ~/git_play/tidal/BootTidal.hs")
+    ;; (tidal-send-string "import qualified Sound.Tidal.Scales as Scales")
+    ;; (tidal-send-string "import qualified Sound.Tidal.Chords as Chords")
 
-  ;; load libraries
-    ;; jbb mod
-      (tidal-send-string ":m +Sound.Tidal.Context")
-      (tidal-send-string ":load ~/git_play/tidal/loadEveryTime.hs")
-    ;; original
-      ;; (tidal-send-string ":module Sound.Tidal.Context")
-
-  (tidal-send-string "(cps, getNow) <- bpsUtils")
-  (tidal-send-string "(d1,t1) <- dirtSetters getNow")
-  (tidal-send-string "(d2,t2) <- dirtSetters getNow")
-  (tidal-send-string "(d3,t3) <- dirtSetters getNow")
-  (tidal-send-string "(d4,t4) <- dirtSetters getNow")
-  (tidal-send-string "(d5,t5) <- dirtSetters getNow")
-  (tidal-send-string "(d6,t6) <- dirtSetters getNow")
-  (tidal-send-string "(d7,t7) <- dirtSetters getNow")
-  (tidal-send-string "(d8,t8) <- dirtSetters getNow")
-  (tidal-send-string "(d9,t9) <- dirtSetters getNow")
-  (tidal-send-string "(d10,t10) <- dirtSetters getNow")
+  (tidal-send-string "(cps, nudger, getNow) <- cpsUtils'")
+  (tidal-send-string "(d0,t0) <- superDirtSetters getNow")
+  (tidal-send-string "(d1,t1) <- superDirtSetters getNow")
+  (tidal-send-string "(d2,t2) <- superDirtSetters getNow")
+  (tidal-send-string "(d3,t3) <- superDirtSetters getNow")
+  (tidal-send-string "(d4,t4) <- superDirtSetters getNow")
+  (tidal-send-string "(d5,t5) <- superDirtSetters getNow")
+  (tidal-send-string "(d6,t6) <- superDirtSetters getNow")
+  (tidal-send-string "(d7,t7) <- superDirtSetters getNow")
+  (tidal-send-string "(d8,t8) <- superDirtSetters getNow")
+  (tidal-send-string "(d9,t9) <- superDirtSetters getNow")
   (tidal-send-string "let bps x = cps (x/2)")
-  (tidal-send-string "let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9,d10]")
+  (tidal-send-string "let hush = mapM_ ($ silence) [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10]")
   (tidal-send-string "let solo = (>>) hush")
   (tidal-send-string ":set prompt \"tidal> \"")
 )
@@ -132,14 +131,16 @@
     (insert "main = do\n")
     (insert (if tidal-literate-p (tidal-unlit s) s))))
 
+
 (defun tidal-get-now ()
   "Store the current cycle position in a variable called 'now'."
   (interactive)
   (tidal-send-string "now' <- getNow")
-  (tidal-send-string "let now = nextSam now'") ;; why?
-  (tidal-send-string "let retrig = (now ~>)")
-  (tidal-send-string "let fadeOut n = spread' (degradeBy) (retrig $ slow n $ envL)")
-  (tidal-send-string "let fadeIn n = spread' (degradeBy) (retrig $ slow n $ (1-) <$> envL)")
+  (tidal-send-string "let now = nextSam now'")
+  (tidal-send-string "let retrig = (now `rotR`)")
+  (tidal-send-string "let fadeOut n = spread' (_degradeBy) (retrig $ slow n $ envL)")
+  (tidal-send-string "let fadeIn n = spread' (_degradeBy) (retrig $ slow n $ (1-) <$> envL)")
+
   )
 
 (defun tidal-run-line ()
@@ -153,8 +154,7 @@
 	       s)))
     (tidal-send-string s*))
   (pulse-momentary-highlight-one-line (point))
-  ;; jbb edit 
-    ;; was: (next-line) 
+  ;; (next-line) ;; jbb edit
   )
 
 (defun tidal-run-multiple-lines ()
@@ -245,6 +245,7 @@
   (tidal-run-multiple-lines)
   )
 
+
 (defun tidal-stop-d1 ()
   "send d1 $ silence as a single line"
   (interactive)
@@ -316,31 +317,13 @@
   )
 
 (defun tidal-run-region ()
-  "Place the region in a do block and compile. REPLACED(by jbb) with tidal-run-multiple-lines-separately."
+  "Place the region in a do block and compile."
   (interactive)
   (tidal-transform-and-store
    "/tmp/tidal.hs"
    (buffer-substring-no-properties (region-beginning) (region-end)))
   (tidal-send-string ":load \"/tmp/tidal.hs\"")
   (tidal-send-string "main"))
-
-(defun tidal-run-multiple-lines-separately ()
-  "Send the current region to the interpreter as separate lines."
-  (interactive)
-  (tidal-get-now)
-  (save-excursion
-   (mark-paragraph)
-   (let* ((s (buffer-substring-no-properties (region-beginning)
-                                             (region-end)))
-          (s* (if tidal-literate-p
-                  (tidal-unlit s)
-                s)))
-     (tidal-send-string s*)
-     (mark-paragraph)
-     (pulse-momentary-highlight-region (mark) (point))
-     )
-   )
-  )
 
 (defun tidal-load-buffer ()
   "Load the current buffer."
@@ -363,26 +346,15 @@
 (defvar tidal-mode-map nil
   "Tidal keymap.")
 
-(defun inferior-haskell-send-command (proc str) ;; JBB NEW, from haskell-mode
-  (setq str (concat str "\n"))
-  (with-current-buffer (process-buffer proc)
-    (inferior-haskell-wait-for-prompt proc)
-    (goto-char (process-mark proc))
-    (insert-before-markers str)
-    (move-marker comint-last-input-end (point))
-    (setq inferior-haskell-seen-prompt nil)
-    (comint-send-string proc str)))
-
 (defun tidal-mode-keybindings (map)
   "Haskell Tidal keybindings."
-  (define-key map [?\C-c ?\C-a] 'inferior-haskell-send-command) ;; jbb-edit
   (define-key map [?\C-c ?\C-s] 'tidal-start-haskell)
   (define-key map [?\C-c ?\C-v] 'tidal-see-output)
   (define-key map [?\C-c ?\C-q] 'tidal-quit-haskell)
   (define-key map [?\C-c ?\C-c] 'tidal-run-line)
   (define-key map [?\C-c ?\C-e] 'tidal-run-multiple-lines)
   (define-key map (kbd "<C-return>") 'tidal-run-multiple-lines)
-  (define-key map [?\C-c ?\C-r] 'tidal-run-multiple-lines-separately)
+  (define-key map [?\C-c ?\C-r] 'tidal-run-region)
   (define-key map [?\C-c ?\C-l] 'tidal-load-buffer)
   (define-key map [?\C-c ?\C-i] 'tidal-interrupt-haskell)
   (define-key map [?\C-c ?\C-m] 'tidal-run-main)
@@ -499,4 +471,3 @@
 (add-to-list 'auto-mode-alist '("\\.tidal$" . tidal-mode))
 
 (provide 'tidal)
-
