@@ -1,3 +1,5 @@
+-- This can't be loaded using :l because (e.g.) it has top-level let bindings
+
 :set -XFlexibleContexts
 :set prompt ""
 
@@ -58,5 +60,4 @@ let solo = (>>) hush
 let solod = (>>) hushd
 let solov = (>>) hushv
 
-:set prompt "tidal> "
-
+:set prompt "> "
