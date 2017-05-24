@@ -58,26 +58,44 @@
   (tidal-send-string ":set prompt2 \"\"")
   (tidal-send-string ":module Sound.Tidal.Context")
   ;; jbb edit
-    (tidal-send-string ":load ~/git_play/tidal/BootTidal.hs")
-    ;; (tidal-send-string "import qualified Sound.Tidal.Scales as Scales")
-    ;; (tidal-send-string "import qualified Sound.Tidal.Chords as Chords")
-
-  (tidal-send-string "(cps, nudger, getNow) <- cpsUtils'")
-  (tidal-send-string "(d0,t0) <- superDirtSetters getNow")
-  (tidal-send-string "(d1,t1) <- superDirtSetters getNow")
-  (tidal-send-string "(d2,t2) <- superDirtSetters getNow")
-  (tidal-send-string "(d3,t3) <- superDirtSetters getNow")
-  (tidal-send-string "(d4,t4) <- superDirtSetters getNow")
-  (tidal-send-string "(d5,t5) <- superDirtSetters getNow")
-  (tidal-send-string "(d6,t6) <- superDirtSetters getNow")
-  (tidal-send-string "(d7,t7) <- superDirtSetters getNow")
-  (tidal-send-string "(d8,t8) <- superDirtSetters getNow")
-  (tidal-send-string "(d9,t9) <- superDirtSetters getNow")
-  (tidal-send-string "let bps x = cps (x/2)")
-  (tidal-send-string "let hush = mapM_ ($ silence) [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10]")
+    ;; (tidal-send-string ":load ~/git_play/tidal/BootTidal.hs")
+    (tidal-send-string "import qualified Sound.Tidal.Scales as Scales")
+    (tidal-send-string "import qualified Sound.Tidal.Chords as Chords")
+    (tidal-send-string "(cps, nudger, getNow) <- cpsUtils'")
+  ;; jbb edit: these used to read (dn,tn) for n in 1-10
+    (tidal-send-string "(d0,dt0) <- superDirtSetters getNow")
+    (tidal-send-string "(d1,dt1) <- superDirtSetters getNow")
+    (tidal-send-string "(d2,dt2) <- superDirtSetters getNow")
+    (tidal-send-string "(d3,dt3) <- superDirtSetters getNow")
+    (tidal-send-string "(d4,dt4) <- superDirtSetters getNow")
+    (tidal-send-string "(d5,dt5) <- superDirtSetters getNow")
+    (tidal-send-string "(d6,dt6) <- superDirtSetters getNow")
+    (tidal-send-string "(d7,dt7) <- superDirtSetters getNow")
+    (tidal-send-string "(d8,dt8) <- superDirtSetters getNow")
+    (tidal-send-string "(d9,dt9) <- superDirtSetters getNow")
+  ;; jbb edit: to distinguish voices from drums
+    (tidal-send-string "(v0,vt0) <- superDirtSetters getNow")
+    (tidal-send-string "(v1,vt1) <- superDirtSetters getNow")
+    (tidal-send-string "(v2,vt2) <- superDirtSetters getNow")
+    (tidal-send-string "(v3,vt3) <- superDirtSetters getNow")
+    (tidal-send-string "(v4,vt4) <- superDirtSetters getNow")
+    (tidal-send-string "(v5,vt5) <- superDirtSetters getNow")
+    (tidal-send-string "(v6,vt6) <- superDirtSetters getNow")
+    (tidal-send-string "(v7,vt7) <- superDirtSetters getNow")
+    (tidal-send-string "(v8,vt8) <- superDirtSetters getNow")
+    (tidal-send-string "(v9,vt9) <- superDirtSetters getNow")
+  (tidal-send-string "let hush = mapM_ ($ silence) [v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,d0,d1,d2,d3,d4,d5,d6,d7,d8,d9]")
   (tidal-send-string "let solo = (>>) hush")
-  (tidal-send-string ":set prompt \"tidal> \"")
+  (tidal-send-string ":set prompt \"> \"")
+  (mapc 'tidal-send-string (read-lines "custom.hs-interactive")) ;; jbb testing
 )
+
+(defun read-lines (filePath)
+  ;; http://ergoemacs.org/emacs/elisp_read_file_content.html
+  "Return a list of lines of a file at filePath."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string (buffer-string) "\n" t)))
 
 (defun tidal-see-output ()
   "Show haskell output."
