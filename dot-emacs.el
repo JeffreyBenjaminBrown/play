@@ -2,14 +2,15 @@
   (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
 
 ;; Semantic Synchrony
-  (defvar smsn-server-host "127.0.0.1")
-    ;; to use the online data:
-      ;; (defvar smsn-server-host "fortytwo.net")
-  (defvar smsn-server-port 8182) ;; is default, omittable
-  (defvar smsn-server-protocol "websocket") ;; is default, omittable
-  (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs")
+  ;; where is the server?
+    ;; (defvar smsn-server-host "fortytwo.net") ;; online
+    (defvar smsn-server-host "127.0.0.1") ;; local
+  (defvar smsn-server-port 8182) ;; 8182 is default
+  (defvar smsn-server-protocol "websocket") ;; websocket is default
+  (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
+  (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
   (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
-         (normal-top-level-add-subdirs-to-load-path))
+    (normal-top-level-add-subdirs-to-load-path))
   (require 'smsn-mode)
 
 ;; haskell
@@ -19,7 +20,7 @@
   (require 'haskell-mode)
 
 ;; tidal
-  (add-to-list 'load-path "~/installs-src/tidal")
+  (add-to-list 'load-path "~/git_play/tidal/emacs")
   (require 'tidal)
 
 ;; custom, jbb
