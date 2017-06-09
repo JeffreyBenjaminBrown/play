@@ -116,7 +116,6 @@
     (insert "main = do\n")
     (insert (if tidal-literate-p (tidal-unlit s) s))))
 
-
 (defun tidal-get-now ()
   "Store the current cycle position in a variable called 'now'."
   (interactive)
@@ -125,7 +124,6 @@
   (tidal-send-string "let retrig = (now `rotR`)")
   (tidal-send-string "let fadeOut n = spread' (_degradeBy) (retrig $ slow n $ envL)")
   (tidal-send-string "let fadeIn n = spread' (_degradeBy) (retrig $ slow n $ (1-) <$> envL)")
-
   )
 
 (defun tidal-run-line ()
@@ -162,6 +160,22 @@
     ;(tidal-send-string (replace-regexp-in-string "\n" " " s*))
    )
   )
+
+(defun tidal-run-multiple-lines-separately ()
+  "Send the current region to the interpreter as separate lines."
+  (interactive)
+  (tidal-get-now)
+  (save-excursion
+   (mark-paragraph)
+   (let* ((s (buffer-substring-no-properties (region-beginning)
+                                             (region-end)))
+          (s* (if tidal-literate-p
+                  (tidal-unlit s)
+                s)))
+     (tidal-send-string s*)
+     (mark-paragraph)
+     (pulse-momentary-highlight-region (mark) (point))
+     )))
 
 (defun tidal-run-d1 ()
   "Send the first instance of d1 to the interpreter as a single line."
@@ -338,7 +352,7 @@
   (define-key map [?\C-c ?\C-q] 'tidal-quit-haskell)
   (define-key map [?\C-c ?\C-c] 'tidal-run-line)
   (define-key map [?\C-c ?\C-e] 'tidal-run-multiple-lines)
-  (define-key map (kbd "<C-return>") 'tidal-run-multiple-lines)
+  (define-key map (kbd "<C-return>") 'tidal-run-multiple-lines-separately)
   (define-key map [?\C-c ?\C-r] 'tidal-run-region)
   (define-key map [?\C-c ?\C-l] 'tidal-load-buffer)
   (define-key map [?\C-c ?\C-i] 'tidal-interrupt-haskell)
