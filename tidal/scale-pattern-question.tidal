@@ -1,16 +1,24 @@
+-- The code relies on some functions in tidal-extensions.hs, which (if you've cloned this repo) can be loaded by running the following line:
+
 :s init.hs
 
--- demonstrating the above
+-- This makes the sound in that file:
 hush
-cps 0.8
+cps 0.5
 let major = [0,2,4,5,7,9,11]
 let dorian = (+ (-2)) <$> [0,2,3,5,7,9,10]
 let phrygian = (+ (-5)) <$> [0, 1, 4, 5, 7, 8, 10]
 let lkScale = fmap . lk12 . (\v -> case v of "maj" -> major; "dor" -> dorian; "phr" -> phrygian)
-let changes =  fmap lkScale ("maj [phr dor]/2" :: Pattern String)
+let changes = fmap lkScale ("maj [phr dor]/2" :: Pattern String)
 let playOverChanges p = up $. unwrap $. slow 2 changes <*> pure p
 let p1 = fast 2 "0 [4 2]/2"
 hush
 d1 $ playOverChanges p1 |*| sound "psr"
 d2 $ playOverChanges (fast 2 "2 [4 ~]/2" + p1) |*| sound "psr"
 d3 $ every 2 (rl $ 1/2) $ playOverChanges (fast 4 "4 [7 ~]/2" + p1) |*| sound "psr"
+
+The only thing I changed is that after playing one cycle, I change the definition of "changes" from this:
+    let changes = fmap lkScale ("maj [phr dor]/2" :: Pattern String)
+to this:
+    let changes = slow 2 $ fmap lkScale ("maj [phr dor]/2" :: Pattern String)
+
