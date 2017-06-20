@@ -42,7 +42,7 @@ d3 $ duty 0 1 4 (|*| si) $ rl (3/32) $ sd "hc(7,16)" |*| ga "0.9"
 d4 $ duty 3 1 4 (|*| si) $ rr (1/8) $ sd "ho*4"
 
 dur 4 -- **
-d1 $ sd "bd(5,8)"
+d1 $ sound "bd(5,8)"
 d2 $ duty 2 1 4 (|*| si) $ rl (1/16) $ sd "sn(11,16)"
 d3 $ duty 0 1 4 (|*| si) $ rl (3/32) $ sd "hc(11,32)" |*| ga "0.9"
 
@@ -54,6 +54,7 @@ d2 $ rl (1/2) $ sd "[sn*4]!! ~"
 let scales = [[1,8/7,9/7,10/7,10/6,11/6,12/6,12/5]]
 let lkScale = ((M.fromList $ zip [1..] scales) M.!)::Int->[Double]
 let ins = sd "sy" |*| qf "185" |*| end "0.5" -- instrument
+let ins = sd "psr"
 let qf' scPat degPat = qf $. runDegPat lkji lkScale scPat degPat |*| ins
 let wav p = cat [p, rev p]
 dur 6
