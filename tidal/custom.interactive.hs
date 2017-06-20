@@ -5,17 +5,6 @@
 :set prompt \"\"
 :l init.hs
 
--- :module Sound.Tidal.Context
--- import qualified Data.List as L
--- import qualified Data.Map as M
--- import Data.Maybe
--- import Control.Applicative
--- import Data.String
--- import Data.Ratio
--- import Data.Random
--- import Data.Random.Source.DevRandom
--- import Data.Fixed (mod',div')
-
 (cps, nudger, getNow) <- cpsUtils'
 
 (d0,dt0) <- superDirtSetters getNow -- drums
