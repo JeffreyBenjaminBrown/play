@@ -3,18 +3,18 @@
   -- I only use that extension so Emacs formats it appropriately.
 
 :set prompt \"\"
-:set prompt2 \"\"
+:l init.hs
 
-:module Sound.Tidal.Context
-import qualified Data.List as L
-import qualified Data.Map as M
-import Data.Maybe
-import Control.Applicative
-import Data.String
-import Data.Ratio
-import Data.Random
-import Data.Random.Source.DevRandom
-import Data.Fixed (mod',div')
+-- :module Sound.Tidal.Context
+-- import qualified Data.List as L
+-- import qualified Data.Map as M
+-- import Data.Maybe
+-- import Control.Applicative
+-- import Data.String
+-- import Data.Ratio
+-- import Data.Random
+-- import Data.Random.Source.DevRandom
+-- import Data.Fixed (mod',div')
 
 (cps, nudger, getNow) <- cpsUtils'
 
