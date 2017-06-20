@@ -54,7 +54,7 @@
      nil
      tidal-interpreter-arguments)
     (tidal-see-output))
-  (mapc 'tidal-send-string (read-lines "custom.interactive.hs"))
+  (mapc 'tidal-send-string (read-lines "init.hs"))
 )
 
 (defun read-lines (filePath)
