@@ -1,13 +1,23 @@
 :s init.hs
 
--- SCALE PATTERNS! WORKS!
+-- scale patterns!  warp melody with chord changes!
 hush
-cps 0.2
+cps 0.8
 let major = [0,2,4,5,7,9,11]
-let dorian = [0,2,3,5,7,9,10]
-let lkScale = fmap . lk12 . (\v -> case v of 1 -> major; 2 -> dorian)
-let changes = fmap lkScale ("1!! 2" :: Pattern Int)
-d1 $ up $. unwrap $. changes <*> (pure $ fast 4 $ run 7) |*| sound "psr"
+let dorian = (+ (-2)) <$> [0,2,3,5,7,9,10]
+let phrygian = (+ (-5)) <$> [0, 1, 4, 5, 7, 8, 10]
+let lkScale = fmap . lk12 . (\v -> case v of "maj" -> major; "dor" -> dorian; "phr" -> phrygian)
+let lkScale = fmap . lk12 . (M.! scaleNameMap)
+let changes = fmap lkScale ("maj [phr dor]/2" :: Pattern String)
+let playOverChanges p = up $. unwrap $. slow 2 changes <*> pure p
+let p1 = fast 2 "0 [4 2]/2"
+hush
+d1 $ playOverChanges p1 |*| sound "psr"
+d2 $ playOverChanges (fast 2 "2 [4 ~]/2" + p1) |*| sound "psr"
+d3 $ every 2 (rl $ 1/2) $ playOverChanges (fast 4 "4 [7 ~]/2" + p1) |*| sound "psr"
+
+-- to change speed in that
+let changes = slow 4 $ fmap lkScale ("maj*2 [phr*2 dor*2]/2" :: Pattern String)
 
 -- within-scale figures!
 cps 1
