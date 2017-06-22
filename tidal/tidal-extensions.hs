@@ -46,7 +46,60 @@
 
 -- ========== Pitch
     to1to2 x = x / 2**(fromIntegral $ floor $ log x / log 2) -- for normalizing a just scale with numbers outside of [1,2). For fixed real number r and any integer k, to1to2 $ r*2**k has the same value.
-  -- scales
+
+  -- the scales
+    scaleNameMap = M.fromList [
+      -- symmetric scales
+       ("dimu",[0,2,3,5,6,8,9,11]) -- diminished up
+      ,("dimd",[0,1,3,4,6,7,9,10]) -- diminished down
+      ,("augu",[0,3,4,7,8,11]) -- augmented up
+      ,("augd",[0,1,4,5,8,9]) -- aug down
+      ,("hol",[0,2,4,6,8,10]) -- whole tone
+
+      -- diatonic family
+      ,("maj",[0,2,4,5,7,9,11]) -- major = ionian
+      ,("dor",[0,2,3,5,7,9,10]) -- dorian
+      ,("phr",[0,1,3,5,7,8,10]) -- phrygian
+      ,("lyd",[0,2,4,6,7,9,11]) -- lydian
+      ,("mix",[0,2,4,5,7,9,10]) -- mixolydian
+      ,("aol",[0,2,3,5,7,8,10]) -- aeolian
+      ,("loc",[0,1,3,5,6,8,10]) -- locrian
+
+       -- harmonic minor family
+      ,("maj5",[0,2,4,5,8,9,11]) -- major #5
+      ,("dor4",[0,2,3,6,7,9,10]) -- dorian #4
+      ,("phr3",[0,1,4,5,7,8,10]) -- phrygian #3
+      ,("lyd2",[0,3,4,6,7,9,11]) -- lydian #2
+      ,("loc47",[0,1,3,4,6,8,9]) -- locrian b4b7
+      ,("aol7",[0,2,3,5,7,8,11]) -- aeolian #7
+      ,("loc6",[0,1,3,5,6,9,10]) -- locrian #6
+
+      -- harmonic minor family backward
+      ,("maj6",[0,2,4,5,7,8,11]) -- major b6
+      ,("dor5",[0,2,3,5,6,9,10]) -- dorian b5
+      ,("phr4",[0,1,3,4,7,8,10]) -- phrygian b4
+      ,("lyd3",[0,2,3,6,7,9,11]) -- lydian b3
+      ,("mix2",[0,1,4,5,7,9,10]) -- mixolydian b2
+      ,("lyd25",[0,3,4,6,8,9,11]) -- lydian #2#5
+      ,("loc7",[0,1,3,5,6,8,9]) -- locrian b7
+
+      -- ("ascending") melodic minor family
+      -- most of these scales have two reasonable  names
+      ,("maj3",[0,2,3,5,7,9,11]) -- major b3
+      ,("dor7",[0,2,3,5,7,9,11]) -- a.k.a. dorian #7
+      ,("dor2",[0,1,3,5,7,9,10]) -- dorian b2
+      ,("phr6",[0,1,3,5,7,9,10]) -- a.k.a. phrygian #6
+      ,("lyd5",[0,2,4,6,8,9,11]) -- lydian #5
+      ,("lyd7",[0,2,4,6,7,9,10]) -- lydian b7
+      ,("mix4",[0,2,4,6,7,9,10]) -- a.k.a. mixolydian #4
+      ,("mix6",[0,2,4,5,7,8,10]) -- mixolydian b6
+      ,("aol3",[0,2,4,5,7,8,10]) -- a.k.a. aeolian #3
+      ,("aol5",[0,2,3,5,6,8,10]) -- aeolian b5
+      ,("loc2",[0,2,3,5,6,8,10]) -- a.k.a. locrian #2
+      ,("loc4",[0,1,3,4,6,8,10]) -- locrian b4
+      ]
+
+  -- scale functions
     remUnif :: Integral a => a -> a -> a
     remUnif num den = -- positive remainder
       if x<0 then x+den else x where x = rem num den
