@@ -1,3 +1,5 @@
+-- The game: Taking turns, mark two adjacent Xs or Os on an array to win.
+
 import Data.Maybe
 import Control.Lens (ix, (.~), (&))
 
@@ -15,24 +17,24 @@ score xo b | won xo b = 1
                          $ tryEverything opponent b
   where opponent = notXO xo
 
-tweakList :: Int -> a -> [a] -> [a] -- change one element
-tweakList position newMember original =
-  original & ix position .~ newMember -- Lens magic, not critical
-
-tryEverything :: XO -> Board -> [Board]
-tryEverything xo b = map (\spot -> tweakList spot (Just xo) b) $ openSpots b
-
-openSpots :: [Maybe a] -> [Int]
-openSpots list = map fst $ filter (isNothing . snd) $ zip [0..] list
-
-full :: Board -> Bool
-full = and . map (not . isNothing) 
-
 won :: XO -> Board -> Bool
 won xo b = hasTwoInARow $ map f b
   where f Nothing = Nothing
         f (Just y) | y == xo = Just y
                    | otherwise = Nothing
+
+full :: Board -> Bool
+full = and . map (not . isNothing) 
+
+tryEverything :: XO -> Board -> [Board]
+tryEverything xo b = map (\spot -> tweakList spot (Just xo) b) $ openSpots b
+
+tweakList :: Int -> a -> [a] -> [a] -- change one element
+tweakList position newMember original =
+  original & ix position .~ newMember -- Lens magic, not critical
+
+openSpots :: [Maybe a] -> [Int]
+openSpots list = map fst $ filter (isNothing . snd) $ zip [0..] list
 
 hasTwoInARow :: [Maybe a] -> Bool
 hasTwoInARow list = or $ map pred listWithLag
