@@ -1,6 +1,9 @@
 ;; makes debugging easier. josh suggests
   (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
 
+;; kill-region should have no effect if the region is not activeo
+  (defvar mark-even-if-inactive nil)
+
 ;; Semantic Synchrony
   ;; where is the server?
     ;; (defvar smsn-server-host "fortytwo.net") ;; online
@@ -14,13 +17,15 @@
   (require 'smsn-mode)
 
 ;; haskell
+  ;; there's also haskell-emacs, installed via `M-x package-list-packages`
   ;; installing the haskell-mode package from within emacs
-  ;; required me to then add this
+    ;; required me to then add this
   (add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-16.1")
   (require 'haskell-mode)
+  (require 'package)  ;; (following https://github.com/haskell/haskell-mode readme)
 
 ;; tidal
-  (add-to-list 'load-path "~/git_play/tidal/emacs")
+  (add-to-list 'load-path "~/code/git_play/tidal/emacs")
   (require 'tidal)
 
 ;; custom, jbb
@@ -31,28 +36,61 @@
   (show-paren-mode 1)
   (tool-bar-mode -1) ;; hide some icons I never use
   ;; fonts, colors
-    (add-to-list 'default-frame-alist '(background-color . "#eeeeee"))  
+    (add-to-list 'default-frame-alist '(background-color . "#eeeeee"))
     (set-face-attribute 'region nil :background "#ccc")
-    (custom-set-faces
-     ;; custom-set-faces was added by Custom.
-     ;; If you edit it by hand, you could mess it up, so be careful.
-     ;; Your init file should contain only one such instance.
-     ;; If there is more than one, they won't work right.
-     '(default ((t (:family "DejaVu Sans Mono"
-			    :foundry "PfEd" :slant normal
-			    :weight normal :height 200 :width normal)))))
 
-;; for haskell-mode (following https://github.com/haskell/haskell-mode readme)
-  (require 'package)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 220 :width normal)))))
 
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(package-archives
-     (quote
-      (("gnu" . "http://elpa.gnu.org/packages/")
-       ("melpa-stable" . "http://stable.melpa.org/packages/"))))
-   '(package-selected-packages (quote (haskell-mode))))
-    (package-initialize)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa-stable" . "http://stable.melpa.org/packages/"))))
+ '(package-selected-packages
+   (quote
+    (ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode)))
+ '(send-mail-function (quote mailclient-send-it)))
+(package-initialize)
+
+;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
+(defun rename-file-and-buffer (new-name)
+ "Renames both current buffer and file it's visiting to NEW-NAME." (interactive "sNew name: ")
+ (let ((name (buffer-name))
+	(filename (buffer-file-name)))
+ (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+ (if (get-buffer new-name)
+	 (message "A buffer named '%s' already exists!" new-name)
+	(progn 	 (rename-file filename new-name 1) 	 (rename-buffer new-name) 	 (set-visited-file-name new-name) 	 (set-buffer-modified-p nil))))))
+
+(defun rename-file-and-buffer (new-name)
+ "Renames both current buffer and file it's visiting to NEW-NAME." (interactive "sNew name: ")
+ (let ((name (buffer-name))
+	(filename (buffer-file-name)))
+ (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+ (if (get-buffer new-name)
+	 (message "A buffer named '%s' already exists!" new-name)
+	(progn 	 (rename-file filename new-name 1) 	 (rename-buffer new-name) 	 (set-visited-file-name new-name) 	 (set-buffer-modified-p nil)))))) ;;
+;; Never understood why Emacs doesn't have this function, either.
+;;
+(defun move-buffer-file (dir)
+ "Moves both current buffer and file it's visiting to DIR." (interactive "DNew directory: ")
+ (let* ((name (buffer-name))
+	 (filename (buffer-file-name))
+	 (dir
+	 (if (string-match dir "\\(?:/\\|\\\\)$")
+	 (substring dir 0 -1) dir))
+	 (newname (concat dir "/" name)))
+ (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+ (progn 	(copy-file filename newname 1) 	(delete-file filename) 	(set-visited-file-name newname)))))
