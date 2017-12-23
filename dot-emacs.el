@@ -1,3 +1,10 @@
+;; use Prolog not Perl in .pl files
+(add-to-list 'auto-mode-alist '("\\.\\(pl\\|pro\\|lgt\\)" . prolog-mode))
+
+;; jbb macros
+(fset 'left-justify-line
+   "\C-a\346\342\C-o\C-a\C-k")
+
 ;; makes debugging easier. josh suggests
   (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
 
@@ -8,7 +15,7 @@
   ;; where is the server?
     ;; (defvar smsn-server-host "fortytwo.net") ;; online
     (defvar smsn-server-host "127.0.0.1") ;; local
-  (defvar smsn-server-port 8182) ;; 8182 is default
+  (defvar smsn-server-port 8184) ;; 8182 is default
   (defvar smsn-server-protocol "websocket") ;; websocket is default
   (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
   (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
@@ -21,11 +28,15 @@
   ;; installing the haskell-mode package from within emacs
     ;; required me to then add this
   (add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-16.1")
+  (custom-set-variables '(haskell-process-type 'stack-ghci))
+    ;; per advice: https://mail.google.com/mail/u/0/#inbox/15fc2b4e97f194d2
+  ;; (custom-set-variables '(haskell-process-path-stack "/home/jeff/code/Tidal")) ;; doesn't seem to help
   (require 'haskell-mode)
   (require 'package)  ;; (following https://github.com/haskell/haskell-mode readme)
 
 ;; tidal
-  (add-to-list 'load-path "~/code/git_play/tidal/emacs")
+  (add-to-list 'load-path "~/code/Tidal")
+  ;; (add-to-list 'load-path "~/code/git_play/tidal/emacs")
   (require 'tidal)
 
 ;; custom, jbb
@@ -57,7 +68,7 @@
      ("melpa-stable" . "http://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode)))
+    (find-file-in-repository rainbow-delimiters hide-lines idris-mode ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode)))
  '(send-mail-function (quote mailclient-send-it)))
 (package-initialize)
 
@@ -94,3 +105,6 @@
  (if (not filename)
 	(message "Buffer '%s' is not visiting a file!" name)
  (progn 	(copy-file filename newname 1) 	(delete-file filename) 	(set-visited-file-name newname)))))
+(put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
