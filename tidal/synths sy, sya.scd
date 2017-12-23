@@ -1,5 +1,5 @@
 (
-s.options.numBuffers = 1024 * 64;
+s.options.numBuffers = 1024 * 1024; // originally was 1024 * 64
 SuperDirt.start;
 
 // warning: do not try to unify qf with the preexisting speed symbol
@@ -21,7 +21,7 @@ SuperDirt.start;
 			~dirt.numChannels, pan, env));
 }).add;);
 
-// With default amp mod, this sounds an octave higher than sy.
+// With default amp mod (qaa), this sounds an octave higher than sy.
   // There's no natural way to bring them in line with each other.
 (SynthDef(\sya,	{
 	|out, pan, amp = 1, qf=440, begin = 0, end = 1,

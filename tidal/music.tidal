@@ -1,5 +1,20 @@
 :s init.hs
 
+let x = [1,
+         4]
+let y = [3
+        ,3]
+
+d3 $ fast 2 $ rl (1/8) $ sound "hh*2 ~"
+d1 $ sound "hatc hato"
+d2 $ slow 2 $ rl (1/8) $ sound "bd sn:1" |*| gain "0.8"
+
+hush
+d1 $ sound          "bd sn:1 [sn:1 bd]/2" |*| gain 0.85
+d2 $ fast 2 $ rl (1/6) $ sound "hh hc   [hh   hc]/2" |*| gain 0.85
+d3 $ slow 3 $ every 3 (slow 2) $ sound "bass*12" |*| up "0 3 [7 9]/2" |*| (slow 4 $ up "0 3 5") |*| gain 1.1
+
+
 -- scale patterns!  warp melody with chord changes!
 hush
 cps 0.8
@@ -7,7 +22,8 @@ let major = [0,2,4,5,7,9,11]
 let dorian = (+ (-2)) <$> [0,2,3,5,7,9,10]
 let phrygian = (+ (-5)) <$> [0, 1, 4, 5, 7, 8, 10]
 let lkScale = fmap . lk12 . (\v -> case v of "maj" -> major; "dor" -> dorian; "phr" -> phrygian)
-let lkScale = fmap . lk12 . (M.! scaleNameMap)
+-- let lkScale = fmap . lk12 . (M.! scaleNameMap)
+  -- that second lkScale seems like it ought to work too, but no
 let changes = fmap lkScale ("maj [phr dor]/2" :: Pattern String)
 let playOverChanges p = up $. unwrap $. slow 2 changes <*> pure p
 let p1 = fast 2 "0 [4 2]/2"
@@ -24,11 +40,17 @@ cps 1
 let scale = [0,2,3,5,7,8,11]
 let f pat12 = (up $ fromIntegral <$> toScale' 12 scale pat12) |*| sound "psr"
 v1 $ f $ "0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8"
-v2 $ f $ "0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8" -5
+v2 $ f $ "0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8" - 5
+v2 $ silence
 
 hush
 d1 $ up (choose [0,3,7]) |*| sound "psr"
 d1 $ slow 1 $ sound "psr"
+
+-- two pentatonic-ish figures a quarterstep + some number of halfsteps apart
+hush
+d1 $ rl (1/8) $ slow 2 $ up "{0 3 5}%4" |*| sound "psr" |*| slow 8 $. up "0 5 2 6.5"
+d2 $ slowspread fast [1/2,1,2,1] $ up "0 2 5" |*| sound "psr" |*| up (9.5) |*| slow 4 $. up "0 -5"
 
 -- slow bells
 hush
@@ -43,15 +65,14 @@ v2 $ instBass
 
 v3 $ sound "sy" |*| qf 200
 
-v3 $ qf "400 <600 <[700 600] [750, 900 930]> >" |*| sound "sya"
-  |*| gain 1.35 |*| sustain 2 |*| attack 0.3 |*| release 2
+v3 $ qf "400 <600 <[700 600] [750, 900 930]> >" |*| sound "sya" |*| gain 1.35 |*| sustain 2 |*| attack 0.3 |*| release 2
 
 -- moving scale figures!
+hush
 let scale = [0,2,3,5,7,8,11]
 let f pat12 = (up $ fromIntegral <$> toScale' 12 scale pat12) |*| sound "psr"
 v1 $ (up $ fromIntegral <$> toScale' 12 scale ("0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8")) |*| sound "psr"
 v2 $ f $ "0 2 4" + "[0 -1 -2 -3]/4 [0 1]/4 [0 1 1 0]/8" + 5
-
 
 v1 $ up $. fromi <$> toScale' 12 scale ("1 2 3*2 4 6*2 5" + slow 2 "0 2") |*| sound "psr"
 let pat = ("1 2 3*2 4 6*2 5" + slow 2 "0 2")
@@ -82,6 +103,7 @@ d2 $ (slow 3 $ qf (run 24)) |*| sound "sya" |*| qf 100
 
 d1 $ slow 3 $ sound "psr*16" |*| up (scale 0 3 sine)
 
-3
-d1 $ sound $ stack[ "ho*3", "bd sn:2"]
+hush
+cps $ 0.3
+d2 $ fast 2 $ sound $ stack[ "ho*3", "bd sn:2"]
 d1 $ sound "psr*24" # up "0 [3 10] [7!! -1]" |+| up (sine*3.0)

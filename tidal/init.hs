@@ -5,6 +5,10 @@
 :l tidal-extensions.hs
 :set prompt "> "
 
+let lkScale = fmap . lk12 . (M.! scaleNameMap)
+  -- ? Why will this definition not work in tidal-extensions.hs
+  -- (Even when it works, I stil can't then use it, even though I can use `let lkScale = fmap . lk12 . (\v -> case v of "maj" -> [0,2,4,5,7,9,11]; "dor" -> [0,2,3,5,7,9,10])`,)
+
 (cps, nudger, getNow) <- cpsUtils'
 
 (d0,dt0) <- superDirtSetters getNow -- drums
