@@ -2,6 +2,7 @@
 (add-to-list 'auto-mode-alist '("\\.\\(pl\\|pro\\|lgt\\)" . prolog-mode))
 
 ;; jbb macros
+(global-set-key (kbd "C-c a") 'append-to-file)
 (fset 'left-justify-line
    "\C-a\346\342\C-o\C-a\C-k")
 
