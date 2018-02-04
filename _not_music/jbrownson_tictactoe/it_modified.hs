@@ -6,7 +6,7 @@ import Control.Monad.List
 import Control.Monad.Writer
 import Control.Monad.Trans.Maybe
 
-boardSize = 2
+boardSize = 3
 
 data XO = X | O deriving (Show, Eq)
 newtype Cell = Cell { mxo :: Maybe XO } deriving (Eq)
@@ -46,7 +46,7 @@ nth n = listToMaybe . drop n
 
 maybeRead :: Read a => String -> Maybe a
 maybeRead s = case reads s of
-    [(x, "")] -> Just x
+   [(x, "")] -> Just x
    _ -> Nothing
 
 setList :: Int -> a -> [a] -> Maybe [a]
@@ -90,12 +90,14 @@ countXOs :: XO -> Board -> Int
 countXOs xo = length . filter (== Just xo) . map mxo . concat . rows
 
 checkPlayersMove :: XO -> Board -> Either String ()
-checkPlayersMove xo board = if countXOs xo board == (countXOs (notXO xo) board - case xo of {X -> 0; O -> 1})
+checkPlayersMove xo board =
+  if countXOs xo board == (countXOs (notXO xo) board
+                           - case xo of {X -> 0; O -> 1})
     then Right ()
     else Left $ "Not " ++ show xo ++ "'s turn"
 
 checkNotWon :: Board -> Either String ()
-checkNotWon board = maybe (Right ()) 
+checkNotWon board = maybe (Right ())
   (const $ Left "Game already won") $ winner board
 
 checkIsntOccupied :: BoardCoord -> Board -> Either String ()
@@ -134,7 +136,8 @@ playerMoveGetter xo board = do
             playerMoveGetter xo board
 
 aiMoveGetter :: MoveGetter
-aiMoveGetter xo board = return $ fromMaybe (0,0) $ eitherToMaybe $ aiMove xo board
+aiMoveGetter xo board = return $ fromMaybe (0,0)
+  $ eitherToMaybe $ aiMove xo board
 
 consoleGame :: MoveGetter -> MoveGetter -> StateT (XO, Board) IO ()
 consoleGame moveGetterA moveGetterB = do
@@ -156,3 +159,8 @@ consoleGame moveGetterA moveGetterB = do
 main = void $ runStateT
   (consoleGame playerMoveGetter aiMoveGetter) 
   (X, emptyBoard)
+
+x = Cell $ Just X
+o = Cell $ Just O
+n = Cell $ Nothing
+b = Board [Row [x,o,n], Row [o,x,n], Row [n,n,n] ]

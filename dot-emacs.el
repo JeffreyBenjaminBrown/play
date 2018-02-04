@@ -1,3 +1,6 @@
+;; no tabs
+(setq-default indent-tabs-mode nil)
+
 ;; use Prolog not Perl in .pl files
 (add-to-list 'auto-mode-alist '("\\.\\(pl\\|pro\\|lgt\\)" . prolog-mode))
 

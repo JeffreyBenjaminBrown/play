@@ -18,8 +18,8 @@ score xo b | won xo b = 1
   where opponent = notXO xo
 
 won :: XO -> Board -> Bool
-won xo b = hasTwoInARow $ map f b
-  where f Nothing = Nothing
+won xo b = hasThreeInARow $ map f b
+  where f Nothing = Nothing -- f keeps each xo, discards each (notXO xo)
         f (Just y) | y == xo = Just y
                    | otherwise = Nothing
 
@@ -41,6 +41,13 @@ hasTwoInARow list = or $ map pred listWithLag
   where listWithLag = zip list (Nothing : list)
         pred (Just _, Just _) = True
         pred _ = False
+
+hasThreeInARow :: [Maybe a] -> Bool -- unsafe! assumes length > 2
+hasThreeInARow list = or $ map f [3 .. length list] where
+  f n = isJust a && isJust b && isJust c where
+    a = list !! (n-1)
+    b = list !! (n-2)
+    c = list !! (n-3)
 
 notXO :: XO -> XO
 notXO X = O
