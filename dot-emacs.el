@@ -34,14 +34,14 @@
   (add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-16.1")
   (custom-set-variables '(haskell-process-type 'stack-ghci))
     ;; per advice: https://mail.google.com/mail/u/0/#inbox/15fc2b4e97f194d2
-  ;; (custom-set-variables '(haskell-process-path-stack "/home/jeff/code/Tidal")) ;; doesn't seem to help
   (require 'haskell-mode)
   (require 'package)  ;; (following https://github.com/haskell/haskell-mode readme)
 
 ;; tidal
   (add-to-list 'load-path "~/code/Tidal")
-  ;; (add-to-list 'load-path "~/code/git_play/tidal/emacs")
+  (add-to-list 'load-path "~/code/git_play/tidal/emacs")
   (require 'tidal)
+  (custom-set-variables '(haskell-process-path-stack "/home/jeff/code/Tidal")) ;; doesn't seem to help
 
 ;; custom, jbb
   ;; obsolete?
