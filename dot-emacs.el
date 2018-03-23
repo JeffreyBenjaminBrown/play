@@ -1,5 +1,9 @@
+(load-file "~/.emacs.d/elisp/coconut-mode.el")
+
 ;; no tabs
 (setq-default indent-tabs-mode nil)
+(setq tab-width 2)
+(setq python-indent 2)
 
 ;; use Prolog not Perl in .pl files
 (add-to-list 'auto-mode-alist '("\\.\\(pl\\|pro\\|lgt\\)" . prolog-mode))
@@ -19,7 +23,7 @@
   ;; where is the server?
     ;; (defvar smsn-server-host "fortytwo.net") ;; online
     (defvar smsn-server-host "127.0.0.1") ;; local
-  (defvar smsn-server-port 8184) ;; 8182 is default
+  (defvar smsn-server-port 8183) ;; 8182 is default
   (defvar smsn-server-protocol "websocket") ;; websocket is default
   (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
   (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
@@ -44,10 +48,6 @@
   (custom-set-variables '(haskell-process-path-stack "/home/jeff/code/Tidal")) ;; doesn't seem to help
 
 ;; custom, jbb
-  ;; obsolete?
-    ;;  (global-unset-key (kbd "C-r"))
-    ;;  (global-set-key (kbd "C-r") 'isearch-backward)
-      ;; bug: should be there already
   (show-paren-mode 1)
   (tool-bar-mode -1) ;; hide some icons I never use
   ;; fonts, colors
