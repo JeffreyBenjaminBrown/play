@@ -2,15 +2,15 @@ prelude: lang
 -------------
   pi is first, e second in each
   third row if extant should ratlz them
+  a, b = pitches 10, 11
   t= tonic in bass, h=tonic high
-    don't use a or b for anything else
   .=silence =?= divide
   , in series = let stand alone, then add concurt (ala piano pedal)
   ' = postfix raise octave
   \ in isolation: downward arpeggio, x-octave
 not sure
   _ = postfix lower octave
-  ~ 
+  ~
 
 pi|3 1 8    4.80 949  3,b 91    8 6   64
 e |2 8 752   3   6069 8   219  b a ~7  1 971
