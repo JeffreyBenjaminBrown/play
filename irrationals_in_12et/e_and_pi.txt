@@ -3,7 +3,8 @@ prelude: lang
   pi is first, e second in each
   third row if extant should ratlz them
   a, b = pitches 10, 11
-  t= tonic in bass, h=tonic high
+  t=tonic in bass, h=tonic high
+  postfix r = "is the root"
   .=silence =?= divide
   , in series = let stand alone, then add concurt (ala piano pedal)
   ' = postfix raise octave
