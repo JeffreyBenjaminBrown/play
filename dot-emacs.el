@@ -1,4 +1,8 @@
-(load-file "~/.emacs.d/elisp/coconut-mode.el")
+(add-to-list 'auto-mode-alist '("\\.curry\\'" . haskell-mode))
+
+;; (load-file "~/.emacs.d/elisp/coconut-mode.el")
+
+;; (global-auto-revert-mode t) ;; reload files when changed
 
 ;; no tabs
 (setq-default indent-tabs-mode nil)
@@ -19,24 +23,37 @@
 ;; kill-region should have no effect if the region is not activeo
   (defvar mark-even-if-inactive nil)
 
-;; Semantic Synchrony
-  ;; where is the server?
-    ;; (defvar smsn-server-host "fortytwo.net") ;; online
-    (defvar smsn-server-host "127.0.0.1") ;; local
-  (defvar smsn-server-port 8183) ;; 8182 is default
-  (defvar smsn-server-protocol "websocket") ;; websocket is default
-  (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
-  (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
-  (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
-    (normal-top-level-add-subdirs-to-load-path))
-  (require 'smsn-mode)
+;;;; Semantic Synchrony
+;;  ;; where is the server?
+;;    ;; (defvar smsn-server-host "fortytwo.net") ;; online
+;;    (defvar smsn-server-host "127.0.0.1") ;; local
+;;  (defvar smsn-server-port 8182) ;; 8182 is default
+;;  (defvar smsn-server-protocol "websocket") ;; websocket is default
+;;  (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
+;;  (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
+;;  (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
+;;    (normal-top-level-add-subdirs-to-load-path))
+;;  (require 'smsn-mode)
 
 ;; haskell
   ;; there's also haskell-emacs, installed via `M-x package-list-packages`
   ;; installing the haskell-mode package from within emacs
     ;; required me to then add this
   (add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-16.1")
-  (custom-set-variables '(haskell-process-type 'stack-ghci))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(haskell-process-path-stack "/home/jeff/code/Tidal")
+ '(haskell-process-type 'stack-ghci)
+ '(package-archives
+   '(("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa-stable" . "http://stable.melpa.org/packages/")))
+ '(package-selected-packages
+   '(intero discover-my-major discover yafolding find-file-in-repository rainbow-delimiters hide-lines idris-mode ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode))
+ '(send-mail-function 'mailclient-send-it))
     ;; per advice: https://mail.google.com/mail/u/0/#inbox/15fc2b4e97f194d2
   (require 'haskell-mode)
   (require 'package)  ;; (following https://github.com/haskell/haskell-mode readme)
@@ -45,7 +62,7 @@
   (add-to-list 'load-path "~/code/Tidal")
   (add-to-list 'load-path "~/code/git_play/tidal/emacs")
   (require 'tidal)
-  (custom-set-variables '(haskell-process-path-stack "/home/jeff/code/Tidal")) ;; doesn't seem to help
+   ;; doesn't seem to help
 
 ;; custom, jbb
   (show-paren-mode 1)
@@ -61,20 +78,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 220 :width normal)))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-archives
-   (quote
-    (("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa-stable" . "http://stable.melpa.org/packages/"))))
- '(package-selected-packages
-   (quote
-    (find-file-in-repository rainbow-delimiters hide-lines idris-mode ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode)))
- '(send-mail-function (quote mailclient-send-it)))
-(package-initialize)
+
 
 ;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
@@ -112,3 +116,22 @@
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+(put 'scroll-left 'disabled nil)
+
+;; metal-mercury-mode
+(add-to-list 'load-path "~/.emacs.d/metal-mercury-mode/")
+(require 'metal-mercury-mode)
+
+(add-to-list 'load-path "/usr/local/mercury-14.01.1/lib/mercury/elisp")
+(autoload 'mdb "gud" "Invoke the Mercury debugger" t)
+
+;; Intero, the Haskell IDE: http://chrisdone.github.io/intero/
+(add-hook 'haskell-mode-hook 'intero-mode)
+
+;; elpy, the emacs python environment
+(setq elpy-rpc-python-command "python3")
+(elpy-enable)
+
+;; exec-path-from-shell, which package makes Emacs's PATH match shell's
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
