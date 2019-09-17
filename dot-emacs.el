@@ -1,4 +1,17 @@
-(add-to-list 'auto-mode-alist '("\\.curry\\'" . haskell-mode))
+; jbb-custom macros
+
+;;  How to store macros here:
+;;    use F3, then F4 to record the macro
+;;    M-x name-last-kbd-macro
+;;    M-x insert-kbd-macro
+;;    paste that code below
+;;    maybe also give it a name (per examples below)
+(defun shorten-other-window ()
+  "Expand current window to use a bit more than half of the other window's lines."
+  (interactive)
+  (enlarge-window (floor (* (window-height (next-window)) 0.55))))
+
+;; add-to-list 'auto-mode-alist '("\\.curry\\'" . haskell-mode))
 
 ;; (load-file "~/.emacs.d/elisp/coconut-mode.el")
 
@@ -46,13 +59,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("8b82aa6c511e289ed6868ae9c082b04844968be6ce2eef62c3c899b2b1038eb4" default))
  '(haskell-process-path-stack "/home/jeff/code/Tidal")
  '(haskell-process-type 'stack-ghci)
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
-   '(intero discover-my-major discover yafolding find-file-in-repository rainbow-delimiters hide-lines idris-mode ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode))
+   '(groovy-mode intero discover-my-major discover yafolding find-file-in-repository rainbow-delimiters hide-lines idris-mode ac-haskell-process haskell-emacs-base ess haskell-emacs haskell-mode))
  '(send-mail-function 'mailclient-send-it))
     ;; per advice: https://mail.google.com/mail/u/0/#inbox/15fc2b4e97f194d2
   (require 'haskell-mode)
@@ -70,6 +85,7 @@
   ;; fonts, colors
     (add-to-list 'default-frame-alist '(background-color . "#eeeeee"))
     (set-face-attribute 'region nil :background "#ccc")
+    (load-theme 'manoj-dark)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -118,15 +134,11 @@
 (put 'upcase-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
 
-;; metal-mercury-mode
-(add-to-list 'load-path "~/.emacs.d/metal-mercury-mode/")
-(require 'metal-mercury-mode)
-
 (add-to-list 'load-path "/usr/local/mercury-14.01.1/lib/mercury/elisp")
 (autoload 'mdb "gud" "Invoke the Mercury debugger" t)
 
 ;; Intero, the Haskell IDE: http://chrisdone.github.io/intero/
-(add-hook 'haskell-mode-hook 'intero-mode)
+;; (add-hook 'haskell-mode-hook 'intero-mode)
 
 ;; elpy, the emacs python environment
 (setq elpy-rpc-python-command "python3")
