@@ -22,9 +22,12 @@
 (global-auto-revert-mode t) ;; reload files when changed
 
 ;; no tabs
-(setq-default indent-tabs-mode nil)
-(setq tab-width 2)
-(setq python-indent 2)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq-default indent-tabs-mode nil)
+            (setq tab-width 2)
+            (setq python-indent 2)
+            (setq python-indent-offset 2)))
 
 ;; jbb macros
 (global-set-key (kbd "C-c a") 'append-to-file)
@@ -63,6 +66,41 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/")))))
+
+;; org-mode colors
+;; find colors with `M-x list-colors-display`
+(custom-theme-set-faces 'user
+                        `(org-level-1 ((t (:foreground "red")))))
+(custom-theme-set-faces 'user
+                        `(org-level-2 ((t (:foreground "orange")))))
+(custom-theme-set-faces 'user
+                        `(org-level-3 ((t (:foreground "yellow")))))
+(custom-theme-set-faces 'user
+                        `(org-level-4 ((t (:foreground "green")))))
+(custom-theme-set-faces 'user
+                        `(org-level-5 ((t (:foreground "cyan")))))
+(custom-theme-set-faces 'user
+                        `(org-level-6 ((t (:foreground "blue")))))
+(custom-theme-set-faces 'user
+                        `(org-level-7 ((t (:foreground "purple")))))
+(custom-theme-set-faces 'user
+                        `(org-level-8 ((t (:foreground "red")))))
+(custom-theme-set-faces 'user
+                        `(org-level-9 ((t (:foreground "red")))))
+(custom-theme-set-faces 'user
+                        `(org-level-10 ((t (:foreground "orange")))))
+(custom-theme-set-faces 'user
+                        `(org-level-11 ((t (:foreground "yellow")))))
+(custom-theme-set-faces 'user
+                        `(org-level-12 ((t (:foreground "green")))))
+(custom-theme-set-faces 'user
+                        `(org-level-13 ((t (:foreground "cyan")))))
+(custom-theme-set-faces 'user
+                        `(org-level-14 ((t (:foreground "blue")))))
+(custom-theme-set-faces 'user
+                        `(org-level-15 ((t (:foreground "purple")))))
+(custom-theme-set-faces 'user
+                        `(org-level-16 ((t (:foreground "red")))))
 
 ;; custom, jbb
   (show-paren-mode 1)
