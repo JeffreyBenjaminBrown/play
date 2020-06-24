@@ -39,7 +39,7 @@
   (after-init . org-roam-mode)
   :custom
   (org-roam-directory
-   "/org/roam/mnt-data") ;; for the roam db
+   "/org-roam") ;; for the roam db
   :bind (:map org-roam-mode-map
           ( ;; ("C-c n l" . org-roam)
             ;; ("C-c n g" . org-roam-show-graph)
@@ -101,7 +101,7 @@
  '(custom-safe-themes
    (quote
     ("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default)))
- '(org-roam-directory "/home/jeff/org/roam/mnt-data" t)
+ '(org-roam-directory "/home/jeff/org-roam" t)
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
