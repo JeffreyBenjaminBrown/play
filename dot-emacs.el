@@ -16,6 +16,32 @@
 (fset 'left-justify-line
    "\C-a\346\342\C-o\C-a\C-k")
 
+(defun jbb-smsn-start ()
+  (interactive)
+  (org-roam-mode -1)
+  (smsn-mode) )
+
+(defun jbb-theme ()
+  (interactive)
+  (load-theme `manoj-dark
+	      1) ) ;; Suppresses the request for confirmation.
+
+(defun jbb-write-delete-on-next-leaf ()
+  "Finds the next leaf, and prefixes [delete - just do it] to its title. Does not push to the graph, for speed and safety."
+  (interactive)
+  (search-forward-regexp "^ *· :")
+  (search-forward-regexp " ")
+  (insert "[delete - just do it] ") )
+
+(defun jbb-delete-at-next-delete-instruction ()
+  "Finds the next leaf prefixed with `[delete` and deletes it. Does not push to the graph, for speed and safety. Leaves the line with some whitespace, so that if the command is repeated without finding anything, it does not delete the next line."
+  (interactive)
+  (search-forward-regexp "^ *· :[[:alnum:]]\\{16\\}: \\[delete")
+  (move-beginning-of-line 1)
+  (insert "  ")
+  (kill-line)
+  (move-beginning-of-line 1) )
+
 (defun shorten-other-window ()
   "Expand current window to use a bit more than half of the other window's lines."
   (interactive)
@@ -101,7 +127,7 @@
  '(custom-safe-themes
    (quote
     ("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default)))
- '(org-roam-directory "/home/jeff/org-roam" t)
+ '(org-roam-directory "/home/jeff/org-roam")
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
