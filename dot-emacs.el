@@ -16,31 +16,41 @@
 (fset 'left-justify-line
    "\C-a\346\342\C-o\C-a\C-k")
 
-(defun jbb-smsn-start ()
-  (interactive)
-  (org-roam-mode -1)
-  (smsn-mode) )
-
 (defun jbb-theme ()
   (interactive)
   (load-theme `manoj-dark
 	      1) ) ;; Suppresses the request for confirmation.
 
-(defun jbb-write-delete-on-next-leaf ()
-  "Finds the next leaf, and prefixes [delete - just do it] to its title. Does not push to the graph, for speed and safety."
+(defun jbb-smsn-start ()
   (interactive)
-  (search-forward-regexp "^ *· :")
-  (search-forward-regexp " ")
-  (insert "[delete - just do it] ") )
+  (org-roam-mode -1)
+  (smsn-mode) )
 
-(defun jbb-delete-at-next-delete-instruction ()
-  "Finds the next leaf prefixed with `[delete` and deletes it. Does not push to the graph, for speed and safety. Leaves the line with some whitespace, so that if the command is repeated without finding anything, it does not delete the next line."
+(defun jbb-smsn-flatten-tree ()
+  "Flattens the current tree view. Useful for deletion. PITFALL: Dangerous! If you push the graph after running this, you'll lose the structure of the tree."
   (interactive)
-  (search-forward-regexp "^ *· :[[:alnum:]]\\{16\\}: \\[delete")
-  (move-beginning-of-line 1)
-  (insert "  ")
-  (kill-line)
-  (move-beginning-of-line 1) )
+  (if (equal major-mode 'smsn-mode)
+      (progn
+	(y-or-n-p "Is this really a TREE?")
+	(replace-regexp "^ *" "") ;; delete leading whitespace
+	(jbb-divide-subtrees-and-leaves) )
+    (message "This command only makes sense in smsn-mode.")
+    ) )
+
+(defun jbb-divide-subtrees-and-leaves ()
+  "Puts the point between subtrees (above) and leaves (below). This is to call the user's attention to the fact that both exist.
+
+PITFALL: If there are no leaves, the regex search will fail, and an error message will be thrown. It's harmless."
+  (beginning-of-buffer)
+  (sort-lines nil 1 (buffer-size) ) ;; now the leaves are last (+ comes before ·)
+  (goto-char (point-min)) ;; go to beginning of buffer
+  (search-forward-regexp "^· :[[:alnum:]]\\{16\\}: ") ;; put mark just before title
+  (beginning-of-line)
+  (insert "\nBEWARE! Above are (if anything) trees, not leaves.\n")
+  (open-line 1)
+  (previous-line)
+  (recenter)
+  )
 
 (defun shorten-other-window ()
   "Expand current window to use a bit more than half of the other window's lines."
