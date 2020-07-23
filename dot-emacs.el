@@ -16,6 +16,11 @@
 (fset 'left-justify-line
    "\C-a\346\342\C-o\C-a\C-k")
 
+(defun jbb-retain-for-mystery-node ()
+  "When I imported my freeplane notes into SmSn, some nodes were translated badly. They appear with titles like \"mus.mm\" or \"go.mm\" instead of what they contained in the freeplane data. When I find such a node, I am leaving it in place, and leaving some of its siblings and its parent in place too, but adding this label to the parent, so that I know why not to separate them."
+  (interactive)
+  (insert " \\ merged, retaining for mystery node"))
+
 (defun jbb-theme ()
   (interactive)
   (load-theme `manoj-dark
@@ -84,7 +89,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
             ("C-c n b" . org-roam-buffer-toggle-display)
             ("C-c n c" . org-roam-db-build-cache) )
           :map org-mode-map
-          ( ("C-c n i" . org-roam-insert))))
+          ( ("C-c n i" .
+	     org-roam-insert-dwim))))  ;; was: org-roam-insert (without -dwim)
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
@@ -110,6 +116,17 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
            :head "#+title: ${title}\n"
            :unnarrowed t)
          ))
+
+(defun org-roam-insert-dwim ()
+  "Insert an org-roam link. If there is a region active, use it as name."
+  (interactive)
+  (push (if (region-active-p)
+	    (capitalize-dwim '(buffer-substring-no-properties
+			       (region-beginning)
+			       (region-end)))
+	  (thing-at-point 'symbol))
+	regexp-history)
+  (call-interactively 'org-roam-insert))
 
 ;; makes debugging easier. josh suggests
   (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
