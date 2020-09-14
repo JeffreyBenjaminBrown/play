@@ -39,6 +39,19 @@
             ) ) ) ) ) )
 (global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
 
+(defun unfold ()
+  (interactive)
+  (progn
+    (let ((origin (point)))
+      (move-end-of-line 1)
+      (forward-char 1)
+      (let ((end (point)))
+        (while (and (invisible-p end) (< end (point-max)))
+          (setq end (1+ end)))
+        (put-text-property origin end 'invisible ())
+        (goto-char origin)))))
+(global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
+
 (defun jbb-retain-for-mystery-node ()
   "When I imported my freeplane notes into SmSn, some nodes were translated badly. They appear with titles like \"mus.mm\" or \"go.mm\" instead of what they contained in the freeplane data. When I find such a node, I am leaving it in place, and leaving some of its siblings and its parent in place too, but adding this label to the parent, so that I know why not to separate them."
   (interactive)
