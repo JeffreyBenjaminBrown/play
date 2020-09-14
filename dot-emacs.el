@@ -16,6 +16,32 @@
 (fset 'left-justify-line
    "\C-a\346\342\C-o\C-a\C-k")
 
+(defun fold (toHide) ;; folds given t, unfolds given ()
+  ;; TODO: It would be better if this showed an ellipsis to represent
+  ;; folded text. Maybe on a separate line, so that it wouldn't be masked
+  ;; by a comment preceding it.
+  (interactive)
+  (progn
+    (back-to-indentation)
+    (let ((cStart (current-column)))
+      (move-end-of-line 1)
+      (let ((pStart (point)))
+        (search-forward-regexp (concat
+  			      "^ \\{0,"
+  			      (number-to-string cStart)
+  			      "\\}[^ ]" ) )
+        (move-beginning-of-line 1)
+        (let ((i (get-text-property (point) 'invisible)))
+	  ;; TODO: rather than toShow below, I'd like to use (not i).
+	  ;; But for some reason that always hides.
+	  (backward-char 1)
+	  (let ((pEnd (point)))
+	    (put-text-property pStart pEnd 'invisible toHide)
+	    (goto-char pStart)
+	    ) ) ) ) ) )
+(global-set-key (kbd "C-c s") (lambda () (interactive) (fold ())))
+(global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
+
 (defun jbb-retain-for-mystery-node ()
   "When I imported my freeplane notes into SmSn, some nodes were translated badly. They appear with titles like \"mus.mm\" or \"go.mm\" instead of what they contained in the freeplane data. When I find such a node, I am leaving it in place, and leaving some of its siblings and its parent in place too, but adding this label to the parent, so that I know why not to separate them."
   (interactive)
