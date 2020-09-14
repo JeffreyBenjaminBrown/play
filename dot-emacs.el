@@ -12,34 +12,31 @@
 ;;    M-x insert-kbd-macro
 ;;    paste that code below
 ;;    maybe also give it a name (per examples below)
-(global-set-key (kbd "C-c a") 'append-to-file)
-(fset 'left-justify-line
-   "\C-a\346\342\C-o\C-a\C-k")
 
-(defun fold (toHide) ;; folds given t, unfolds given ()
+(defun fold (toHide) ;; folds given t.
+  ;; TODO: Should fold given (), but doesn't.
+  ;; So I use the `unfold` function for that.
   ;; TODO: It would be better if this showed an ellipsis to represent
   ;; folded text. Maybe on a separate line, so that it wouldn't be masked
   ;; by a comment preceding it.
   (interactive)
   (progn
     (back-to-indentation)
-    (let ((cStart (current-column)))
+    (let ((nSpaces (current-column)))
       (move-end-of-line 1)
-      (let ((pStart (point)))
-        (search-forward-regexp (concat
-  			      "^ \\{0,"
-  			      (number-to-string cStart)
-  			      "\\}[^ ]" ) )
+      (let ((startRegion (point)))
+        (search-forward-regexp (concat "^$\\|^ \\{0,"
+                                       (number-to-string nSpaces)
+                                       "\\}[^ ]" ) )
         (move-beginning-of-line 1)
         (let ((i (get-text-property (point) 'invisible)))
-	  ;; TODO: rather than toShow below, I'd like to use (not i).
-	  ;; But for some reason that always hides.
-	  (backward-char 1)
-	  (let ((pEnd (point)))
-	    (put-text-property pStart pEnd 'invisible toHide)
-	    (goto-char pStart)
-	    ) ) ) ) ) )
-(global-set-key (kbd "C-c s") (lambda () (interactive) (fold ())))
+          ;; TODO: rather than toShow below, I'd like to use (not i).
+          ;; But for some reason that always hides.
+          (backward-char 1)
+          (let ((endRegion (point)))
+            (put-text-property startRegion endRegion 'invisible toHide)
+            (goto-char startRegion)
+            ) ) ) ) ) )
 (global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
 
 (defun jbb-retain-for-mystery-node ()
