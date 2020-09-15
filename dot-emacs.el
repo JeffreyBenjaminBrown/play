@@ -12,6 +12,10 @@
 ;;    M-x insert-kbd-macro
 ;;    paste that code below
 ;;    maybe also give it a name (per examples below)
+;; I think this says that if a text's "invisibility" property is set to
+;; `my-fold`, then an ellipsis should be shown in its place.
+;; https://stackoverflow.com/questions/63893154/in-emacs-whats-the-opposite-of-invisible-text/63895106#63895106
+(add-to-invisibility-spec '(my-fold . t))
 
 (defun fold (toHide) ;; folds given t.
   ;; TODO: Should fold given (), but doesn't.
@@ -25,16 +29,21 @@
     (let ((nSpaces (current-column)))
       (move-end-of-line 1)
       (let ((startRegion (point)))
-        (search-forward-regexp (concat "^$\\|^ \\{0,"
-                                       (number-to-string nSpaces)
-                                       "\\}[^ ]" ) )
+        (search-forward-regexp
+         (concat "^ \\{0," (number-to-string nSpaces) "\\}[^ $]" ) )
         (move-beginning-of-line 1)
         (let ((i (get-text-property (point) 'invisible)))
-          ;; TODO: rather than toShow below, I'd like to use (not i).
-          ;; But for some reason that always hides.
+          ;; TODO: rather than toHide below, I'd like to use (not i).
+          ;; That way I would only need one function and keyboard-shortcut,
+          ;; not two. But for some reason, if I do that it always hides.
           (backward-char 1)
           (let ((endRegion (point)))
-            (put-text-property startRegion endRegion 'invisible toHide)
+            ( put-text-property
+              ;; If the "invisible" property is any non-nil value,
+              ;; the text is invisible. However, some non-nil values
+              ;; (see, e.g., the definition of `my-fold` above)
+              ;; cause "invisible" text to display as an ellipsis.
+              startRegion endRegion 'invisible 'my-fold)
             (goto-char startRegion)
             ) ) ) ) ) )
 (global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
