@@ -17,6 +17,17 @@
 ;; https://stackoverflow.com/questions/63893154/in-emacs-whats-the-opposite-of-invisible-text/63895106#63895106
 (add-to-invisibility-spec '(my-fold . t))
 
+(defun space-around-next-non-alphanum ()
+  (interactive)
+  (progn
+    (search-forward-regexp "[^ a-zA-Z_'0-9]")
+    (backward-char 1)
+    (insert " ")
+    (forward-char 1)
+    (insert " ") ) )
+(global-set-key (kbd "C-c SPC") (lambda () (interactive)
+                                  (space-around-next-non-alphanum)))
+
 (defun fold (toHide) ;; folds given t.
   ;; TODO: Should fold given (), but doesn't.
   ;; So I use the `unfold` function for that.
@@ -402,6 +413,5 @@ Version 2018-04-02T14:38:04-07:00"
           (insert "\n"))))
      (t (progn
           (message "nothing done. logic error 40873. shouldn't reach here" ))))))
-
-(global-set-key (kbd "C-c SPC")
- 		(lambda () (interactive) (xah-shrink-whitespaces)))
+(global-set-key (kbd "C-c C-SPC") (lambda () (interactive)
+                                    (xah-shrink-whitespaces)))
