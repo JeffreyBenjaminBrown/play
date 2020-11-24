@@ -20,7 +20,7 @@
 (defun space-around-next-non-alphanum ()
   (interactive)
   (progn
-    (search-forward-regexp "[^ a-zA-Z_'0-9]")
+    (search-forward-regexp "[^ a-zA-Z_0-9'\"]")
     (backward-char 1)
     (insert " ")
     (forward-char 1)
@@ -132,21 +132,23 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 ;; org-roam
 (use-package org-roam
+  :ensure t
   :hook
   (after-init . org-roam-mode)
   :custom
-  (org-roam-directory
-   "/org-roam") ;; for the roam db
+  (org-roam-directory "~/org-roam")
   :bind (:map org-roam-mode-map
-          ( ;; ("C-c n l" . org-roam)
-            ;; ("C-c n g" . org-roam-show-graph)
-	    ("C-c n l" . org-roam-store-link)
-            ("C-c n f" . org-roam-find-file)
-            ("C-c n b" . org-roam-buffer-toggle-display)
-            ("C-c n c" . org-roam-db-build-cache) )
-          :map org-mode-map
-          ( ("C-c n i" .
-	     org-roam-insert-dwim))))  ;; was: org-roam-insert (without -dwim)
+              (("C-c n b" . org-roam) ;; opens the roam-buffer
+               ("C-c n f" . org-roam-find-file)
+               ;; ("C-c n g" . org-roam-graph))
+               :map org-mode-map
+               (("C-c n i" . org-roam-insert))
+               (("C-c n I" . org-roam-insert-immediate))
+	       (("C-c n l" . org-store-link))
+	       (("C-c n h" . org-roam-create-note-from-headline))
+	       ;; (("C-c C-l" . org-insert-link))
+	       )))
+(setq org-id-link-to-org-use-id t)
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
@@ -184,8 +186,34 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 	regexp-history)
   (call-interactively 'org-roam-insert))
 
+
+(defun org-roam-create-note-from-headline ()
+  ;; by user 'telotortium' at the org-roam discourse:
+  ;; https://org-roam.discourse.group/t/creating-an-org-roam-note-from-an-existing-headline/978
+  "Create an Org-roam note from the current headline and jump to it.
+
+Normally, insert the headline’s title using the ’#title:’ file-level property
+and delete the Org-mode headline. However, if the current headline has a
+Org-mode properties drawer already, keep the headline and don’t insert
+‘#+title:'. Org-roam can extract the title from both kinds of notes, but using
+‘#+title:’ is a bit cleaner for a short note, which Org-roam encourages."
+  (interactive)
+  (let ((title (nth 4 (org-heading-components)))
+        (has-properties (org-get-property-block)))
+    (org-cut-subtree)
+    (org-roam-find-file title nil nil 'no-confirm)
+    (org-paste-subtree)
+    (unless has-properties
+      (kill-line)
+      (while (outline-next-heading)
+        (org-promote)))
+    (goto-char (point-min))
+    (when has-properties
+      (kill-line)
+      (kill-line))))
+
 ;; makes debugging easier. josh suggests
-  (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
+(add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
 
 ;; kill-region should have no effect if the region is not active
   (defvar mark-even-if-inactive nil)
@@ -208,17 +236,14 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default)))
- '(org-roam-directory "/home/jeff/org-roam")
+   '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
+ '(org-roam-directory "/home/jeff/org-roam" t)
  '(package-archives
-   (quote
-    (("gnu" . "http://elpa.gnu.org/packages/")
+   '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
-     ("melpa-stable" . "http://stable.melpa.org/packages/"))))
+     ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
-   (quote
-    (org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex))))
+   '(org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex)))
 
 ;; org-mode colors
 ;; find colors with `M-x list-colors-display`
