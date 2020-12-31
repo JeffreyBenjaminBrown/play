@@ -80,7 +80,7 @@
 (defun jbb-theme ()
   (interactive)
   (load-theme `manoj-dark
-	      1) ) ;; Suppresses the request for confirmation.
+              1) ) ;; Suppresses the request for confirmation.
 
 (defun jbb-smsn-start ()
   (interactive)
@@ -92,9 +92,9 @@
   (interactive)
   (if (equal major-mode 'smsn-mode)
       (progn
-	(y-or-n-p "Is this really a TREE?")
-	(replace-regexp "^ *" "") ;; delete leading whitespace
-	(jbb-divide-subtrees-and-leaves) )
+        (y-or-n-p "Is this really a TREE?")
+        (replace-regexp "^ *" "") ;; delete leading whitespace
+        (jbb-divide-subtrees-and-leaves) )
     (message "This command only makes sense in smsn-mode.")
     ) )
 
@@ -144,17 +144,17 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
                :map org-mode-map
                (("C-c n i" . org-roam-insert))
                (("C-c n I" . org-roam-insert-immediate))
-	       (("C-c n l" . org-store-link))
-	       (("C-c n h" . org-roam-create-note-from-headline))
-	       ;; (("C-c C-l" . org-insert-link))
-	       )))
+               (("C-c n l" . org-store-link))
+               (("C-c n h" . org-roam-create-note-from-headline))
+               ;; (("C-c C-l" . org-insert-link))
+               )))
 (setq org-id-link-to-org-use-id t)
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
       ;; to change every link involving them.
       '( ( "u" "public" plain
-	   (function org-roam--capture-get-point)
+           (function org-roam--capture-get-point)
            "%?"
            :file-name "tech/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n"
@@ -168,7 +168,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
            :unnarrowed t)
 
          ( "o" "ofiscal" plain
-	   (function org-roam--capture-get-point)
+           (function org-roam--capture-get-point)
            "%?"
            :file-name "ofiscal/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+title: ${title}\n"
@@ -179,11 +179,11 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
   "Insert an org-roam link. If there is a region active, use it as name."
   (interactive)
   (push (if (region-active-p)
-	    (capitalize-dwim '(buffer-substring-no-properties
-			       (region-beginning)
-			       (region-end)))
-	  (thing-at-point 'symbol))
-	regexp-history)
+            (capitalize-dwim '(buffer-substring-no-properties
+                               (region-beginning)
+                               (region-end)))
+          (thing-at-point 'symbol))
+        regexp-history)
   (call-interactively 'org-roam-insert))
 
 
@@ -318,37 +318,37 @@ Org-mode properties drawer already, keep the headline and don’t insert
 
 ;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
- "Renames both current buffer and file it's visiting to NEW-NAME." (interactive "sNew name: ")
- (let ((name (buffer-name))
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
 	(filename (buffer-file-name)))
- (if (not filename)
+    (if (not filename)
 	(message "Buffer '%s' is not visiting a file!" name)
- (if (get-buffer new-name)
-	 (message "A buffer named '%s' already exists!" new-name)
-	(progn 	 (rename-file filename new-name 1) 	 (rename-buffer new-name) 	 (set-visited-file-name new-name) 	 (set-buffer-modified-p nil))))))
+      (if (get-buffer new-name)
+	  (message "A buffer named '%s' already exists!" new-name)
+	(progn
+	  (rename-file filename new-name 1)
+	  (rename-buffer new-name)
+	  (set-visited-file-name new-name)
+	  (set-buffer-modified-p nil))))))
 
-(defun rename-file-and-buffer (new-name)
- "Renames both current buffer and file it's visiting to NEW-NAME." (interactive "sNew name: ")
- (let ((name (buffer-name))
-	(filename (buffer-file-name)))
- (if (not filename)
-	(message "Buffer '%s' is not visiting a file!" name)
- (if (get-buffer new-name)
-	 (message "A buffer named '%s' already exists!" new-name)
-	(progn 	 (rename-file filename new-name 1) 	 (rename-buffer new-name) 	 (set-visited-file-name new-name) 	 (set-buffer-modified-p nil)))))) ;;
 ;; Never understood why Emacs doesn't have this function, either.
-;;
 (defun move-buffer-file (dir)
- "Moves both current buffer and file it's visiting to DIR." (interactive "DNew directory: ")
- (let* ((name (buffer-name))
-	 (filename (buffer-file-name))
-	 (dir
-	 (if (string-match dir "\\(?:/\\|\\\\)$")
-	 (substring dir 0 -1) dir))
-	 (newname (concat dir "/" name)))
- (if (not filename)
-	(message "Buffer '%s' is not visiting a file!" name)
- (progn 	(copy-file filename newname 1) 	(delete-file filename) 	(set-visited-file-name newname)))))
+  "Moves both current buffer and file it's visiting to DIR."
+  (interactive "DNew directory: ")
+  (let* ((name (buffer-name))
+         (filename (buffer-file-name))
+         (dir
+          (if (string-match dir "\\(?:/\\|\\\\)$")
+              (substring dir 0 -1) dir))
+         (newname (concat dir "/" name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (progn
+	(copy-file filename newname 1)
+	(delete-file filename)
+	(set-visited-file-name newname)))))
+
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -440,3 +440,13 @@ Version 2018-04-02T14:38:04-07:00"
           (message "nothing done. logic error 40873. shouldn't reach here" ))))))
 (global-set-key (kbd "C-c C-SPC") (lambda () (interactive)
                                     (xah-shrink-whitespaces)))
+
+;; plucked from https://gitlab.haskell.org/ghc/ghc/-/wikis/emacs
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq kill-whole-line t) ;; cursor at start => C-k kills the newline too
+(column-number-mode 1)
+(defun untabify-buffer ()
+  "Untabify current buffer."
+  (interactive)
+  (save-excursion (untabify (point-min) (point-max))))
+(setq-default fill-column 80) ;; reformat a comment with M-q
