@@ -119,6 +119,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
   (enlarge-window (floor (* (window-height (next-window)) 0.45))))
 
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
+(add-to-list 'auto-mode-alist '("Makefile" . makefile-mode))
 
 (global-auto-revert-mode t) ;; reload files when changed
 
@@ -185,7 +186,6 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
           (thing-at-point 'symbol))
         regexp-history)
   (call-interactively 'org-roam-insert))
-
 
 (defun org-roam-create-note-from-headline ()
   ;; by user 'telotortium' at the org-roam discourse:
