@@ -212,6 +212,30 @@ Org-mode properties drawer already, keep the headline and don’t insert
       (kill-line)
       (kill-line))))
 
+;; Doesn't work but would be cool.
+(defun bms/org-roam-rg-search ()
+  ;; https://org-roam.discourse.group/t/using-consult-ripgrep-with-org-roam-for-searching-notes/1226
+  "Search org-roam directory using consult-ripgrep. With live-preview."
+  (interactive)
+  (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
+    (consult-ripgrep org-roam-directory)))
+(global-set-key (kbd "C-c rr") 'bms/org-roam-rg-search)
+
+(defun org-hide-properties ()
+  ;; https://org-roam.discourse.group/t/org-roam-major-redesign/1198/34
+  "Hide org headline's properties using overlay."
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:PROPERTIES:\n\\( *:.+?:.*\n\\)+ *:END:\n" nil t)
+      (overlay-put (make-overlay
+                    (match-beginning 0) (match-end 0))
+                   'display ""))))
+;; (add-hook 'org-mode-hook #'org-hide-properties)
+  ;; TODO : It's buggy -- it causes one bullet to appear adjacent to another
+  ;; if the second is empty aside from the properties.
+  ;; Once it's fixed, uncomment this line.
+
 ;; makes debugging easier. josh suggests
 (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
 
