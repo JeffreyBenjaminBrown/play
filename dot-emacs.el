@@ -131,6 +131,24 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
             (setq python-indent 2)
             (setq python-indent-offset 2)))
 
+;; mwim
+(global-set-key (kbd "C-a") 'mwim-beginning)
+(global-set-key (kbd "C-e") 'mwim-end)
+
+;; block-nav
+(setq block-nav-center-after-scroll nil)
+(setq block-nav-move-skip-shallower nil)
+(global-set-key (kbd "M-<down>") 'block-nav-next-block)
+(global-set-key (kbd "M-<up>") 'block-nav-previous-block)
+(global-set-key (kbd "M-<right>") 'block-nav-next-indentation-level)
+(global-set-key (kbd "M-<left>") 'block-nav-previous-indentation-level)
+
+;; vertigo
+(global-linum-mode)		;; always show line numbers
+(linum-relative-global-mode)	;; make them relative
+(global-set-key (kbd "M-p") 'vertigo-visible-jump-up)
+(global-set-key (kbd "M-n") 'vertigo-visible-jump-down)
+
 ;; org-roam
 (use-package org-roam
   :ensure t
