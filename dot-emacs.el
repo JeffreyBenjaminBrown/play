@@ -17,7 +17,7 @@
 ;; https://stackoverflow.com/questions/63893154/in-emacs-whats-the-opposite-of-invisible-text/63895106#63895106
 (add-to-invisibility-spec '(my-fold . t))
 
-(defun space-around-next-non-alphanum ()
+(defun insert-space-around-next-non-alphanum ()
   (interactive)
   (progn
     (search-forward-regexp "[^ a-zA-Z_0-9'\"]")
@@ -26,7 +26,7 @@
     (forward-char 1)
     (insert " ") ) )
 (global-set-key (kbd "C-c SPC") (lambda () (interactive)
-                                  (space-around-next-non-alphanum)))
+                                  (insert-space-around-next-non-alphanum)))
 
 (defun fold (toHide) ;; folds given t.
   ;; TODO: Should fold given (), but doesn't.
