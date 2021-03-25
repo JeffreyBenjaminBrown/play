@@ -143,11 +143,19 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (global-set-key (kbd "M-<right>") 'block-nav-next-indentation-level)
 (global-set-key (kbd "M-<left>") 'block-nav-previous-indentation-level)
 
-;; vertigo
+;; vertigo: jump many lines from home keys
 (global-linum-mode)		;; always show line numbers
 (linum-relative-global-mode)	;; make them relative
-(global-set-key (kbd "M-p") 'vertigo-visible-jump-up)
-(global-set-key (kbd "M-n") 'vertigo-visible-jump-down)
+(global-set-key (kbd "M-p") 'vertigo-jump-up)
+(global-set-key (kbd "M-n") 'vertigo-jump-down)
+
+;; iflipb: change buffers fast
+(require 'iflipb)
+(global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
+(global-set-key (kbd "<C-iso-lefttab>") 'iflipb-previous-buffer)
+
+;; neotree: a tree view for something like dired
+(setq neo-theme 'ascii) ;; possibilities: classic ascii arrow icons nerd
 
 ;; org-roam
 (use-package org-roam
@@ -281,7 +289,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
- '(org-roam-directory "/home/jeff/org-roam" t)
+ '(org-roam-directory "/home/jeff/org-roam")
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
@@ -356,7 +364,17 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  '(org-level-6 ((t (:foreground "blue"))))
  '(org-level-7 ((t (:foreground "purple"))))
  '(org-level-8 ((t (:foreground "red"))))
- '(org-level-9 ((t (:foreground "red")))))
+ '(org-level-9 ((t (:foreground "red"))))
+ '(rainbow-delimiters-base-error-face ((t (:inherit rainbow-delimiters-base-face :background "Red" :foreground "White"))))
+ '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :background "Black" :foreground "White"))))
+ '(rainbow-delimiters-depth-2-face ((t (:inherit rainbow-delimiters-base-face :background "white" :foreground "black"))))
+ '(rainbow-delimiters-depth-3-face ((t (:inherit rainbow-delimiters-base-face :background "#000066" :foreground "White"))))
+ '(rainbow-delimiters-depth-4-face ((t (:inherit rainbow-delimiters-base-face :background "#9999ff" :foreground "black"))))
+ '(rainbow-delimiters-depth-5-face ((t (:inherit rainbow-delimiters-base-face :background "#003300" :foreground "white"))))
+ '(rainbow-delimiters-depth-6-face ((t (:inherit rainbow-delimiters-base-face :background "#77ff77" :foreground "black"))))
+ '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :background "#884400" :foreground "white"))))
+ '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :background "#ffff66" :foreground "black"))))
+ '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :background "#550055" :foreground "#ffff33")))))
 
 
 
