@@ -131,6 +131,11 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
             (setq python-indent 2)
             (setq python-indent-offset 2)))
 
+;; show time
+(defun jbb-clock ()
+  (interactive)
+  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+
 ;; mwim
 (global-set-key (kbd "C-a") 'mwim-beginning)
 (global-set-key (kbd "C-e") 'mwim-end)
@@ -156,6 +161,11 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 ;; neotree: a tree view for something like dired
 (setq neo-theme 'ascii) ;; possibilities: classic ascii arrow icons nerd
+
+;; rainbow brackets. Very customized, elsewhere in this file
+;; (automatically created text,
+;; via `M-x customize-group rainbow-delimiters-faces)
+(rainbow-delimiters-mode)
 
 ;; org-roam
 (use-package org-roam
