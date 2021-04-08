@@ -12,10 +12,6 @@
 ;;    M-x insert-kbd-macro
 ;;    paste that code below
 ;;    maybe also give it a name (per examples below)
-;; I think this says that if a text's "invisibility" property is set to
-;; `my-fold`, then an ellipsis should be shown in its place.
-;; https://stackoverflow.com/questions/63893154/in-emacs-whats-the-opposite-of-invisible-text/63895106#63895106
-(add-to-invisibility-spec '(my-fold . t))
 
 (defun insert-space-around-next-non-alphanum ()
   (interactive)
@@ -28,8 +24,25 @@
 (global-set-key (kbd "C-c SPC") (lambda () (interactive)
                                   (insert-space-around-next-non-alphanum)))
 
+
+;; Indicate hidden text with " ⬎" instead of an ellipsis.
+;; Other likely candidates:
+;; ‣ ⁕ ↷ ↝ → ⇀ ⇢ ⇾ ⋱ 〉 ► ▻ ➝ ➛ ⟝ ⟶ ⫎ ⬎ ✳
+;; Source; Reddit user xtajv
+;;   https://www.reddit.com/r/emacs/comments/8r3x9w/can_i_change_what_chars_folded_text_is_displayed/
+(set-display-table-slot standard-display-table
+                        'selective-display (string-to-vector " ⬎"))
+
+(add-to-invisibility-spec '(jbb-fold . t))
+  ;; Has this effect:
+  ;; If the 'invisible property of an overlay is set to 'jbb-fold,
+  ;; the "invisible" text will be rendered with " ⬎".
+  ;; (Search this text for ⬎ to see why it's not an ellipsis, the default.)
+  ;; Had I instead written `(add-to-invisibility-spec 'jbb-fold),
+  ;; nothing would be shown to indicate the hidden text.
+  ;; Details: https://www.gnu.org/software/emacs/manual/html_node/elisp/Managing-Overlays.html
 (defun fold (toHide) ;; folds given t.
-  ;; TODO: Should fold given (), but doesn't.
+  ;; TODO: Should unfold given (), but doesn't.
   ;; So I use the `unfold` function for that.
   ;; TODO: It would be better if this showed an ellipsis to represent
   ;; folded text. Maybe on a separate line, so that it wouldn't be masked
@@ -49,27 +62,32 @@
           ;; not two. But for some reason, if I do that it always hides.
           (backward-char 1)
           (let ((endRegion (point)))
-            ( put-text-property
-              ;; If the "invisible" property is any non-nil value,
-              ;; the text is invisible. However, some non-nil values
-              ;; (see, e.g., the definition of `my-fold` above)
-              ;; cause "invisible" text to display as an ellipsis.
-              startRegion endRegion 'invisible 'my-fold)
-            (goto-char startRegion)
-            ) ) ) ) ) )
+            (overlay-put (make-overlay startRegion endRegion)
+                         'invisible 'jbb-fold)
+            ;;( put-text-property
+            ;;  ;; If the "invisible" property is any non-nil value,
+            ;;  ;; the text is invisible. However, some non-nil values
+            ;;  ;; (see, e.g., the definition of `jbb-fold` above)
+            ;;  ;; cause "invisible" text to display as an ellipsis.
+            ;;  startRegion endRegion 'invisible 'jbb-fold)
+            (goto-char startRegion) ) ) ) ) ) )
 (global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
 
 (defun unfold ()
   (interactive)
   (progn
     (let ((origin (point)))
-      (move-end-of-line 1)
-      (forward-char 1)
-      (let ((end (point)))
-        (while (and (invisible-p end) (< end (point-max)))
-          (setq end (1+ end)))
-        (put-text-property origin end 'invisible ())
-        (goto-char origin)))))
+      (move-beginning-of-line 1)
+      (let ((start (point)))
+        (move-end-of-line 1)
+        (forward-char 1)
+        (let ((end (point)))
+          (while (and (invisible-p end)
+                      (< end (point-max)))
+            (setq end (1+ end)))
+          (remove-overlays start end 'invisible 'jbb-fold)
+          (put-text-property origin end 'invisible ())
+          (goto-char origin))))))
 (global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
 
 (defun jbb-retain-for-mystery-node ()
@@ -148,15 +166,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (global-set-key (kbd "M-<right>") 'block-nav-next-indentation-level)
 (global-set-key (kbd "M-<left>") 'block-nav-previous-indentation-level)
 
-;; vertigo: jump many lines from home keys
-(global-linum-mode)		;; always show line numbers
-(linum-relative-global-mode)	;; make them relative
-(global-set-key (kbd "M-p") 'vertigo-jump-up)
-(global-set-key (kbd "M-n") 'vertigo-jump-down)
-
 ;; iflipb: change buffers fast
-(require 'iflipb)
-(global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
+(global-set-key (kbd "<C-tab>")         'iflipb-next-buffer)
 (global-set-key (kbd "<C-iso-lefttab>") 'iflipb-previous-buffer)
 
 ;; neotree: a tree view for something like dired
@@ -165,7 +176,41 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 ;; rainbow brackets. Very customized, elsewhere in this file
 ;; (automatically created text,
 ;; via `M-x customize-group rainbow-delimiters-faces)
-(rainbow-delimiters-mode)
+;;
+;; To load it automatically in code:
+;; (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+(global-set-key (kbd "C-x /") 'goto-last-change)
+
+(ctrlf-mode +1)
+
+(global-set-key (kbd "M-o") 'ace-window)
+
+(beacon-mode) ;; temporarily highlight cursor after scroll
+
+(global-set-key (kbd "C-c <backspace>") 'smart-hungry-delete-backward-char)
+(global-set-key (kbd "C-c C-d")         'smart-hungry-delete-forward-char)
+(eval-after-load 'org
+  (progn
+    (define-key org-mode-map (kbd "C-c C-d")
+      ;; disable because it conflicts with my assignment for smart-hungry-delete-forward-char
+      nil)))
+
+(defun jbb-undo-tree ()
+  (interactive)
+  (progn (split-window-right)
+         (undo-tree-mode)
+         (undo-tree-visualize)
+         (undo-tree-visualizer-toggle-diff)))`
+
+;; volatile highlights: highlight kills, undos, etc.
+(volatile-highlights-mode t)
+;; TODO The above does not make vhl the default -- I still have to enable it
+;; in every new buffer. Also the code below doesn't work --
+;; I can evaluate it by hand (after evaluating the above line),
+;; but it breaks the autoload process.
+;; (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
+;; (vhl/install-extension 'undo-tree)
 
 ;; org-roam
 (use-package org-roam
@@ -359,6 +404,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 220 :width normal))))
+ '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
  '(org-level-1 ((t (:foreground "red"))))
  '(org-level-10 ((t (:foreground "orange"))))
  '(org-level-11 ((t (:foreground "yellow"))))
@@ -385,7 +431,6 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :background "#884400" :foreground "white"))))
  '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :background "#ffff66" :foreground "black"))))
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :background "#550055" :foreground "#ffff33")))))
-
 
 
 ;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
