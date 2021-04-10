@@ -190,6 +190,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 (global-set-key (kbd "C-c <backspace>") 'smart-hungry-delete-backward-char)
 (global-set-key (kbd "C-c C-d")         'smart-hungry-delete-forward-char)
+(require 'org) ;; so that the next line knows what org-mode-map is
 (eval-after-load 'org
   (progn
     (define-key org-mode-map (kbd "C-c C-d")
