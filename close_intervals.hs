@@ -4,10 +4,16 @@
 -- and then evaluate `printList close` in GHCI.
 -- It will print triplets (a,b,c) where a and b are ratios,
 -- and c is the distance in cents between them.
--- Defining `disallowed_integers` allows you to test an odd limit.
+
+-- To test an odd limit:
+-- Define the parameter `disallowed_integers`.
 -- For instance, to test the 7-odd-limit, you would define integer-limit
 -- to be 14, and then include 11 and 13 in disallowed_integers,
 -- since ratios in the 7-odd-limit cannot include primes 11 or 13.
+-- PITFALL: This code is not clever enough to compute multiples of the
+-- primes you want to omit. If your integer limit is, say, 40,
+-- but you want to exclude prime 13, you'll need to include not just 13,
+-- but also 26 and 39, in `disallowed_integers`.
 
 import Data.Ratio
 import qualified Data.Set as S
