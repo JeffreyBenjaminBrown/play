@@ -354,6 +354,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
  '(org-roam-directory "/home/jeff/org-roam")
+ '(org-todo-keywords '((sequence "TODO" "BLOCKED" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
