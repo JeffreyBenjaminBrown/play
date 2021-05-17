@@ -90,6 +90,14 @@
           (goto-char origin))))))
 (global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
 
+(defun jbb-full-screen-buffer ()
+  (interactive)
+  (progn (
+list-buffers)
+	 (other-window 1)
+	 (delete-other-windows)
+	 ))
+
 (defun jbb-retain-for-mystery-node ()
   "When I imported my freeplane notes into SmSn, some nodes were translated badly. They appear with titles like \"mus.mm\" or \"go.mm\" instead of what they contained in the freeplane data. When I find such a node, I am leaving it in place, and leaving some of its siblings and its parent in place too, but adding this label to the parent, so that I know why not to separate them."
   (interactive)
