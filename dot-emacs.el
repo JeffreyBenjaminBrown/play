@@ -201,6 +201,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (require 'org) ;; so that the next line knows what org-mode-map is
 (eval-after-load 'org
   (progn
+    (setq org-fontify-done-headline nil)
+      ;; prevents DONE headings from displaying in a special pink font that makes links invisible
     (define-key org-mode-map (kbd "C-c C-d")
       ;; disable because it conflicts with my assignment for smart-hungry-delete-forward-char
       nil)))
