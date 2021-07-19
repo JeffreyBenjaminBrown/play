@@ -196,6 +196,10 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 (beacon-mode) ;; temporarily highlight cursor after scroll
 
+(require 'js)
+(eval-after-load 'js
+  (setq js-indent-level 2))
+
 (global-set-key (kbd "C-c <backspace>") 'smart-hungry-delete-backward-char)
 (global-set-key (kbd "C-c C-d")         'smart-hungry-delete-forward-char)
 (require 'org) ;; so that the next line knows what org-mode-map is
@@ -242,6 +246,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
                ;; (("C-c C-l" . org-insert-link))
                )))
 (setq org-id-link-to-org-use-id t)
+;; (setq org-roam-v2-ack t) ;; indicates I migrated
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
@@ -417,7 +422,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 220 :width normal))))
  '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
- '(org-level-1 ((t (:foreground "red"))))
+ '(org-level-1 ((t (:extend nil :foreground "#ff8888"))))
+   ;; pink rather than red, which is dark
  '(org-level-10 ((t (:foreground "orange"))))
  '(org-level-11 ((t (:foreground "yellow"))))
  '(org-level-12 ((t (:foreground "green"))))
