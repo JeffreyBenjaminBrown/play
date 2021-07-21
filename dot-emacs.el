@@ -233,45 +233,33 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
   :hook
   (after-init . org-roam-mode)
   :custom
-  (org-roam-directory "~/org-roam")
-  :bind (:map org-roam-mode-map
-              (("C-c n b" . org-roam) ;; opens the roam-buffer
-               ("C-c n f" . org-roam-find-file)
-               ;; ("C-c n g" . org-roam-graph))
-               :map org-mode-map
-               (("C-c n i" . org-roam-insert))
-               (("C-c n I" . org-roam-insert-immediate))
-               (("C-c n l" . org-store-link))
-               (("C-c n h" . org-roam-create-note-from-headline))
-               ;; (("C-c C-l" . org-insert-link))
-               )))
-(setq org-id-link-to-org-use-id t)
-;; (setq org-roam-v2-ack t) ;; indicates I migrated
+  (org-roam-directory "~/org-roam") )
+(setq org-roam-v2-ack t) ;; indicates I migrated
+
+;; TODO: A lot of global-set-key commands in this file use the wrong syntax,
+;; omitting the # symbol. This way works.
+;; (So does the lambda expression way, but it's needlessly verbose.)
+(global-set-key (kbd "C-c C-l") #'org-insert-link)
+(global-set-key (kbd "C-c n l") #'org-store-link)
+(setq org-id-link-to-org-use-id t) ;; so stored links refer to IDs
+(global-set-key (kbd "C-c n f") #'org-roam-node-find)
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
       ;; to change every link involving them.
-      '( ( "u" "public" plain
-           (function org-roam--capture-get-point)
-           "%?"
-           :file-name "tech/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n"
-           :unnarrowed t)
-
-         ( "r" "private" plain
-           (function org-roam--capture-get-point)
-           "%?"
-           :file-name "pers/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n"
-           :unnarrowed t)
-
-         ( "o" "ofiscal" plain
-           (function org-roam--capture-get-point)
-           "%?"
-           :file-name "ofiscal/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+title: ${title}\n"
-           :unnarrowed t)
-         ))
+      '( ("d" "public" plain "%?"
+          :if-new (file+head "tech/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ("d" "private" plain "%?"
+          :if-new (file+head "pers/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ("d" "ofiscal" plain "%?"
+          :if-new (file+head "ofiscal/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ))
 
 (defun org-roam-insert-dwim ()
   "Insert an org-roam link. If there is a region active, use it as name."
@@ -360,7 +348,9 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
+ '(org-hide-block-startup t)
  '(org-roam-directory "/home/jeff/org-roam")
+ '(org-startup-folded t)
  '(org-todo-keywords '((sequence "TODO" "BLOCKED" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
