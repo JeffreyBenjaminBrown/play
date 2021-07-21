@@ -241,21 +241,23 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 ;; (So does the lambda expression way, but it's needlessly verbose.)
 (global-set-key (kbd "C-c C-l") #'org-insert-link)
 (global-set-key (kbd "C-c n l") #'org-store-link)
-(setq org-id-link-to-org-use-id t) ;; so stored links refer to IDs
+(setq org-id-link-to-org-use-id t) ;; make stored links refer to IDs
 (global-set-key (kbd "C-c n f") #'org-roam-node-find)
+(global-set-key (kbd "C-c n i") #'org-roam-node-insert) ;; insert a *link*
+(global-set-key (kbd "C-c n b") #'org-roam-db-sync) ;; update the db
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
       ;; to change every link involving them.
-      '( ("d" "public" plain "%?"
+      '( ("u" "public" plain "%?"
           :if-new (file+head "tech/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("d" "private" plain "%?"
+	 ("r" "private" plain "%?"
           :if-new (file+head "pers/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("d" "ofiscal" plain "%?"
+	 ("o" "ofiscal" plain "%?"
           :if-new (file+head "ofiscal/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
