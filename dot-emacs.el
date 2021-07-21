@@ -413,6 +413,16 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :background "#ffff66" :foreground "black"))))
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :background "#550055" :foreground "#ffff33")))))
 
+;; https://github.com/emacs-helm/helm/issues/1038
+;; I don't use helm, but if I start, this should improve (to me)
+;; the font size for the helm buffer.
+(defun helm-buffer-face-mode ()
+   "Helm buffer face"
+   (interactive)
+   (with-helm-buffer
+     (setq line-spacing 2)
+     (buffer-face-set '(:family "Source Code Pro" :height 220))))
+(add-hook 'helm-update-hook 'helm-buffer-face-mode)
 
 ;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
