@@ -244,7 +244,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (setq org-id-link-to-org-use-id t) ;; make stored links refer to IDs
 (global-set-key (kbd "C-c n f") #'org-roam-node-find)
 (global-set-key (kbd "C-c n i") #'org-roam-node-insert) ;; insert a *link*
-(global-set-key (kbd "C-c n b") #'org-roam-db-sync) ;; update the db
+(global-set-key (kbd "C-c n d") #'org-roam-db-sync) ;; update the db
+(global-set-key (kbd "C-c n b") #'org-roam-buffer-toggle) ;; show backlinks
 
 (setq org-roam-capture-templates
       ;; These folder names are dumb, but to change them I would need
