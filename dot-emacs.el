@@ -149,6 +149,10 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 (global-auto-revert-mode t) ;; reload files when changed
 
+(add-hook 'erlang-mode-hook
+	  (lambda ()
+	    (setq erlang-indent-level 2)))
+
 ;; no tabs
 (add-hook 'python-mode-hook
           (lambda ()
@@ -333,7 +337,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
      ("melpa" . "http://melpa.org/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
-   '(org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex)))
+   '(erlang org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex)))
 
 ;; org-mode colors
 ;; find colors with `M-x list-colors-display`
