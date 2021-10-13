@@ -5,7 +5,7 @@
 (require 'use-package)
 (package-initialize)
 
-;; jbb macros
+;; ;; ;; jbb macros ;; ;; ;;
 ;;  How to store macros here:
 ;;    use F3, then F4 to record the macro
 ;;    M-x name-last-kbd-macro
@@ -153,6 +153,14 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 	  (lambda ()
 	    (setq erlang-indent-level 2)))
 
+;; show time
+(defun jbb-clock ()
+  (interactive)
+  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+
+
+;; ;; ;; Other stuff ;; ;; ;;
+
 ;; no tabs
 (add-hook 'python-mode-hook
           (lambda ()
@@ -160,11 +168,6 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
             (setq tab-width 2)
             (setq python-indent 2)
             (setq python-indent-offset 2)))
-
-;; show time
-(defun jbb-clock ()
-  (interactive)
-  (message (format-time-string "%Y-%m-%d %H:%M:%S")))
 
 ;; mwim
 (global-set-key (kbd "C-a") 'mwim-beginning)
