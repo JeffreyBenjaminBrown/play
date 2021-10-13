@@ -161,6 +161,23 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 ;; ;; ;; Other stuff ;; ;; ;;
 
+;; So that copy and paste works from Emacs-in-Bash to other apps.
+(xclip-mode 1)
+
+;; PureScript
+(require 'psc-ide)
+(add-hook 'purescript-mode-hook
+  (lambda ()
+    (psc-ide-mode)
+    (company-mode)
+    (flycheck-mode)
+    (turn-on-purescript-indentation)))
+
+;; Gleam, a language like Erlang with static types
+(load-file "~/.emacs.d/elisp/gleam-mode/gleam-mode.el")
+(require 'gleam-mode)
+(add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
+
 ;; no tabs
 (add-hook 'python-mode-hook
           (lambda ()
@@ -242,6 +259,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
   :custom
   (org-roam-directory "~/org-roam") )
 (setq org-roam-v2-ack t) ;; indicates I migrated
+
+(org-roam-db-autosync-mode)
 
 ;; TODO: A lot of global-set-key commands in this file use the wrong syntax,
 ;; omitting the # symbol. This way works.
