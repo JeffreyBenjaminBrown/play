@@ -164,6 +164,11 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 ;; So that copy and paste works from Emacs-in-Bash to other apps.
 (xclip-mode 1)
 
+(add-hook 'go-mode-hook
+          (lambda ()
+            (setq tab-width 2)
+            (setq indent-tabs-mode nil)))
+
 ;; PureScript
 (require 'psc-ide)
 (add-hook 'purescript-mode-hook
