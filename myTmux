@@ -1,0 +1,29 @@
+### USAGE
+# Run
+#   myTmux <server-name>
+# where <server-name> is whatever I want to call that tmux server.
+# This lets me maintain multiple tmux servers in different namespaces,
+# and save and restore to each.
+# For the default behavior (what you get when running `tmux` without args),
+# provide no server name.
+#
+### A SOLUTION
+# If I don't remember the server names on offer, run
+#   find ~/.tmux/resurrect -type d
+#
+### HOW IT WORKS
+# In ~/.tmux.conf there is a line that reads something like
+#   set -g @resurrect-dir "~/.tmux/resurrect/subfolder"
+# This changes the it to point to ~/.tmux/resurrect/$1,
+# where $1 is the argument to this script.
+# If no argument is given, it points to ~/.tmux/resurrect,
+# which is the default launch behavior for tmux.
+# It then launches a tmux server with that name.
+
+sed -i "s/^.*resurrect-dir.*\$/set -g @resurrect-dir \"~\/\.tmux\/resurrect\/$1\"/g" ~/code/git_play/dot-tmux.conf
+
+if test -n "$1"; then
+  tmux -L $1 # Calls the session $1        and saves to ~/.tmux/resurrect/$1
+else
+  tmux       # Calls the session "default" and saves to ~/.tmux/resurrect
+fi
