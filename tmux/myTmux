@@ -11,6 +11,12 @@
 # If I don't remember the server names on offer, run
 #   find ~/.tmux/resurrect -type d
 #
+### PITFALL
+# The `sed` command changes a line of the Tmux config.
+# That config only seems to matter when launching a Tmux server.
+# That's why I can then change it to something else
+# and launch a server under a different name.
+#
 ### HOW IT WORKS
 # In ~/.tmux.conf there is a line that reads something like
 #   set -g @resurrect-dir "~/.tmux/resurrect/subfolder"
