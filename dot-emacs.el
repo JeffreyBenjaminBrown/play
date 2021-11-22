@@ -361,7 +361,11 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
+ '(org-adapt-indentation t) ;; contents inherit indentation changes
+ '(org-fontify-done-headline nil)
  '(org-hide-block-startup t)
+ '(org-id-link-to-org-use-id t)
+ '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-startup-folded t)
  '(org-todo-keywords '((sequence "TODO" "BLOCKED" "DONE")))
@@ -371,41 +375,6 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
      ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
    '(erlang org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex)))
-
-;; org-mode colors
-;; find colors with `M-x list-colors-display`
-(custom-theme-set-faces 'user
-                        `(org-level-1 ((t (:foreground "red")))))
-(custom-theme-set-faces 'user
-                        `(org-level-2 ((t (:foreground "orange")))))
-(custom-theme-set-faces 'user
-                        `(org-level-3 ((t (:foreground "yellow")))))
-(custom-theme-set-faces 'user
-                        `(org-level-4 ((t (:foreground "green")))))
-(custom-theme-set-faces 'user
-                        `(org-level-5 ((t (:foreground "cyan")))))
-(custom-theme-set-faces 'user
-                        `(org-level-6 ((t (:foreground "blue")))))
-(custom-theme-set-faces 'user
-                        `(org-level-7 ((t (:foreground "purple")))))
-(custom-theme-set-faces 'user
-                        `(org-level-8 ((t (:foreground "red")))))
-(custom-theme-set-faces 'user
-                        `(org-level-9 ((t (:foreground "red")))))
-(custom-theme-set-faces 'user
-                        `(org-level-10 ((t (:foreground "orange")))))
-(custom-theme-set-faces 'user
-                        `(org-level-11 ((t (:foreground "yellow")))))
-(custom-theme-set-faces 'user
-                        `(org-level-12 ((t (:foreground "green")))))
-(custom-theme-set-faces 'user
-                        `(org-level-13 ((t (:foreground "cyan")))))
-(custom-theme-set-faces 'user
-                        `(org-level-14 ((t (:foreground "blue")))))
-(custom-theme-set-faces 'user
-                        `(org-level-15 ((t (:foreground "purple")))))
-(custom-theme-set-faces 'user
-                        `(org-level-16 ((t (:foreground "red")))))
 
 ;; word wrap when starting org-mode
 (add-hook 'org-mode-hook 'toggle-truncate-lines)
