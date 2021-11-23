@@ -26,7 +26,7 @@
 # which is the default launch behavior for tmux.
 # It then launches a tmux server with that name.
 
-sed -i "s/^.*resurrect-dir.*\$/set -g @resurrect-dir \"~\/\.tmux\/resurrect\/$1\"/g" ~/code/git_play/dot-tmux.conf
+sed -i "s/^.*resurrect-dir.*\$/set -g @resurrect-dir \"~\/\.tmux\/resurrect\/$1\"/g" ~/code/git_play/tmux/dot-tmux.conf
 
 if test -n "$1"; then
   tmux -L $1 # Calls the session $1        and saves to ~/.tmux/resurrect/$1
