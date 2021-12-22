@@ -5,6 +5,10 @@
 (require 'use-package)
 (package-initialize)
 
+(with-eval-after-load 'shell
+  ;; https://github.com/CeleritasCelery/emacs-native-shell-complete
+  (native-complete-setup-bash))
+
 ;; I probably don't need this but it seems harmless.
 (setq tab-stop-list '(2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 5 0 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100))
 
@@ -74,7 +78,7 @@
             ;;  ;; cause "invisible" text to display as an ellipsis.
             ;;  startRegion endRegion 'invisible 'jbb-fold)
             (goto-char startRegion) ) ) ) ) ) )
-(global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
+;; (global-set-key (kbd "C-c h") (lambda () (interactive) (fold t)))
 
 (defun unfold ()
   (interactive)
@@ -91,7 +95,7 @@
           (remove-overlays start end 'invisible 'jbb-fold)
           (put-text-property origin end 'invisible ())
           (goto-char origin))))))
-(global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
+;; (global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
 
 (defun jbb-full-screen-buffer ()
   (interactive)
@@ -160,6 +164,18 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (defun jbb-clock ()
   (interactive)
   (message (format-time-string "%Y-%m-%d %H:%M:%S")))
+
+(defun recenter-left-right ()
+  ;; https://stackoverflow.com/a/1249665/916142
+  "make the point horizontally centered in the window"
+  (interactive)
+  (let ((mid (/ (window-width) 2))
+        (line-len (save-excursion (end-of-line) (current-column)))
+        (cur (current-column)))
+    (if (< mid cur)
+        (set-window-hscroll (selected-window)
+                            (- cur mid)))))
+(global-set-key (kbd "C-S-l") 'recenter-left-right)
 
 
 ;; ;; ;; Other stuff ;; ;; ;;
