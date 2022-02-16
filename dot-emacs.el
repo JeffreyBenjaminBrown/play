@@ -5,6 +5,8 @@
 (require 'use-package)
 (package-initialize)
 
+(menu-bar-mode -1) ;; Whether to show it. (t for true, -1 for nil.)
+
 (with-eval-after-load 'shell
   ;; https://github.com/CeleritasCelery/emacs-native-shell-complete
   (native-complete-setup-bash))
@@ -96,6 +98,19 @@
           (put-text-property origin end 'invisible ())
           (goto-char origin))))))
 ;; (global-set-key (kbd "C-c s") (lambda () (interactive) (unfold)))
+
+;; https://emacs.stackexchange.com/a/37889
+(defun mark-receiving-ghci-buffer ()
+   (interactive)
+   (setq receiving-ghci-buffer (buffer-name)))
+(defun send-highlighted-region-to-receiving-ghci-buffer (beg end)
+  (interactive "r")
+  (process-send-string receiving-ghci-buffer ":{\n")
+  (process-send-region receiving-ghci-buffer beg end)
+  (process-send-string receiving-ghci-buffer "\n:}\n"))
+(global-set-key ( kbd "C-c s")
+		( lambda () (interactive)
+		  (send-highlighted-region-to-receiving-ghci-buffer) ) )
 
 (defun jbb-full-screen-buffer ()
   (interactive)
@@ -229,6 +244,9 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 (global-set-key (kbd "<C-tab>")         'iflipb-next-buffer)
 (global-set-key (kbd "<C-iso-lefttab>") 'iflipb-previous-buffer)
 
+;; Use `ibuffer` (good sorting, other commands) instead of `list-buffers`.
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; neotree: a tree view for something like dired
 (setq neo-theme 'ascii) ;; possibilities: classic ascii arrow icons nerd
 
@@ -238,6 +256,10 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 ;;
 ;; To load it automatically in code:
 ;; (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+(global-set-key (kbd "C-x x C-b") 'persp-list-buffers)
+  ;; Like all persp-mode shortcuts, this starts with `C-x x`.
+  ;; Like `list-buffers`, it starts with `C-x` and ends with `C-b`.
 
 (global-set-key (kbd "C-x /") 'goto-last-change)
 
