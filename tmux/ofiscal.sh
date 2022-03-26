@@ -30,6 +30,11 @@ tmux -L of send-keys     -t web:1                 \
   "echo \"\" > /etc/cron.deny"              Enter \
   "service cron stop && service cron start" Enter \
   "exit"                                    Enter
+sleep 1
+# Enter Docker container as appuser.
+tmux -L of send-keys     -t web:1                 \
+  "docker exec -it tax.co.web bash"         Enter \
+  "cd /mnt/"                                Enter
 
 tmux -L of rename-window -t web:2 GIT
 tmux -L of send-keys     -t web:2 \
@@ -38,7 +43,7 @@ tmux -L of send-keys     -t web:2 \
 
 
 ###
-### Setup tax.co.web
+### Setup tax.co
 ###
 
 tmux -L of rename-window -t sim:0 d-sh
@@ -50,7 +55,7 @@ tmux -L of rename-window -t sim:1 d-py
 tmux -L of send-keys     -t sim:1            \
      "docker exec -it tax.co.web bash" Enter \
      "cd mnt/tax_co"                   Enter \
-     "python3"                         Enter
+     "ipython"                         Enter
 
 tmux -L of rename-window -t sim:2 GIT
 tmux -L of send-keys     -t sim:2 \
