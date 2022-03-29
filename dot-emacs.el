@@ -5,8 +5,6 @@
 (require 'use-package)
 (package-initialize)
 
-(menu-bar-mode -1) ;; Whether to show it. (t for true, -1 for nil.)
-
 (with-eval-after-load 'shell
   ;; https://github.com/CeleritasCelery/emacs-native-shell-complete
   (native-complete-setup-bash))
@@ -605,3 +603,5 @@ Version 2018-04-02T14:38:04-07:00"
   (interactive)
   (save-excursion (untabify (point-min) (point-max))))
 (setq-default fill-column 80) ;; reformat a comment with M-q
+
+(menu-bar-mode -1) ;; Whether to show it. (t for true, -1 for nil.)
