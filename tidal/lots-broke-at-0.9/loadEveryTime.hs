@@ -30,11 +30,11 @@
   -- these are based on the definition of "gain"
     amp_p = F "amp" (Just 1) -- Amplitude
     amp = make' VF amp_p :: Pattern Double -> ParamPattern
-  
+
   -- qf is like n from Sound.Tidal.Params, but using Doubles, not Ints
     qf_p = F "qf" (Just 0) -- Quality: (carrier) Frequency
     qf = make' VF qf_p :: Pattern Double -> ParamPattern
-  
+
   -- each of these next is expressed relative to qf
     -- by default frequencies are 1*qf and amplitudes are 0
     qpf_p = F "qpf" (Just 1) -- Quality: Phase modulator Frequency
@@ -49,7 +49,7 @@
     qaf = make' VF qaf_p :: Pattern Double -> ParamPattern
     qaa_p = F "qaa" (Just 0) -- Quality: Am modulator Amplitude (typ. 0 or 1)
     qaa = make' VF qaa_p :: Pattern Double -> ParamPattern
-  
+
 -- ================== Native  ====================
   -- say a sentence
     data Sample = BassDrum | Snare | Silence deriving Show
@@ -155,7 +155,7 @@
     rd = rand
     (st,ap,sr,ssr) = (stack,append,spread,slowspread)
     (ev,du) = (every,duty)
-    lin min max x = x*(max - min) + min
+    lin min max x = x*(max - min) + min -- input in [0,1] => min < out < max
     st' fracs = stack $ map pure fracs
     ca' fracs = cat $ map pure fracs
 
