@@ -299,6 +299,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 ;; (vhl/install-extension 'undo-tree)
 
 ;; org-roam
+(setq org-roam-database-connector 'sqlite3)
 (use-package org-roam
   :ensure t
   :hook
