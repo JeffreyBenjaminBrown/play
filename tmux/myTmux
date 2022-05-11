@@ -8,8 +8,9 @@
 # provide no server name.
 #
 ### A SOLUTION
-# If I don't remember the server names on offer, run
-#   find ~/.tmux/resurrect -type d
+# If I don't remember the server names on offer,
+# just look at the names of the subfolders of
+#   ~/.tmux/resurrect
 #
 ### PITFALL
 # The `sed` command changes a line of the Tmux config.
@@ -20,13 +21,13 @@
 ### HOW IT WORKS
 # In ~/.tmux.conf there is a line that reads something like
 #   set -g @resurrect-dir "~/.tmux/resurrect/subfolder"
-# This changes the it to point to ~/.tmux/resurrect/$1,
+# This changes it to point to ~/.tmux/resurrect/$1,
 # where $1 is the argument to this script.
 # If no argument is given, it points to ~/.tmux/resurrect,
 # which is the default launch behavior for tmux.
 # It then launches a tmux server with that name.
 
-sed -i "s/^.*resurrect-dir.*\$/set -g @resurrect-dir \"~\/\.tmux\/resurrect\/$1\"/g" ~/code/git_play/tmux/dot-tmux.conf
+sed -i --follow-symlinks "s/^.*resurrect-dir.*\$/set -g @resurrect-dir \"~\/\.tmux\/resurrect\/$1\"/g" ~/.tmux.conf
 
 if test -n "$1"; then
   tmux -L $1 # Calls the session $1        and saves to ~/.tmux/resurrect/$1
