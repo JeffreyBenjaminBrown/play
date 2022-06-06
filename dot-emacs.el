@@ -429,7 +429,7 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 220 :width normal))))
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 300 :width normal))))
  '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
  '(org-level-1 ((t (:extend nil :foreground "#ff8888"))))
    ;; pink rather than red, which is dark
@@ -467,41 +467,8 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
    (interactive)
    (with-helm-buffer
      (setq line-spacing 2)
-     (buffer-face-set '(:family "Source Code Pro" :height 220))))
+     (buffer-face-set '(:family "Source Code Pro" :height 300))))
 (add-hook 'helm-update-hook 'helm-buffer-face-mode)
-
-;; from Stevey Egge: https://sites.google.com/site/steveyegge2/my-dot-emacs-file
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-	(filename (buffer-file-name)))
-    (if (not filename)
-	(message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-	  (message "A buffer named '%s' already exists!" new-name)
-	(progn
-	  (rename-file filename new-name 1)
-	  (rename-buffer new-name)
-	  (set-visited-file-name new-name)
-	  (set-buffer-modified-p nil))))))
-
-;; Never understood why Emacs doesn't have this function, either.
-(defun move-buffer-file (dir)
-  "Moves both current buffer and file it's visiting to DIR."
-  (interactive "DNew directory: ")
-  (let* ((name (buffer-name))
-         (filename (buffer-file-name))
-         (dir
-          (if (string-match dir "\\(?:/\\|\\\\)$")
-              (substring dir 0 -1) dir))
-         (newname (concat dir "/" name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (progn
-	(copy-file filename newname 1)
-	(delete-file filename)
-	(set-visited-file-name newname)))))
 
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
