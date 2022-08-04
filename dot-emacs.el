@@ -193,6 +193,12 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
 
 ;; ;; ;; Other stuff ;; ;; ;;
 
+;; Prevent align-regexp from using tabs
+;; https://stackoverflow.com/a/25164056/916142
+(defadvice align-regexp (around align-regexp-with-spaces activate)
+  (let ((indent-tabs-mode nil))
+    ad-do-it))
+
 ;; So that copy and paste works from Emacs-in-Bash to other apps.
 (xclip-mode 1)
 
