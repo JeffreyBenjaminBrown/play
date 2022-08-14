@@ -12,3 +12,9 @@ unset SSH_ASKPASS
 
 # Set Git language to English
 export LANGUAGE="en_US.UTF-8 git"
+
+# So that copy-paste works
+set enable-bracketed-paste off
+
+# So that the "bell" in Emacs is more polite.
+xset b 1 80 200
