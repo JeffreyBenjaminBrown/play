@@ -12,6 +12,9 @@
 ;; I probably don't need this but it seems harmless.
 (setq tab-stop-list '(2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 5 0 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100))
 
+;; to avoid hearing beeps
+(setq visible-bell t)
+
 ;; ;; ;; jbb macros ;; ;; ;;
 ;;  How to store macros here:
 ;;    use F3, then F4 to record the macro
@@ -217,9 +220,9 @@ PITFALL: If there are no leaves, the regex search will fail, and an error messag
     (turn-on-purescript-indentation)))
 
 ;; Gleam, a language like Erlang with static types
-(load-file "~/.emacs.d/elisp/gleam-mode/gleam-mode.el")
-(require 'gleam-mode)
-(add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
+;; (load-file "~/.emacs.d/elisp/gleam-mode/gleam-mode.el")
+;; (require 'gleam-mode)
+;; (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
 
 ;; no tabs
 (add-hook 'python-mode-hook
