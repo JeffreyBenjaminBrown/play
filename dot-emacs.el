@@ -139,6 +139,23 @@
       ;; disable because it conflicts with my assignment for smart-hungry-delete-forward-char
       nil)))
 
+(defun jbb-org-open-at-point ()
+  (interactive) ;; _event is ignored
+  (if ;; This if-else clause testing the major mode is basically unnecessary,
+      ;; because `jbb-org-open-at-point`
+      ;; will only be called via the shortcut defined next,
+      ;; which is only available from org-mode.
+      (equal "org-mode" (symbol-name major-mode))
+      (progn (call-interactively 'org-open-at-point)
+	     (delete-other-windows))
+    (message ("jbb-org-open-at-point does nothing outside of org-mode."))
+))
+
+
+(define-key org-mode-map (kbd "C-c C-o")   'jbb-org-open-at-point)
+( define-key ;; TODO : Why does this only work for slow clicks?
+  org-mode-map [mouse-1] 'jbb-org-open-at-point)
+
 ;; volatile highlights: highlight kills, undos, etc.
 (volatile-highlights-mode t)
 ;; TODO The above does not make vhl the default -- I still have to enable it
