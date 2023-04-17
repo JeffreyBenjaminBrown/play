@@ -12,6 +12,24 @@ tmux -L of send-keys -t web:0 \
 
 
 ###
+### Setup cities
+###
+
+tmux -L of send-keys -t cities:0         \
+     "docker exec -it cities bash" Enter \
+     "cd mnt/cities"               Enter
+
+tmux -L of send-keys -t cities:1         \
+     "docker exec -it cities bash" Enter \
+     "cd mnt/cities"               Enter \
+     "ipython3"                    Enter
+
+tmux -L of send-keys -t cities:2         \
+     "ssh-agent bash"              Enter \
+     "ssh-add"                     Enter
+
+
+###
 ### Setup tax.co.web
 ###
 
