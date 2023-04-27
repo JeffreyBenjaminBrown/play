@@ -165,7 +165,7 @@
 ;; (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
 ;; (vhl/install-extension 'undo-tree)
 
-(setq org-roam-db-location "c:/org-roam/org-roam.db")
+(setq org-roam-db-location "~/org-roam/org-roam.db")
 (use-package org-roam
   :ensure t
   :hook
