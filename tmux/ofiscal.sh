@@ -28,6 +28,24 @@ tmux -L of send-keys -t cities:2         \
      "ssh-agent bash"              Enter \
      "ssh-add"                     Enter
 
+### Setup pensions
+###
+
+docker start pension
+
+tmux -L of send-keys -t pensions:0     \
+  "docker exec -it pension bash" Enter \
+  "cd mnt/"                      Enter
+
+tmux -L of send-keys -t pensions:1     \
+  "docker exec -it pension bash" Enter \
+  "cd mnt/"                      Enter \
+  "ipython3"                     Enter
+
+tmux -L of send-keys -t pensions:2 \
+     "ssh-agent bash" Enter        \
+     "ssh-add"        Enter
+
 
 ###
 ### Setup tax.co.web
@@ -41,15 +59,13 @@ tmux -L of send-keys     -t web:0                       \
   "service apache2 stop && service apache2 start" Enter \
   "cd /mnt/"                                      Enter
 
-# Enter Docker container as root, set up cron, exit.
 tmux -L of send-keys     -t web:1                 \
   "docker exec -it -u 0 tax.co.web bash"    Enter \
   "cp /mnt/tax_co/cron/*_cron /etc/cron.d"  Enter \
   "echo \"\" > /etc/cron.deny"              Enter \
   "service cron stop && service cron start" Enter \
   "exit"                                    Enter
-sleep 1
-# Enter Docker container as appuser.
+sleep 1 # IMPORTANT: `exit` takes a while.
 tmux -L of send-keys     -t web:1                 \
   "docker exec -it tax.co.web bash"         Enter \
   "cd /mnt/"                                Enter
