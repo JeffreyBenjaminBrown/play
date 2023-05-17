@@ -17,11 +17,11 @@ tmux -L of send-keys -t web:0 \
 
 tmux -L of send-keys -t cities:0         \
      "docker exec -it cities bash" Enter \
-     "cd mnt/cities"               Enter
+     "cd mnt"                      Enter
 
 tmux -L of send-keys -t cities:1         \
      "docker exec -it cities bash" Enter \
-     "cd mnt/cities"               Enter \
+     "cd mnt"                      Enter \
      "ipython3"                    Enter
 
 tmux -L of send-keys -t cities:2         \
