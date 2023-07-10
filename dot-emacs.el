@@ -230,9 +230,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
- '(org-adapt-indentation t) ;; contents inherit indentation changes
+ '(org-adapt-indentation t)
+ '(org-cycle-hide-block-startup t)
  '(org-fontify-done-headline nil)
- '(org-hide-block-startup t)
  '(org-id-link-to-org-use-id t)
  '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
@@ -243,7 +243,8 @@
      ("melpa" . "http://melpa.org/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
-   '(erlang org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex)))
+   '(erlang org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex))
+ '(warning-suppress-log-types '(((unlock-file)))))
 
 ;; word wrap when starting org-mode
 (add-hook 'org-mode-hook 'toggle-truncate-lines)
