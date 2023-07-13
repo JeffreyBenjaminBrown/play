@@ -21,6 +21,7 @@ tmux -L of send-keys -t cities:0      \
   "cd mnt/"                     Enter
 
 tmux -L of send-keys -t cities:1      \
+  "docker exec -it cities bash" Enter \
   "cd mnt/"                     Enter \
   "ipython"                     Enter
 
