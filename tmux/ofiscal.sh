@@ -16,6 +16,7 @@ tmux -L of send-keys -t web:0 \
 ###
 
 tmux -L of send-keys -t cities:0         \
+     "docker start cities"         Enter \
      "docker exec -it cities bash" Enter \
      "cd mnt"                      Enter
 
