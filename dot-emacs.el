@@ -237,7 +237,7 @@
  '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-startup-folded t)
- '(org-todo-keywords '((sequence "TODO" "BLOCKED" "DONE")))
+ '(org-todo-keywords '((sequence "TODO" "BLOCKED" "ONGOING" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
