@@ -151,6 +151,19 @@
     (message ("jbb-org-open-at-point does nothing outside of org-mode."))
 ))
 
+(eval-after-load "dired"
+  ;; In dired-mode, this lets you use "F" to open all marked files.
+  ;; (Mark them with "m" first, and unmark them with "u",
+  ;; or unmark all of them with "U".)
+  ;; Source:
+  ;;   https://stackoverflow.com/a/1110487/916142
+  '(progn
+     (define-key dired-mode-map "F" 'my-dired-find-file)
+     (defun my-dired-find-file (&optional arg)
+       "Open each of the marked files, or the file under the point, or when prefix arg, the next N files "
+       (interactive "P")
+       (mapc 'find-file (dired-get-marked-files nil arg))
+       )))
 
 (define-key org-mode-map (kbd "C-c C-o")   'jbb-org-open-at-point)
 ( define-key ;; TODO : Why does this only work for slow clicks?
