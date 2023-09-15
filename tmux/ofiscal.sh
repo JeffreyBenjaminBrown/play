@@ -8,7 +8,30 @@
 tmux -L of kill-session -t 0
 
 tmux -L of send-keys -t web:0 \
-     "docker start tax.co.web" Enter
+  "docker start tax.co.web" Enter
+
+
+###
+### Setup unir
+###
+
+tmux -L of send-keys -t web:2       \
+  "docker start tax.co.web" Enter
+
+tmux -L of send-keys -t unir:0      \
+  "docker start unir"         Enter \
+  "docker exec -it unir bash" Enter \
+  "cd mnt/"                   Enter
+
+tmux -L of send-keys -t unir:1      \
+  "docker start unir"         Enter \
+  "docker exec -it unir bash" Enter \
+  "cd mnt/"                   Enter \
+  "ipython"                   Enter
+
+tmux -L of send-keys -t unir:2      \
+  "ssh-agent bash" Enter            \
+  "ssh-add"        Enter
 
 
 ###
@@ -61,25 +84,27 @@ tmux -L of send-keys     -t web:0                       \
   "service apache2 stop && service apache2 start" Enter \
   "cd /mnt/"                                      Enter
 
-tmux -L of send-keys     -t web:1                 \
-  "docker exec -it -u 0 tax.co.web bash"    Enter \
-  "cp /mnt/tax_co/cron/*_cron /etc/cron.d"  Enter \
-  "echo \"\" > /etc/cron.deny"              Enter \
-  "service cron stop && service cron start" Enter \
-  "exit"                                    Enter
+tmux -L of send-keys     -t web:1                       \
+  "docker exec -it -u 0 tax.co.web bash"          Enter \
+  "cp /mnt/tax_co/cron/*_cron /etc/cron.d"        Enter \
+  "echo \"\" > /etc/cron.deny"                    Enter \
+  "service cron stop && service cron start"       Enter \
+  "exit"                                          Enter
 sleep 1 # IMPORTANT: `exit` takes a while.
-tmux -L of send-keys     -t web:1                 \
-  "docker exec -it tax.co.web bash"         Enter \
-  "cd /mnt/"                                Enter
+tmux -L of send-keys     -t web:1                       \
+  "docker exec -it tax.co.web bash"               Enter \
+  "cd /mnt/"                                      Enter
 
 tmux -L of rename-window -t web:2 GIT
-tmux -L of send-keys     -t web:2 \
-     "ssh-agent bash" Enter       \
-     "ssh-add"        Enter
+tmux -L of send-keys     -t web:2                       \
+     "ssh-agent bash"                             Enter \
+     "ssh-add"                                    Enter
 
 
 ###
-### Setup tax.co
+### Setup tax.co repo,
+### which (PITFALL) is *also* running in the tax.co.web Docker container
+### (like the tax.co.web repo is).
 ###
 
 tmux -L of rename-window -t sim:0 d-sh
@@ -94,6 +119,6 @@ tmux -L of send-keys     -t sim:1            \
      "ipython"                         Enter
 
 tmux -L of rename-window -t sim:2 GIT
-tmux -L of send-keys     -t sim:2 \
-     "ssh-agent bash" Enter       \
-     "ssh-add"        Enter
+tmux -L of send-keys     -t sim:2            \
+     "ssh-agent bash"                  Enter \
+     "ssh-add"                         Enter
