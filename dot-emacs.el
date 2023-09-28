@@ -211,6 +211,10 @@
           :if-new (file+head "pers/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
+	 ("s" "stale" plain "%?"
+          :if-new (file+head "stale/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
 	 ("o" "ofiscal" plain "%?"
           :if-new (file+head "ofiscal/${slug}.org"
                              "#+title: ${title}\n")
