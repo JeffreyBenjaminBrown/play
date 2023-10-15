@@ -44,6 +44,12 @@
 
 ;; ;; ;; Other stuff ;; ;; ;;
 
+(setq yas-snippet-dirs
+      '( ;; This is a singleton list; it could be longer.
+	"~/emacs.d/yasnippets/"))
+(add-hook 'org-mode-hook #'yas-minor-mode)
+(global-set-key (kbd "C-c y") 'yas-insert-snippet)
+
 (defun org-hide-source-block-delimiters ()
   "Hide #+begin-src / #+end-src lines."
   (interactive)
@@ -272,7 +278,8 @@
    '((org-src-preserve-indentation)
      (eval require 'ox-texinfo+ nil t)
      (eval require 'ol-info)))
- '(warning-suppress-log-types '(((unlock-file)))))
+ '(warning-suppress-log-types '(((unlock-file))))
+ '(yas-wrap-around-region t))
 
 ;; word wrap when starting org-mode
 (add-hook 'org-mode-hook 'toggle-truncate-lines)

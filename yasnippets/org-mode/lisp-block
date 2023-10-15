@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: lisp-block
+# key: <#+
+# --
+
+#+BEGIN_SRC lisp
+  $0
+#+END_SRC
