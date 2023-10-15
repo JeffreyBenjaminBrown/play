@@ -44,6 +44,12 @@
 
 ;; ;; ;; Other stuff ;; ;; ;;
 
+(defun org-hide-source-block-delimiters ()
+  "Hide #+begin-src / #+end-src lines."
+  (interactive)
+  (hide-lines-matching (rx line-start (zero-or-more " ") "#+" (or "begin" "end") "_src")))
+(global-set-key (kbd "C-c h") 'org-hide-source-block-delimiters)
+
 ;; Prevent align-regexp from using tabs
 ;; https://stackoverflow.com/a/25164056/916142
 (defadvice align-regexp (around align-regexp-with-spaces activate)
@@ -261,6 +267,10 @@
      ("melpa-stable" . "http://stable.melpa.org/packages/")))
  '(package-selected-packages
    '(erlang org-roam undo-tree scala-mode python-mode org nix-mode markdown-mode magit intero hide-lines csv-mode auctex))
+ '(safe-local-variable-values
+   '((org-src-preserve-indentation)
+     (eval require 'ox-texinfo+ nil t)
+     (eval require 'ol-info)))
  '(warning-suppress-log-types '(((unlock-file)))))
 
 ;; word wrap when starting org-mode
