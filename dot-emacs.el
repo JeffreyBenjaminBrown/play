@@ -259,6 +259,7 @@
  '(org-id-link-to-org-use-id t)
  '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
+ '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
  '(org-startup-folded t)
  '(org-todo-keywords '((sequence "TODO" "BLOCKED" "ONGOING" "DONE")))
  '(package-archives
