@@ -11,6 +11,10 @@
 
 tmux -L of kill-session -t 0
 
+docker start tax.co.web
+docker start unir
+docker start pgn
+
 DIR=~/code/git_play/tmux/
 
 $DIR/ofiscal/tax.co.web.sh

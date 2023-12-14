@@ -46,8 +46,9 @@
 
 (setq yas-snippet-dirs
       '( ;; This is a singleton list; it could be longer.
-	"~/emacs.d/yasnippets/"))
+	"~/.emacs.d/yasnippets/"))
 (add-hook 'org-mode-hook #'yas-minor-mode)
+(yas-global-mode t)
 (global-set-key (kbd "C-c y") 'yas-insert-snippet)
 
 (defun org-hide-source-block-delimiters ()
@@ -262,6 +263,7 @@
  '(iflipb-ignore-buffers '("()")) ;; ignores no buffers
  '(org-adapt-indentation t)
  '(org-cycle-hide-block-startup t)
+ '(org-edit-src-content-indentation 0)
  '(org-fontify-done-headline nil)
  '(org-id-link-to-org-use-id t)
  '(org-roam-db-autosync-mode t)
@@ -292,6 +294,9 @@
     (add-to-list 'default-frame-alist '(background-color . "#eeeeee"))
     (set-face-attribute 'region nil :background "#ccc")
     (load-theme 'manoj-dark)
+
+(set-face-attribute ;; Make lines starting with #+ in org files 1/3 height.
+ 'org-meta-line nil :height 0.33)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
