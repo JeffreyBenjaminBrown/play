@@ -93,9 +93,6 @@
             (setq python-indent 2)
             (setq python-indent-offset 2)))
 
-;; Coconut is like, interporable with, and better than Python.
-(load-file "~/.emacs.d/elisp/coconut-mode/coconut-mode.el")
-
 ;; mwim
 (global-set-key (kbd "C-a") 'mwim-beginning)
 (global-set-key (kbd "C-e") 'mwim-end)
