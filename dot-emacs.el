@@ -300,7 +300,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 500 :width normal))))
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 300 :width normal))))
  '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
  '(org-level-1 ((t (:extend nil :foreground "#ff8888"))))
    ;; pink rather than red, which is dark
