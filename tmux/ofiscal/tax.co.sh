@@ -6,12 +6,14 @@
 tmux -L of rename-window -t sim:0 d-sh
 tmux -L of send-keys     -t sim:0         \
   "docker exec -it tax.co.web bash" Enter \
-  "cd mnt/tax_co"                   Enter
+  "cd mnt/tax_co"                   Enter \
+  "source python/venv/bin/activate" Enter
 
 tmux -L of rename-window -t sim:1 d-py
 tmux -L of send-keys     -t sim:1         \
   "docker exec -it tax.co.web bash" Enter \
   "cd mnt/tax_co"                   Enter \
+  "source python/venv/bin/activate" Enter \
   "ipython"                         Enter
 
 tmux -L of rename-window -t sim:2 GIT
