@@ -4,6 +4,7 @@
 ;; You may delete these explanatory comments.
 (require 'use-package)
 (package-initialize)
+(add-to-list 'load-path "/home/jeff/.emacs.d/elisp/")
 
 (with-eval-after-load 'shell
   ;; https://github.com/CeleritasCelery/emacs-native-shell-complete
@@ -70,6 +71,11 @@
           (lambda ()
             (setq tab-width 2)
             (setq indent-tabs-mode nil)))
+
+;; ;; Visual Basic (at .emacs.d/elisp/visual-basic-mode.el)
+;; (autoload 'visual-basic-mode "visual-basic-mode" "Visual Basic mode." t)
+;; (push '("\\.\\(?:frm\\|\\(?:ba\\|cl\\|vb\\)s\\)\\'" . visual-basic-mode)
+;;        auto-mode-alist)
 
 ;; PureScript
 (require 'psc-ide)
@@ -238,17 +244,17 @@
 ;; kill-region should have no effect if the region is not active
   (defvar mark-even-if-inactive nil)
 
-;; Semantic Synchrony
-  ;; where is the server?
-    ;; (defvar smsn-server-host "fortytwo.net") ;; online
-  (defvar smsn-server-host "127.0.0.1") ;; local
-  (defvar smsn-server-port 8183) ;; 8182 is default
-  (defvar smsn-server-protocol "websocket") ;; websocket is default
-  (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
-  ;; (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
-  (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
-    (normal-top-level-add-subdirs-to-load-path))
-  (require 'smsn-mode)
+;; ;; Semantic Synchrony
+;;   ;; where is the server?
+;;     ;; (defvar smsn-server-host "fortytwo.net") ;; online
+;;   (defvar smsn-server-host "127.0.0.1") ;; local
+;;   (defvar smsn-server-port 8183) ;; 8182 is default
+;;   (defvar smsn-server-protocol "websocket") ;; websocket is default
+;;   (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
+;;   ;; (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
+;;   (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
+;;     (normal-top-level-add-subdirs-to-load-path))
+;;   (require 'smsn-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -300,7 +306,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 300 :width normal))))
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 300 :width normal)))) ;; jbb height
  '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
  '(org-level-1 ((t (:extend nil :foreground "#ff8888"))))
    ;; pink rather than red, which is dark
