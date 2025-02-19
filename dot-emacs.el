@@ -210,7 +210,6 @@
 ;; (So does the lambda expression way, but it's needlessly verbose.)
 (global-set-key (kbd "C-c C-l") #'org-insert-link)
 (global-set-key (kbd "C-c n l") #'org-store-link)
-(setq org-id-link-to-org-use-id t) ;; make stored links refer to IDs
 (global-set-key (kbd "C-c n f") #'org-roam-node-find)
 (global-set-key (kbd "C-c n i") #'org-roam-node-insert) ;; insert a *link*
 (global-set-key (kbd "C-c n d") #'org-roam-db-sync) ;; update the db
@@ -220,15 +219,19 @@
       ;; These folder names are dumb, but to change them I would need
       ;; to change every link involving them.
       '( ("u" "public" plain "%?"
-          :if-new (file+head "tech/${slug}.org"
+          :if-new (file+head "public/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
 	 ("r" "private" plain "%?"
-          :if-new (file+head "pers/${slug}.org"
+          :if-new (file+head "personal/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("s" "stale" plain "%?"
-          :if-new (file+head "stale/${slug}.org"
+	 ("d" "deciduous" plain "%?"
+          :if-new (file+head "deciduous/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ("m" "mincit" plain "%?"
+          :if-new (file+head "mincit/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
 	 ("o" "ofiscal" plain "%?"
@@ -273,7 +276,7 @@
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
  '(org-startup-folded t)
- '(org-todo-keywords '((sequence "TODO" "BLOCKED" "ONGOING" "DONE")))
+ '(org-todo-keywords '((sequence "TODO" "BLK_DATE" "ONGOING" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
