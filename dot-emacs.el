@@ -222,7 +222,7 @@
           :if-new (file+head "public/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("r" "private" plain "%?"
+	 ("r" "personal" plain "%?"
           :if-new (file+head "personal/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
@@ -271,7 +271,7 @@
  '(org-cycle-hide-block-startup t)
  '(org-edit-src-content-indentation 0)
  '(org-fontify-done-headline nil)
- '(org-id-link-to-org-use-id nil)
+ '(org-id-link-to-org-use-id 'use-existing)
  '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
