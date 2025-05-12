@@ -47,9 +47,9 @@
 
 (setq yas-snippet-dirs
       '( ;; This is a singleton list; it could be longer.
-	"~/.emacs.d/yasnippets/"))
+	"/home/jeff/.emacs.d/yasnippets/"))
 (add-hook 'org-mode-hook #'yas-minor-mode)
-(yas-global-mode t)
+;; (yas-global-mode t)
 (global-set-key (kbd "C-c y") 'yas-insert-snippet)
 
 (defun org-hide-source-block-delimiters ()
@@ -86,8 +86,18 @@
     (flycheck-mode)
     (turn-on-purescript-indentation)))
 
+;; Use spaces instead of tabs for all modes
+(setq-default indent-tabs-mode nil)
+
+(use-package rust-mode
+  :config
+  (setq rust-indent-offset 2) ; indentation size
+  (add-hook 'rust-mode-hook
+            (lambda ()
+              (setq indent-tabs-mode nil))))
+
 ;; Gleam, a language like Erlang with static types
-;; (load-file "~/.emacs.d/elisp/gleam-mode/gleam-mode.el")
+;; (load-file "/home/jeff/.emacs.d/elisp/gleam-mode/gleam-mode.el")
 ;; (require 'gleam-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
 
@@ -194,13 +204,13 @@
 ;; (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
 ;; (vhl/install-extension 'undo-tree)
 
-(setq org-roam-db-location "~/org-roam/org-roam.db")
+(setq org-roam-db-location "/home/jeff/org-roam/org-roam.db")
 (use-package org-roam
   :ensure t
   :hook
   (after-init . org-roam-mode)
   :custom
-  (org-roam-directory "~/org-roam") )
+  (org-roam-directory "/home/jeff/org-roam") )
 (setq org-roam-v2-ack t) ;; indicates I migrated
 
 (org-roam-db-autosync-mode)
@@ -216,8 +226,6 @@
 (global-set-key (kbd "C-c n b") #'org-roam-buffer-toggle) ;; show backlinks
 
 (setq org-roam-capture-templates
-      ;; These folder names are dumb, but to change them I would need
-      ;; to change every link involving them.
       '( ("u" "public" plain "%?"
           :if-new (file+head "public/${slug}.org"
                              "#+title: ${title}\n")
@@ -255,7 +263,7 @@
 ;;   (defvar smsn-server-protocol "websocket") ;; websocket is default
 ;;   (defvar smsn-default-vcs-file "/mnt/smsn-data/vcs") ;; ought to be default
 ;;   ;; (defvar smsn-default-freeplane-file "/mnt/smsn-data/it.mm") ;; ought to be default
-;;   (let ((default-directory "~/.emacs.d/elisp/")) ;; Weird scope!
+;;   (let ((default-directory "/home/jeff/.emacs.d/elisp/")) ;; Weird scope!
 ;;     (normal-top-level-add-subdirs-to-load-path))
 ;;   (require 'smsn-mode)
 
@@ -271,7 +279,6 @@
  '(org-cycle-hide-block-startup t)
  '(org-edit-src-content-indentation 0)
  '(org-fontify-done-headline nil)
- '(org-id-link-to-org-use-id 'use-existing)
  '(org-roam-db-autosync-mode t)
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
@@ -367,3 +374,11 @@
 (menu-bar-mode -1) ;; Whether to show it. (t for true, -1 for nil.)
 
 (load-file ".emacs.d/functions.el")
+
+(setq org-id-link-to-org-use-id 't)
+;; C-c n l = org-store-link
+;; nil didn't seem to work.
+;; t gives me properties when I run org-store-link.
+;; 'use-existing creates no properties drawers when I need
+;; -- when running `C-c n l` (org-store-link)
+  ;; controls creation of properties drawers under org-roam nodes
