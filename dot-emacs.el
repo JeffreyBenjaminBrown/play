@@ -298,7 +298,7 @@
  '(org-roam-directory "/home/jeff/org-roam")
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
  '(org-startup-folded t)
- '(org-todo-keywords '((sequence "TODO" "BLK_DATE" "ONGOING" "DONE")))
+ '(org-todo-keywords '((sequence "TODO" "AWAITS" "ONGOING" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
