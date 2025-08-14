@@ -72,6 +72,13 @@
             (setq tab-width 2)
             (setq indent-tabs-mode nil)))
 
+(setq ess-style 'RStudio)  ;; prevents auto-applying RStudio-style
+(add-hook 'ess-r-mode-hook
+          (lambda ()
+            (setq ess-indent-offset 2)
+            (setq tab-width 2)
+            (setq indent-tabs-mode nil)))
+
 ;; ;; Visual Basic (at .emacs.d/elisp/visual-basic-mode.el)
 ;; (autoload 'visual-basic-mode "visual-basic-mode" "Visual Basic mode." t)
 ;; (push '("\\.\\(?:frm\\|\\(?:ba\\|cl\\|vb\\)s\\)\\'" . visual-basic-mode)
@@ -93,6 +100,14 @@
   :config
   (setq rust-indent-offset 2) ; indentation size
   (add-hook 'rust-mode-hook
+            (lambda ()
+              (setq indent-tabs-mode nil))))
+
+(use-package typescript-mode
+  :mode "\\.ts\\'"
+  :config
+  (setq typescript-indent-level 2) ; indentation size
+  (add-hook 'typescript-mode-hook
             (lambda ()
               (setq indent-tabs-mode nil))))
 
@@ -316,7 +331,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 300 :width normal)))) ;; jbb height
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 250 :width normal)))) ;; jbb height
  '(ctrlf-highlight-active ((t (:inherit isearch :background "#00ff55" :distant-foreground "#550000" :foreground "#990000"))))
  '(org-level-1 ((t (:extend nil :foreground "#ff8888"))))
    ;; pink rather than red, which is dark
