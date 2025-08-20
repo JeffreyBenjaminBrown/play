@@ -42,6 +42,12 @@
 	  (lambda ()
 	    (setq erlang-indent-level 2)))
 
+(add-hook 'sh-mode-hook
+          (lambda ()
+            (setq sh-basic-offset 2)
+            (setq sh-indentation 2)
+            (setq tab-width 2)
+            (setq indent-tabs-mode nil)))
 
 ;; ;; ;; Other stuff ;; ;; ;;
 
