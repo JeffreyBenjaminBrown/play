@@ -225,16 +225,21 @@
 ;; (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
 ;; (vhl/install-extension 'undo-tree)
 
-(setq org-roam-db-location "/home/jeff/org-roam/org-roam.db")
+(setq org-roam-db-location "/home/jeff/org-roam/data/org-roam.db")
 (use-package org-roam
   :ensure t
   :hook
   (after-init . org-roam-mode)
   :custom
-  (org-roam-directory "/home/jeff/org-roam") )
+  (org-roam-directory "/home/jeff/org-roam/data") )
 (setq org-roam-v2-ack t) ;; indicates I migrated
 
 (org-roam-db-autosync-mode)
+
+(defalias 'visit-link-from-diff-and-show-backlinks
+  ;; From magit, if the cursor is on a link ID,
+  ;; this will visit said link and reveal its backlinks.
+   (kmacro "C-r : <return> C-SPC C-s ] <return> C-b M-w M-b M-x o r g - i d - g o <tab> <return> C-y <return> C-c n b") )
 
 ;; TODO: A lot of global-set-key commands in this file use the wrong syntax,
 ;; omitting the # symbol. This way works.
@@ -251,8 +256,16 @@
           :if-new (file+head "public/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("r" "personal" plain "%?"
-          :if-new (file+head "personal/${slug}.org"
+	 ("l" "personal-ish" plain "%?"
+          :if-new (file+head "personal-ish/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ("o" "personal-most" plain "%?"
+          :if-new (file+head "personal-most/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
+	 ("p" "personal-proc" plain "%?"
+          :if-new (file+head "personal-proc/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
 	 ("d" "deciduous" plain "%?"
@@ -263,12 +276,26 @@
           :if-new (file+head "mincit/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("o" "ofiscal" plain "%?"
+	 ("f" "ofiscal" plain "%?"
           :if-new (file+head "ofiscal/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
+	 ;;( ;; DEPRECATED.
+         ;; "r" "personal" plain "%?"
+         ;; :if-new (file+head "personal/${slug}.org"
+         ;;                    "#+title: ${title}\n")
+         ;; :unnarrowed t)
 	 ))
 
+(progn
+  (defun jbb-warn-if-personal ()
+    (when (and buffer-file-name
+               (string-prefix-p
+                (file-truename "/home/jeff/org-roam/data/personal/")
+                (file-truename buffer-file-name)))
+      ;; (message "File from personal/. Consider recategorizing.")
+      (read-key "File from personal/. Consider recategorizing. (press any key)")))
+  (add-hook 'find-file-hook #'jbb-warn-if-personal))
 
 ;; makes debugging easier. josh suggests
 (add-hook 'after-init-hook '(lambda () (setq debug-on-error t)))
@@ -301,7 +328,6 @@
  '(org-edit-src-content-indentation 0)
  '(org-fontify-done-headline nil)
  '(org-roam-db-autosync-mode t)
- '(org-roam-directory "/home/jeff/org-roam")
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
  '(org-startup-folded t)
  '(org-todo-keywords '((sequence "TODO" "AWAITS" "ONGOING" "DONE")))
@@ -403,3 +429,6 @@
 ;; 'use-existing creates no properties drawers when I need
 ;; -- when running `C-c n l` (org-store-link)
   ;; controls creation of properties drawers under org-roam nodes
+
+(progn ;; org-roam log org-roam history
+  (load-file "~/org-roam/reading-history/main.el"))
