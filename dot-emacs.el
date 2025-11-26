@@ -6,6 +6,17 @@
 (package-initialize)
 (add-to-list 'load-path "/home/jeff/.emacs.d/elisp/")
 
+(progn
+  (defun pad-the-next-dot ()
+    "Find the next literal '.'. Insert a space before and after."
+    (interactive)
+    (when (search-forward "." nil t)
+      (backward-char)
+      (insert " ")
+      (forward-char)
+      (insert " ")))
+  (global-set-key (kbd "C-c .") 'pad-the-next-dot))
+
 (with-eval-after-load 'shell
   ;; https://github.com/CeleritasCelery/emacs-native-shell-complete
   (native-complete-setup-bash))
@@ -102,12 +113,44 @@
 ;; Use spaces instead of tabs for all modes
 (setq-default indent-tabs-mode nil)
 
-(use-package rust-mode
-  :config
-  (setq rust-indent-offset 2) ; indentation size
-  (add-hook 'rust-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil))))
+( progn ;; my Rust config
+  (use-package rust-mode
+    :config
+    (setq rust-indent-offset 2) ; indentation size
+    (add-hook 'rust-mode-hook
+              (lambda ()
+                (setq indent-tabs-mode nil))))
+  (defface jbb-rust-punct-face
+    '((t :foreground "#ffff00"))  ; bright yellow
+    "Face for Rust punctuation and brackets (excluding '?').")
+  (defun jbb-rust--punct-or-bracket-matcher (limit)
+    "Match one punctuation/bracket char (\\s., \\s(, \\s)) except '?' up to LIMIT."
+    (let (found)
+      (while (and (not found)
+                  (re-search-forward
+                   "\\(?:\\s.\\|\\s(\\|\\s)\\|[<>]\\)" limit t))
+        (let* ((end (point))
+               (start (1- end))
+               (c (char-before end)))
+          (unless (eq c ??)                      ; skip '?'
+            (set-match-data (list start end))
+            (setq found t))))
+      found))
+  (defun jbb-rust-punct-setup ()
+    (font-lock-add-keywords
+     nil
+     '(( ; an unsafe lists of pairs
+        jbb-rust--punct-or-bracket-matcher
+        0
+        'jbb-rust-punct-face
+        t)) ; t = override
+     'append)
+    (font-lock-flush)
+    (font-lock-ensure))
+  (dolist (hook '(rust-mode-hook
+                  rustic-mode-hook
+                  rust-ts-mode-hook))
+    (add-hook hook #'jbb-rust-punct-setup)))
 
 (use-package typescript-mode
   :mode "\\.ts\\'"
@@ -225,13 +268,14 @@
 ;; (vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
 ;; (vhl/install-extension 'undo-tree)
 
-(setq org-roam-db-location "/home/jeff/org-roam/data/org-roam.db")
+(setq org-roam-db-location "/home/jeff/org-roam/org-roam.db")
 (use-package org-roam
   :ensure t
-  :hook
-  (after-init . org-roam-mode)
-  :custom
-  (org-roam-directory "/home/jeff/org-roam/data") )
+  :hook (after-init . org-roam-mode)
+  :config (add-to-list 'org-roam-buffer-postrender-functions
+                       #'visual-line-mode
+                       #'magit-section-show-level-2-all)
+  :custom (org-roam-directory "/home/jeff/org-roam") )
 (setq org-roam-v2-ack t) ;; indicates I migrated
 
 (org-roam-db-autosync-mode)
@@ -256,11 +300,11 @@
           :if-new (file+head "public/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("l" "personal-ish" plain "%?"
+	 ("i" "personal-ish" plain "%?"
           :if-new (file+head "personal-ish/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("o" "personal-most" plain "%?"
+	 ("m" "personal-most" plain "%?"
           :if-new (file+head "personal-most/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
@@ -268,11 +312,15 @@
           :if-new (file+head "personal-proc/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
+	 ("C" "by-claude" plain "%?"
+          :if-new (file+head "claude/${slug}.org"
+                             "#+title: ${title}\njeff-made: true\n")
+          :unnarrowed t)
 	 ("d" "deciduous" plain "%?"
           :if-new (file+head "deciduous/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ("m" "mincit" plain "%?"
+	 ("M" "mincit" plain "%?"
           :if-new (file+head "mincit/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
@@ -280,18 +328,18 @@
           :if-new (file+head "ofiscal/${slug}.org"
                              "#+title: ${title}\n")
           :unnarrowed t)
-	 ;;( ;; DEPRECATED.
-         ;; "r" "personal" plain "%?"
-         ;; :if-new (file+head "personal/${slug}.org"
-         ;;                    "#+title: ${title}\n")
-         ;; :unnarrowed t)
+	 ( ;; DEPRECATED, but indexing requires a passage like this.
+          "r" "personal" plain "%?"
+          :if-new (file+head "personal/${slug}.org"
+                             "#+title: ${title}\n")
+          :unnarrowed t)
 	 ))
 
 (progn
   (defun jbb-warn-if-personal ()
     (when (and buffer-file-name
                (string-prefix-p
-                (file-truename "/home/jeff/org-roam/data/personal/")
+                (file-truename "/home/jeff/org-roam/personal/")
                 (file-truename buffer-file-name)))
       ;; (message "File from personal/. Consider recategorizing.")
       (read-key "File from personal/. Consider recategorizing. (press any key)")))
@@ -330,7 +378,7 @@
  '(org-roam-db-autosync-mode t)
  '(org-src-window-setup 'current-window) ;; This way `C-c '` (org-edit-special) in org-mode on a code block opens the code-edit window full-screen rather than splitting the frame.
  '(org-startup-folded t)
- '(org-todo-keywords '((sequence "TODO" "AWAITS" "ONGOING" "DONE")))
+ '(org-todo-keywords '((sequence "TODO" "ONGOING" "AWAITS" "DONE")))
  '(package-archives
    '(("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/")
@@ -429,6 +477,3 @@
 ;; 'use-existing creates no properties drawers when I need
 ;; -- when running `C-c n l` (org-store-link)
   ;; controls creation of properties drawers under org-roam nodes
-
-(progn ;; org-roam log org-roam history
-  (load-file "~/org-roam/reading-history/main.el"))
