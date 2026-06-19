@@ -2,9 +2,28 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
-(require 'use-package)
+(require 'package)
+(setq package-install-upgrade-built-in t)
+(add-to-list 'package-archives
+             '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
+(require 'use-package)
 (add-to-list 'load-path "/home/jeff/.emacs.d/elisp/")
+
+(;; Use in conjunction with 'diredt-omit-mode'
+ setq dired-omit-files
+      (rx (or (seq bol "." eol) ; matches "."
+              (seq bol ".." eol) ; matches ".."
+              (seq bol "." (+ any) eol)))) ; matches other dotfiles
+
+(;; Workaround for magit 4.5.0 variable rename.
+ ;; TODO : At some point in the future this should become unnecessary.
+ ;; I'm not sure why I need it right now;
+ ;; I'm hoping it's that nixos-unstable just has to catch up.
+ with-eval-after-load 'magit-section
+  (unless (boundp 'magit-section-visibility-indicator)
+    (defvaralias 'magit-section-visibility-indicator
+      'magit-section-visibility-indicators)))
 
 (progn
   (defun pad-the-next-dot ()
@@ -113,15 +132,12 @@
 ;; Use spaces instead of tabs for all modes
 (setq-default indent-tabs-mode nil)
 
-( progn ;; my Rust config
-  (use-package rust-mode
-    :config
-    (setq rust-indent-offset 2) ; indentation size
-    (add-hook 'rust-mode-hook
-              (lambda ()
-                (setq indent-tabs-mode nil))))
+(progn ;; rust-mode
+  ;; (add-to-list 'load-path "~/hodal/skg/_burying/rust-indent/")
+  ;; (require 'jbb-rust-indent)
+  (setq rust-indent-offset 2)
   (defface jbb-rust-punct-face
-    '((t :foreground "#ffff00"))  ; bright yellow
+    '((t :foreground "#ffff00"))
     "Face for Rust punctuation and brackets (excluding '?').")
   (defun jbb-rust--punct-or-bracket-matcher (limit)
     "Match one punctuation/bracket char (\\s., \\s(, \\s)) except '?' up to LIMIT."
@@ -132,25 +148,18 @@
         (let* ((end (point))
                (start (1- end))
                (c (char-before end)))
-          (unless (eq c ??)                      ; skip '?'
+          (unless (eq c ??)
             (set-match-data (list start end))
             (setq found t))))
       found))
   (defun jbb-rust-punct-setup ()
     (font-lock-add-keywords
      nil
-     '(( ; an unsafe lists of pairs
-        jbb-rust--punct-or-bracket-matcher
-        0
-        'jbb-rust-punct-face
-        t)) ; t = override
+     '((jbb-rust--punct-or-bracket-matcher 0 'jbb-rust-punct-face t))
      'append)
     (font-lock-flush)
     (font-lock-ensure))
-  (dolist (hook '(rust-mode-hook
-                  rustic-mode-hook
-                  rust-ts-mode-hook))
-    (add-hook hook #'jbb-rust-punct-setup)))
+  (add-hook 'rust-mode-hook #'jbb-rust-punct-setup))
 
 (use-package typescript-mode
   :mode "\\.ts\\'"
@@ -164,6 +173,12 @@
 ;; (load-file "/home/jeff/.emacs.d/elisp/gleam-mode/gleam-mode.el")
 ;; (require 'gleam-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.gleam$" . gleam-mode))
+
+(advice-add ;; so that M-. called on 'name' looks for name without 's.
+ 'xref-backend-identifier-at-point :filter-return
+ (lambda (id)
+   (when (stringp id)
+     (string-trim id "['\"]" "['\"]"))))
 
 ;; no tabs
 (add-hook 'python-mode-hook
@@ -272,9 +287,6 @@
 (use-package org-roam
   :ensure t
   :hook (after-init . org-roam-mode)
-  :config (add-to-list 'org-roam-buffer-postrender-functions
-                       #'visual-line-mode
-                       #'magit-section-show-level-2-all)
   :custom (org-roam-directory "/home/jeff/org-roam") )
 (setq org-roam-v2-ack t) ;; indicates I migrated
 
@@ -371,7 +383,6 @@
  '(custom-safe-themes
    '("cf7ed2618df675fdd07e64d5c84b32031ec97a8f84bfd7cc997938ad8fa0799f" default))
  '(iflipb-ignore-buffers '("()")) ;; ignores no buffers
- '(org-adapt-indentation t)
  '(org-cycle-hide-block-startup t)
  '(org-edit-src-content-indentation 0)
  '(org-fontify-done-headline nil)
@@ -477,3 +488,9 @@
 ;; 'use-existing creates no properties drawers when I need
 ;; -- when running `C-c n l` (org-store-link)
   ;; controls creation of properties drawers under org-roam nodes
+
+(global-unset-key [M-wheel-up])
+(global-unset-key [M-wheel-down])
+
+(setq ;; Emacs defaults tags-case-fold-search to default, which inherits case-fold-search=t, which causes it toignore case in TAGS files. This changes that.
+ tags-case-fold-search nil)

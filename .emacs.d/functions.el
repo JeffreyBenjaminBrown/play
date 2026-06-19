@@ -74,9 +74,9 @@
   (process-send-string receiving-ghci-buffer ":{\n")
   (process-send-region receiving-ghci-buffer beg end)
   (process-send-string receiving-ghci-buffer "\n:}\n"))
-(global-set-key ( kbd "C-c s")
-		( lambda () (interactive)
-		  (send-highlighted-region-to-receiving-ghci-buffer) ) )
+;; (global-set-key ( kbd "C-c s")
+;; 		( lambda () (interactive)
+;; 		  (send-highlighted-region-to-receiving-ghci-buffer) ) )
 
 (defun jbb-full-screen-buffer ()
   (interactive)
